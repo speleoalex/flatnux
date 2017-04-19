@@ -1,0 +1,39 @@
+.fnfilemanager *{
+	padding: 0px;
+	margin: 0px;
+	font-family:Verdana;
+	font-size: 12px;
+	line-height: 12px;
+}
+.fnfilemanager{
+	background-color: #e2ddcf;
+}
+.fnfilemanager pre{
+	font-family: monospace;
+	
+}
+.fnfilemanager button{
+	border: 1px outset;
+	padding:1px;
+}
+/*
+.fnfilemanager input{
+	border:1px solid #000000;
+	background-color: #e2ddcf;
+	color:#000000;
+	vertical-align: middle;
+	margin: 1px;
+}
+
+.fnfilemanager input[type="radio"] { height:16px;border-style:none; }
+.fnfilemanager input[type="checkbox"] { height:16px;border-style:none; }
+.fnfilemanager input[type="button"] { border-style:outset; }
+.fnfilemanager input[type="submit"] { border-style:outset; }
+*/
+.fnfilemanager{
+	
+}
+
+.fnfilemanager td{
+	border: 0px;
+}

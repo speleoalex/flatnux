@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fn_sections>
+	<id>login</id>
+	<type>login</type>
+	<position>30</position>
+	<status>1</status>
+    <blocksmode>hide</blocksmode>
+    <blocks>user</blocks>     
+</fn_sections>

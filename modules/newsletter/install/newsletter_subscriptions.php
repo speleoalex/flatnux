@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?php exit(0);?>
+<tables>
+	<field>
+		<name>id</name>
+		<primarykey>1</primarykey>
+		<extra>autoincrement</extra>
+		<frm_show>0</frm_show>
+	</field>
+	<field>
+		<name>email</name>
+		<frm_it>Email</frm_it>
+		<frm_i18n>email</frm_i18n>
+		<frm_required>1</frm_required>
+	</field>
+	<field>
+		<name>newsletter</name>
+		<type>multicheck</type>
+		<frm_i18n>Subscriptions</frm_i18n>
+		<frm_it>Sottoscrizioni</frm_it>
+		<frm_en>Subscriptions</frm_en>
+		<showinprofile>0</showinprofile>
+		<frm_required>0</frm_required>
+		<foreignkey>newsletter_newsletters</foreignkey>
+		<fk_link_field>id</fk_link_field>
+		<fk_show_field>title</fk_show_field>
+		<frm_show>1</frm_show>
+	</field>
+</tables>

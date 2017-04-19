@@ -1,0 +1,17 @@
+html{
+	padding:0px;
+}
+body{
+	padding:0px;
+	margin:0px;
+}
+img{
+	border:0px;
+}
+p,form,div{
+	margin:0px;
+     
+}
+table{
+    border-collapse: collapse
+}
