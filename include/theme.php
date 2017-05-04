@@ -87,6 +87,7 @@ if (!function_exists("FN_HtmlHeader"))
         global $_FN;
         $html="";
         $sectionvalues=FN_GetSectionValues($_FN['mod']);
+        ob_start();
         if (!empty($sectionvalues['type'])&&file_exists("modules/{$sectionvalues['type']}/header.php"))
         {
             require_once "modules/{$sectionvalues['type']}/header.php";
@@ -99,6 +100,7 @@ if (!function_exists("FN_HtmlHeader"))
         {
             $html.=$_FN['section_header'];
         }
+        $html .=trim(ltrim(ob_get_clean()));
         $html.="\n\t<title>{$_FN['site_title']}</title>";
         $html.=FN_IncludeCSS($include_theme_css,$include_section_css);
         $html.=FN_IncludeJS();
@@ -682,12 +684,20 @@ function FN_TPL_ReplaceHtmlPart($partname,$replace,$tp_str,$default="")
     $str_out=str_replace($tp_str_tmp,$replace,$tp_str);
     return $str_out;
 }
-
+/**
+ * 
+ * @param string $str
+ * @return string
+ */
 function FN_TPL_tp_create_topmenu($str="")
 {
     return FN_TPL_html_menu($str,"top");
 }
-
+/**
+ * 
+ * @param string $str
+ * @return string
+ */
 function FN_TPL_tp_create_menu($str="")
 {
     return FN_TPL_html_menu($str,"vertical");
@@ -715,13 +725,13 @@ function FN_TPL_html_menu($str="",$part)
     {
         $tp_menuitem[$k]=preg_replace("/href=\"javascript:/im","ferh=\"javascript:",$tp_menuitem[$k]);
         $tp_menuitem[$k]=preg_replace("/href='javascript:/im","ferh='javascript:",$tp_menuitem[$k]);
-        
+
         $tp_menuitem[$k]=preg_replace("/<a([^>]+)(href)=(\")([^\"]*)(\")/im","<a\\1\\2=\\3{link}\\3",$tp_menuitem[$k]);
         $tp_menuitem[$k]=preg_replace("/<a([^>]+)(href)=(\')([^\']*)(\')/im","<a\\1\\2=\\3{link}\\3",$tp_menuitem[$k]);
 
         $tp_menuitem[$k]=preg_replace("/ferh=\"javascript:/im","href=\"javascript:",$tp_menuitem[$k]);
         $tp_menuitem[$k]=preg_replace("/ferh='javascript:/im","href='javascript:",$tp_menuitem[$k]);
-        
+
         if (strpos($tp_menuitem[$k],'{title}')===false)
         {
             $tp_menuitem[$k]=preg_replace("/(<a.*>)(.*)(<\/a)/im","\\1{title}\\3",$tp_menuitem[$k]);
@@ -892,16 +902,17 @@ function FN_TPL_tp_create_submenu_($str,$idsection)
 }
 
 /**
- *
+ * 
+ * @param string $str
  * @return string
  */
 function FN_TPL_tp_create_blocks_right($str)
 {
     return FN_TPL_tp_create_blocks($str,"right");
 }
-
 /**
- *
+ * 
+ * @param string $str
  * @return string
  */
 function FN_TPL_tp_create_blocks_left($str)
@@ -995,6 +1006,12 @@ if (!function_exists("FN_HtmlMainteanceMode"))
     function FN_HtmlMainteanceMode()
     {
         global $_FN;
+        if (file_exists("themes/{$_FN['theme']}/mainteancemode.tp.html"))
+        {
+
+            return FN_TPL_ApplyTplFile("themes/{$_FN['theme']}/mainteancemode.tp.html",$_FN);
+        }
+
         $html="<html><head><title>{$_FN['site_title']}</title></head><body>";
         $html.="<h2>".FN_Translate("site in maintenance")."</h2>";
         $html.=FN_HtmlLoginForm();

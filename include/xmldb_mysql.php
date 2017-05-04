@@ -75,7 +75,7 @@ class XMLTable_mysql
 
 
         // se sono impostate connessioni a livello globale nypasso le impostazioni della tabella
-        global $xmldb_mysqldatabase,$xmldb_mysqlusername,$xmldb_mysqlpassword,$xmldb_mysqlhost;
+        global $xmldb_mysqldatabase,$xmldb_mysqlusername,$xmldb_mysqlpassword,$xmldb_mysqlhost,$xmldb_timezone;
         if ($xmldb_mysqlhost!=""&&$xmldb_mysqldatabase!=""&&$xmldb_mysqlusername!="")
         {
             $mysql['host']=$xmldb_mysqlhost;
@@ -110,7 +110,10 @@ class XMLTable_mysql
         {
             $this->conn=$xmldb_mysqlconnection;
             $this->conn->query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
-
+            if ($xmldb_timezone)
+            {
+                $this->conn->query("SET time_zone = '$xmldb_timezone'");
+            }
 
             $result=$this->conn->query("SHOW databases");
             $exists=false;
