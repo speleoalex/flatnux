@@ -1,3 +1,6 @@
+5/2017
+    -bug fix
+    -migliorato supporto per i temi
 2/2017
     -supporto temi nel pannello di controllo
     -bug fix

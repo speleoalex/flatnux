@@ -67,7 +67,8 @@ function FN_CanModify($user,$fileorfolder)
 	global $_FN;
 	if ($fileorfolder == "")
 		$fileorfolder = ".";
-	if (!file_exists(realpath($fileorfolder)))
+        //dprint_r($fileorfolder);
+	if (!@realpath($fileorfolder) || !file_exists(realpath($fileorfolder)))
 		return false;
 	if (is_dir($fileorfolder))
 		return FN_CanModifyFolder($user,$fileorfolder);
@@ -86,7 +87,7 @@ function FN_CanView($user,$fileorfolder)
 	global $_FN;
 	if ($fileorfolder == "")
 		$fileorfolder = ".";
-	if (!file_exists(realpath($fileorfolder)))
+	if (!@realpath($fileorfolder) || !file_exists(realpath($fileorfolder)))
 		return false;
 	if (is_dir($fileorfolder))
 		return FN_CanViewFolder($user,$fileorfolder);

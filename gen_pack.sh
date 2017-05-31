@@ -72,6 +72,7 @@ if [ -d "$pwd" ]; then
     
         #sposto esclusi
 	mv ./flatnux/.svn ./fnexlude/
+	mv ./flatnux/.git ./fnexlude/
         #creo zip devel
 	zip -r $namezip"-devel.zip" $pwd
 	mkdir ./fnbuild
@@ -98,17 +99,18 @@ if [ -d "$pwd" ]; then
 
 	echo "----UPDATE SVN----";
 	cd /home/speleoalex/Documents/SVN-flatnux/trunk/
-	svn commit 
+	#svn commit 
 ## per creare versione stabile ##
 #	svn copy ./trunk https://flatnux.svn.sourceforge.net/svnroot/flatnux/tags/flatnux_1.0 -m flatnux_1.0
 ## per creare versione testing ##
 #	svn copy ./trunk https://flatnux.svn.sourceforge.net/svnroot/flatnux/testing/$pwd-$(date +"%Y-%m.%d").$n -m $(date +"%Y-%m.%d")
 
-	cd /home/speleoalex/public_html/flatnux
+	cd /home/speleoalex/public_html/
 
 
         #ripristino esclusi
 	mv ./fnexlude/.svn ./flatnux/
+	mv ./fnexlude/.git ./flatnux/
         #ripristino devel
 	mv ./fnbuild/nbproject ./flatnux/
 	mv ./fnbuild/.project ./flatnux/

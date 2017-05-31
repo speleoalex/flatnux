@@ -460,7 +460,7 @@ function FNCC_HtmlDashBoard()
         if (!empty($section['type']))
         {
             $sectiondir="modules/{$section['type']}";
-            if (file_exists("$sectiondir/controlcenter/fncc_dashboard.php"))
+            if (is_dir($sectiondir) && file_exists("$sectiondir/controlcenter/fncc_dashboard.php"))
             {
                 echo "<div class=\"fncc_dashboard_item\">";
                 echo "<div  class=\"fncc_dashboard_itemtitle\" >".$section['title']."</div>";
@@ -475,7 +475,7 @@ function FNCC_HtmlDashBoard()
     {
         $section=basename($sectiondir);
         $title=FN_GetFolderTitle($sectiondir);
-        if (file_exists("$sectiondir/controlcenter/fncc_dashboard.php"))
+        if (is_dir($sectiondir) && file_exists("$sectiondir/controlcenter/fncc_dashboard.php"))
         {
             echo "<div class=\"fncc_dashboard_item\">";
             echo "<div  class=\"fncc_dashboard_itemtitle\" >".$title."</div>";
@@ -491,8 +491,7 @@ function FNCC_HtmlDashBoard()
             $sectiondirs=glob("$cc_sectiondir/*");
             foreach($sectiondirs as $sectiondir)
             {
-
-                if (file_exists("$sectiondir/fncc_dashboard.php"))
+                if (is_dir($sectiondir) && file_exists("$sectiondir/fncc_dashboard.php"))
                 {
                     $sectiontitle=FN_GetFolderTitle($sectiondir);
                     echo "<div class=\"fncc_dashboard_item\">";
