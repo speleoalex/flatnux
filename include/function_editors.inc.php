@@ -829,6 +829,10 @@ function FN_HtmlEditContent($file,$formaction="",$exit="",$editor_params=false)
             $html.="<form method=\"post\" action=\"$formaction\" >";
             $file_extension=strtolower(FN_GetFileExtension($file));
             $value=file_get_contents($filetoget);
+            if (isset($editor_params['force_value']))
+            {
+                $value=$editor_params['force_value'];
+            }
             switch($file_extension)
             {
                 case "php":
@@ -882,7 +886,8 @@ function FN_HtmlEditContent($file,$formaction="",$exit="",$editor_params=false)
                     break;
             }
             $ck=($isdraft==true) ? "checked=\"checked\"" : "";
-            $html.="<div class=\"fn_editorfooter\">\n<input value=\"1\" $ck type=\"checkbox\" name=\"savedraft\" />&nbsp;".FN_i18n("save as draft")."&nbsp;<button type=\"submit\">".FN_i18n("save")."</button>";
+            $text_save=!empty($editor_params['text_save']) ? $editor_params['text_save'] : FN_i18n("save");
+            $html.="<div class=\"fn_editorfooter\">\n<input value=\"1\" $ck type=\"checkbox\" name=\"savedraft\" />&nbsp;".FN_i18n("save as draft")."&nbsp;<button type=\"submit\">".$text_save."</button>";
             if ($exit!="")
                 $html.="<button type=\"button\" class=\"button\" onclick=\"$exitjs\" > ".FN_i18n("cancel")."</button>";
             $html.="</div></form>";

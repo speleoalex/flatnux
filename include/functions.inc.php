@@ -103,40 +103,93 @@ function FN_HtmlSection($section="")
     $modcont=FN_GetParam("opt",$_GET,"flat");
     if ($modcont!="")
     {
-        $title=$_FN['sectionvalues']['title'];
-        if (FN_erg('config.php$',$modcont))
-            $title=FN_Translate("advanced settings","Aa")." $title";
-        if ($_FN['sectionvalues']['type']!=""&&is_dir("modules/{$_FN['sectionvalues']['type']}"))
-            $title.=" (".FN_Translate("page like","Aa")." ".FN_GetFolderTitle("modules/{$_FN['sectionvalues']['type']}").")";
+        $mode=FN_GetParam("mode",$_GET,"flat");
+        if ($mode=="versions")
+        {
+            $html.="FILE: <b>$modcont</b><br />";
+            $html.="".FN_Translate("versions").":<br />";
+            $html.="<table><tr><td>".FN_Translate("creation date")."</td><td>".FN_Translate("created by")."</td><td>".FN_Translate("delete date")."</td><td>".FN_Translate("overwritten by")."</td><td></td></tr>";
+            $files=glob("$modcont.*");
+            usort($files,function( $a,$b )
+            {
+                return filemtime($a)-filemtime($b);
+            });
+            $bk_user="";
+            foreach($files as $file)
+            {
+                $html.="<tr>";
+                $attr=explode(".",basename($file));
+                $date=DateTime::createFromFormat('YmdHis',$attr[count($attr)-3]);
+                $dateFile=$attr[count($attr)-4];
 
-        $t_exit="<button onclick=\"window.location='".FN_RewriteLink("index.php?mod={$_FN['mod']}","&")."';return false;\">".FN_HtmlArrowLeft()." ".FN_Translate("back to")." \"{$_FN['sectionvalues']['title']}\"</button>";
-        //try edit module------------------------------------------------------>
-        if ($modcont=="fnc_ccnf_section_{$_FN['mod']}")
-        {
-            if (FN_UserCanEditSection()&&false!==($html=FN_HtmlEditSection($_FN['mod'])))
-            {
-                return "<div class=\"fn_admin\"><h4>".FN_Translate("administration tools")." $title $t_exit</h4>".$html."</div>";
+                if (is_numeric($dateFile))
+                {
+                    $dateFile=FN_FormatDate($dateFile);
+                }
+                else
+                {
+                    $dateFile="unknown";
+                }
+                $bk_date=$date->getTimestamp();
+                $bk_date=FN_FormatDate($bk_date);
+                $html.="<td>$dateFile</td><td>$bk_user</td><td>".$bk_date."</td>";
+                $bk_user=$attr[count($attr)-2];
+                $html.="<td>$bk_user</td>";
+                $html.="<td><button onclick=\"window.location='index.php?mod={$_FN['mod']}&opt=$modcont&restore=$file'\">".FN_Translate("restore")."</button></td>";
+                $html.="</tr>";
             }
-        }
-        //try edit module------------------------------------------------------<
-        //try edit file-------------------------------------------------------->
-        elseif (is_dir(dirname($modcont))&&!is_dir($modcont)&&FN_CanModifyFile($_FN['user'],$modcont))
-        {
-            $editor_params=array();
+
+            $html.="<tr><td>".FN_FormatDate(filemtime($modcont))."</td><td>$bk_user</td><td>-</td><td>-</td><td><button onclick=\"window.location='index.php?mod={$_FN['mod']}&opt=$modcont'\">".FN_Translate("edit")."</button>"."</td></tr>";
+            $html.="</table>";
             $linkcancel=FN_RewriteLink("index.php?mod={$_FN['mod']}");
-            $linkform=FN_RewriteLink("index.php?mod={$_FN['mod']}&amp;opt=$modcont");
-            if (file_exists("sections/{$_FN['mod']}/style.css"))
-            {
-                $editor_params['css_file']="sections/{$_FN['mod']}/style.css";
-            }
-            $_FN['editor_folder']="sections/{$_FN['mod']}";
-            $html=FN_HtmlEditContent($modcont,$linkform,$linkcancel,$editor_params);
-            if ($html!==false)
-            {
-                return "<div class=\"fn_admin\"><h4>$title $t_exit</h4>".$html."</div>";
-            }
+            $html.="<br /><button onclick=\"window.location='$linkcancel';\">".FN_Translate("cancel")."</button>";
+            return "<div class=\"fn_admin\"><h4>".FN_Translate("administration tools")." $title $t_exit</h4>".$html."</div>";
         }
-        //try edit file--------------------------------------------------------<
+        else
+        {
+
+            $title=$_FN['sectionvalues']['title'];
+            if (FN_erg('config.php$',$modcont))
+                $title=FN_Translate("advanced settings","Aa")." $title";
+            if ($_FN['sectionvalues']['type']!=""&&is_dir("modules/{$_FN['sectionvalues']['type']}"))
+                $title.=" (".FN_Translate("page like","Aa")." ".FN_GetFolderTitle("modules/{$_FN['sectionvalues']['type']}").")";
+
+            $t_exit="<button onclick=\"window.location='".FN_RewriteLink("index.php?mod={$_FN['mod']}","&")."';return false;\">".FN_HtmlArrowLeft()." ".FN_Translate("back to")." \"{$_FN['sectionvalues']['title']}\"</button>";
+            //try edit module------------------------------------------------------>
+            if ($modcont=="fnc_ccnf_section_{$_FN['mod']}")
+            {
+                if (FN_UserCanEditSection()&&false!==($html=FN_HtmlEditSection($_FN['mod'])))
+                {
+                    return "<div class=\"fn_admin\"><h4>".FN_Translate("administration tools")." $title $t_exit</h4>".$html."</div>";
+                }
+            }
+            //try edit module------------------------------------------------------<
+            //try edit file-------------------------------------------------------->
+            elseif (is_dir(dirname($modcont))&&!is_dir($modcont)&&FN_CanModifyFile($_FN['user'],$modcont))
+            {
+                $editor_params=array();
+                $linkcancel=FN_RewriteLink("index.php?mod={$_FN['mod']}");
+                $linkform=FN_RewriteLink("index.php?mod={$_FN['mod']}&amp;opt=$modcont");
+                if (file_exists("sections/{$_FN['mod']}/style.css"))
+                {
+                    $editor_params['css_file']="sections/{$_FN['mod']}/style.css";
+                }
+                $_FN['editor_folder']="sections/{$_FN['mod']}";
+                $file_restore=FN_GetParam("restore",$_GET);
+                if (!empty($file_restore)&&file_exists($file_restore)&&FN_GetFileExtension($file_restore)=="bak~")
+                {
+                    $editor_params['force_value']=file_get_contents($file_restore);
+                    $linkcancel=$linkcancel=FN_RewriteLink("index.php?mod={$_FN['mod']}&amp;opt=$modcont&amp;mode=versions");
+                    $editor_params['text_save'] = FN_Translate("restore");
+                }
+                $html=FN_HtmlEditContent($modcont,$linkform,$linkcancel,$editor_params);
+                if ($html!==false)
+                {
+                    return "<div class=\"fn_admin\"><h4>$title $t_exit</h4>".$html."</div>";
+                }
+            }
+            //try edit file--------------------------------------------------------<
+        }
     }
     //-------------print section----------------------------------------------->
     if (!empty($sectionvalues['type'])&&file_exists("modules/{$sectionvalues['type']}"))
@@ -149,6 +202,7 @@ function FN_HtmlSection($section="")
     }
     //-------------print section-----------------------------------------------<
     $html.=$htmlconfig;
+
     return $html;
 }
 

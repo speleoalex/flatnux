@@ -65,8 +65,61 @@ if ($modcont)
     }
     else
     {
+        $file_restore=FN_GetParam("restore",$_GET);
+        if (!empty($file_restore)&&file_exists($file_restore)&&FN_GetFileExtension($file_restore)=="bak~")
+        {
+            $editor_params['force_value']=file_get_contents($file_restore);
+            $editor_params['text_save']=FN_Translate("restore");
+        }
         $_FN['editor_folder']=dirname($modcont);
         FN_EditContent($modcont,"{$_FN['controlcenter']}?opt=$opt&edit=$modcont","?opt=$opt",$editor_params);
+        $html="";
+        //-----old versions---------------------------------------------------->
+        {
+            $html.="<h3>".FN_Translate("old versions").":</h3>";
+            $html.="<table><tr><td><b>".FN_Translate("creation date")."</b></td><td><b>".FN_Translate("created by")."</b></td><td><b>".FN_Translate("delete date")."</b></td><td><b>".FN_Translate("overwritten by")."</b></td><td></td></tr>";
+            $files=glob("$modcont.*");
+            usort($files,function( $a,$b )
+            {
+                return filemtime($a)-filemtime($b);
+            });
+            
+            $bk_user="";
+            foreach($files as $file)
+            {
+                $html.="<tr>";
+                $attr=explode(".",basename($file));
+                $date=DateTime::createFromFormat('YmdHis',$attr[count($attr)-3]);
+                $dateFile=$attr[count($attr)-4];
+                if (is_numeric($dateFile))
+                {
+                    $dateFile=FN_FormatDate($dateFile);
+                }
+                else
+                {
+                    $dateFile="unknown";
+                }
+                if (is_object($date))
+                {
+                    $bk_date=$date->getTimestamp();
+                    $bk_date=FN_FormatDate($bk_date);
+                }
+                else
+                {
+                    $bk_date="";
+                }
+                $html.="<td>$dateFile</td><td>$bk_user</td><td>".$bk_date."</td>";
+                $bk_user=$attr[count($attr)-2];
+                $html.="<td>$bk_user</td>";
+                $html.="<td><button onclick=\"window.location='controlcenter.php?mod={$_FN['mod']}&opt=$opt&edit=$modcont&restore=$file'\">".FN_Translate("restore")."</button></td>";
+                $html.="</tr>";
+            }
+
+            $html.="<tr><td>".FN_FormatDate(filemtime($modcont))."</td><td>$bk_user</td><td>-</td><td>-</td><td><button onclick=\"window.location='controlcenter.php?mod={$_FN['mod']}&opt=$opt&edit=$modcont'\">".FN_Translate("edit")."</button>"."</td></tr>";
+            $html.="</table>";
+            echo $html;
+        }
+        //-----old versions----------------------------------------------------<
     }
 }
 else
@@ -716,22 +769,22 @@ function FNCC_print_section($section,$level)
 
     $html.="</td>";
 
-    
+
     $html.="<td style=\"text-align:left;border-left:1px solid #dadada\">{$section['level']}</td>";
     $html.="<td style=\"text-align:left;border-left:1px solid #dadada\">{$section['group_view']}</td>";
     $html.="<td style=\"text-align:left;border-left:1px solid #dadada\">{$section['group_edit']}</td>";
-    
+
     $end=$start="";
     if ($section['startdate'])
     {
-        $start =FN_FormatDate($section['startdate']);
+        $start=FN_FormatDate($section['startdate']);
     }
     if ($section['enddate'])
     {
-        $end =FN_FormatDate($section['enddate']);
+        $end=FN_FormatDate($section['enddate']);
     }
     $html.="<td style=\"text-align:left;border-left:1px solid #dadada\">{$start}</td>";
-    $html.="<td style=\"text-align:left;border-left:1px solid #dadada\">{$end}</td>";    
+    $html.="<td style=\"text-align:left;border-left:1px solid #dadada\">{$end}</td>";
 
 //    else
 //        $html .= "<img alt=\"\" src=\"images/unlocked.png\" style=\"vertical-align:middle\" />";

@@ -1,3 +1,8 @@
+6/2017
+    -ottimizzazione inclusioni non necessarie
+    -supporto vecchie versioni di files
+    -creato modulo html_template 
+
 5/2017
     -bug fix
     -migliorato supporto per i temi

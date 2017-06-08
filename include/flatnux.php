@@ -55,6 +55,9 @@ foreach($files as $file)
 }
 //files in cms ---<
 require_once $_FN['filesystempath']."/include/xmldb.php";
+require_once $_FN['filesystempath']."/include/xmldb_frm.php";
+require_once $_FN['filesystempath']."/include/xmldb_query.php";
+
 require_once $_FN['filesystempath']."/include/auth/$_FN_default_auth_method.php";
 include $_FN['filesystempath']."/config.php";
 if ($_FN['consolemode'])

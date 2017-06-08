@@ -15,12 +15,13 @@ define("_MAXTENTATIVIDIACCESSO","1000");
 define("_MAX_FILES_PER_FOLDER","10000");
 define("_MAX_LOCK_TIME","30"); // seconds
 
-
+/*
 $files=glob(dirname(__FILE__)."/xmldb_*.php");
 foreach($files as $file)
 {
     require_once $file;
 }
+*/
 
 /**
  *
@@ -1210,6 +1211,11 @@ class XMLTable
                 $this->$k=$v;
             }
         }
+        if (file_exists(dirname(__FILE__)."/xmldb_{$this->driver}.php"))
+        {
+            require_once "xmldb_{$this->driver}.php";
+        }
+        
         $classname="XMLTable_".$this->driver;
         if (!class_exists($classname))
         {

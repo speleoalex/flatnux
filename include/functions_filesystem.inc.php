@@ -260,9 +260,10 @@ function FN_BackupFile($file)
 		$user = $_FN['user'];
 		if ($user == "")
 			$user = "_@CMS@_";
-		while(file_exists("$file.".date("YmdHis",$time).".{$_FN['user']}.bak~"))
+                $dateFile = filemtime($file);                
+		while(file_exists("$file.$dateFile.".date("YmdHis",$time).".{$_FN['user']}.bak~"))
 			$time++;
-		FN_Copy($file,"$file.".date("YmdHis",$time).".{$_FN['user']}.bak~");
+		FN_Copy($file,"$file.$dateFile.".date("YmdHis",$time).".{$_FN['user']}.bak~");
 	}
 }
 

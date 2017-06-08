@@ -119,6 +119,7 @@ function xmldb_frm_view_file($params)
  */
 function FN_XmltableEditor($tablename,$params=false,$params2=false)
 {
+    require_once ("include/xmldb_editor.php");
     global $_FN;
     $xmldatabase=$_FN['database'];
     if ($params2!= false && !is_array($params))

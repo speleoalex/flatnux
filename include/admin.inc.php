@@ -186,8 +186,12 @@ function FN_HtmlAdminOptions()
 							"</button>
 <form style=\"display:inline\" method=\"post\" action=\"".FN_RewriteLink("index.php?mod={$_FN['mod']}")."\">
 <input type=\"hidden\" name=\"filetodel\" value=\"sections/{$_FN['mod']}/section.{$l}.html\" />    
-<button type=\"submit\" onclick=\"if(!confirm ('".FN_Translate('are you sure you want to delete this content?')."')){return false;}\" >".FN_Translate("delete")."</button></form>                                    
-</td></tr>";
+<button type=\"submit\" onclick=\"if(!confirm ('".FN_Translate('are you sure you want to delete this content?')."')){return false;}\" >".FN_Translate("delete")."</button></form>";
+$html .="    <button onclick=\"window.location='".
+							FN_RewriteLink("index.php?mod={$_FN['mod']}&opt=sections/{$_FN['mod']}/section.{$l}.html&mode=versions","&")."'\" >".
+							FN_Translate("old versions").
+							"</button>";
+$html .="</td></tr>";
 					}
 				}
 			}
