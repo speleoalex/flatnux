@@ -55,10 +55,6 @@ $config['enable_socialnetworks'] = 0;
 $config['enable_googleplus'] = 0;
 #[i18n]enable Facebook {1=yes,0=no}
 $config['enable_facebook'] = 0;
-
-
-
-
 #[it]Genera una google sitemap con i records presenti {1=si,0=no}
 #[en]Generate google sitemap {1=yes,0=no}
 #[i18n]generate google sitemap {1=yes,0=no}
@@ -73,8 +69,8 @@ $config['show_rss_icon']=1;
 $config['show_tags']=1;
 #[i18n]facebook appid
 $config['fb_appid']="63008488243";
-
-
+#[i18n]enable cache {1=yes,0=no}
+$config['use_cache']=false;
 
 
 ?>

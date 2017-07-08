@@ -48,6 +48,7 @@ else
         exit();
     }
     $html="";
+    require_once $_FN['filesystempath']."/include/xmldb_frm_search.php";
     $Table=FN_XmlForm($tablename);
 
     $Search=new xmldb_searchform($_FN['database'],$tablename,$_FN['datadir'],$_FN['lang'],$_FN['languages'],false);
@@ -279,12 +280,12 @@ function FNNAV_ViewGridForm()
         if ($navigate == 0)
         {
             $linkpage=FNNAV_MakeLink(array("nav"=>1),"&amp;");
-            $tplvars['html_categories'].= "<a href=\"$linkpage\">".FN_Translate("browse by categories")."</a> "." <img alt=\"\" src=\"images/right.png\" />";
+            $tplvars['html_categories'].= "<a href=\"$linkpage\">".FN_Translate("browse by categories")."</a> "." <img alt=\"\" src=\"{$_FN['siteurl']}images/right.png\" />";
         }
         else
         {
             $linkpage=FN_RewriteLink("index.php?mod={$_FN['mod']}&amp;nav=0","&amp;");
-            $tplvars['html_categories'].= "<a href=\"$linkpage\">".FN_Translate("hide categories")."</a>"." <img alt=\"\" src=\"images/right.png\" />";
+            $tplvars['html_categories'].= "<a href=\"$linkpage\">".FN_Translate("hide categories")."</a>"." <img alt=\"\" src=\"{$_FN['siteurl']}images/right.png\" />";
         }
         $tplvars['html_categories'].= "</div>";
     }
@@ -1002,12 +1003,12 @@ function FNNAV_PrintList($results,$tplvars)
                 if ($viewmode == "icon")
                 {
                     $linkpage=FNNAV_MakeLink(array("viewmode"=>"list"),"&");
-                    $htmlpages .= "<a title=\"".FN_Translate("icon view")."\" onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\" ><img style=\"vertical-align:middle;border:0px\" src=\"modules/{$_FN['sectionvalues']['type']}/icons.png\" /></a>";
+                    $htmlpages .= "<a title=\"".FN_Translate("icon view")."\" onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\" ><img style=\"vertical-align:middle;border:0px\" src=\"{$_FN['siteurl']}modules/{$_FN['sectionvalues']['type']}/icons.png\" /></a>";
                 }
                 else
                 {
                     $linkpage=FNNAV_MakeLink(array("viewmode"=>"icon"),"&");
-                    $htmlpages .= "<a title=\"".FN_Translate("list view")."\" onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\" ><img style=\"vertical-align:middle;border:0px\" src=\"modules/{$_FN['sectionvalues']['type']}/list.png\" /></a>";
+                    $htmlpages .= "<a title=\"".FN_Translate("list view")."\" onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\" ><img style=\"vertical-align:middle;border:0px\" src=\"{$_FN['siteurl']}modules/{$_FN['sectionvalues']['type']}/list.png\" /></a>";
                 }
                 $htmlpages .= " - ".FN_Translate("search results","Aa")."  $start - $end  ".FN_i18n("of")." $num_records"."";
                 $htmlpages .= "</div>";
@@ -1022,7 +1023,7 @@ function FNNAV_PrintList($results,$tplvars)
                 $tplvars['html_pages']=$htmlpages;
                 $tplvars['html_rss']="";
                 if ($config['enable_rss'] && !empty($_FN['rss_link']))
-                    $tplvars['html_rss']="<div><a href=\"{$_FN['rss_link']}\"><img src=\"modules/navigator/rss.png\"  alt=\"rss\"/></a></div>";
+                    $tplvars['html_rss']="<div><a href=\"{$_FN['rss_link']}\"><img src=\"{$_FN['siteurl']}modules/navigator/rss.png\"  alt=\"rss\"/></a></div>";
             }
             else
             {
@@ -1168,7 +1169,7 @@ function FNNAV_PrintList($results,$tplvars)
         } catch (e)
         {
         }
-        div.innerHTML = "<div style=\"color:#ffffff;margin-top:" + getScrollY() + "px\" ><br />loading...<br /><br /><img  src='<?php echo "modules/navigator/"?>loading.gif' /><br /><br /></div>";
+        div.innerHTML = "<div style=\"color:#ffffff;margin-top:" + getScrollY() + "px\" ><br />loading...<br /><br /><img  src='<?php echo "{$_FN['siteurl']}modules/navigator/"?>loading.gif' /><br /><br /></div>";
         document.getElementsByTagName('body')[0].appendChild(div);
     }
 </script>

@@ -558,7 +558,7 @@ var movedown = function (node)
                             {
                                 $s=($item[$t->primarykey]==$varvalue) ? "selected=\"selected\"" : "";
                                 $html.="\n\t<option $s value=\"{$item[$t->primarykey]}\">";
-                                $html.=$item[$t->primarykey];
+                                $html.=(!empty($item['title']))?$item[$t->primarykey]."-".$item['title']:$item[$t->primarykey];
                                 $html.="</option>";
                             }
                         }

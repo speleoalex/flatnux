@@ -46,6 +46,7 @@ if (is_array($files))
         require_once $file;
     }
 }
+
 //files extra cms ---<
 //files in cms --->
 $files=glob($_FN['filesystempath']."/include/*.inc.php");
@@ -57,6 +58,8 @@ foreach($files as $file)
 require_once $_FN['filesystempath']."/include/xmldb.php";
 require_once $_FN['filesystempath']."/include/xmldb_frm.php";
 require_once $_FN['filesystempath']."/include/xmldb_query.php";
+require_once $_FN['filesystempath']."/include/xmldb_frm_search.php";
+
 
 require_once $_FN['filesystempath']."/include/auth/$_FN_default_auth_method.php";
 include $_FN['filesystempath']."/config.php";
@@ -67,6 +70,7 @@ if ($_FN['consolemode'])
 
 FN_LoadVarsFromTable($_FN,"fn_settings",array("timestart","consolemode","filesystempath","charset_lang","default_database_driver","section_header_footer"));
 
+$_FN['use_urlserverpath']=false;
 
 //----------------------------------timezone----------------------------------->
 if (function_exists("date_default_timezone_get"))
@@ -147,6 +151,19 @@ if ($_FN['siteurl']=="")
     $_FN['siteurl']=$siteurl;
 }
 
+if (empty($_FN['sitepath']))
+{
+    $_FN['sitepath']=FN_GetParam("PHP_SELF",$_SERVER);
+    if ($_FN['sitepath']=="")
+        $_FN['sitepath']="/";
+    else
+    {
+        $_FN['sitepath']=dirname($_FN['sitepath'])."/";
+        if ($_FN['sitepath']=="//")
+            $_FN['sitepath']="/";
+    }
+}
+
 $_FN['listlanguages']=explode(",",$_FN['languages']);
 $_FN['lang']=$_FN['listlanguages'][0];
 $_FN['lang_default']=$_FN['lang'];
@@ -206,9 +223,12 @@ if (!$_FN['consolemode'])
 }
 
 //---init var sections,blocks,sectiontypes --->
-$_FN['blocks']=FN_GetAllBlocks();
-$_FN['sections']=FN_GetAllSections();
-$_FN['sectionstypes']=FN_GetAllSectionTypes();
+if (empty($_FN['blocks']))
+    $_FN['blocks']=FN_GetAllBlocks();
+if (empty($_FN['sections']))
+    $_FN['sections']=FN_GetAllSections();
+if (empty($_FN['sectionstypes']))
+    $_FN['sectionstypes']=FN_GetAllSectionTypes();
 $_FN['sectionvalues']=FN_GetSectionValues($_FN['mod']);
 if (!empty($_FN['sectionvalues']['keywords']))
     $_FN['keywords']="{$_FN['sectionvalues']['keywords']}";
@@ -303,6 +323,29 @@ function dprint_xml($var,$str="")
 function dprint_r_get($var)
 {
     return print_r($var,true);
+}
+
+/**
+ * 
+ * @global type $_FN
+ * @staticvar boolean $oldTimer
+ * @param type $str
+ * 
+ * use: FN_Debug_timer(__FILE__.":".__LINE__);
+ */
+function FN_Debug_timer($str)
+{
+
+    global $_FN;
+    static $oldTimer=false;
+    $mtime=explode(" ",microtime());
+    $mtime=doubleval($mtime[1])+doubleval($mtime[0]);
+    if ($oldTimer===false)
+        $oldTimer=$mtime;
+    $str.=" total ".sprintf("%.4f",abs($mtime-$_FN['timestart']));
+    $str.=" -  last:".sprintf("%.4f",abs($mtime-$oldTimer));
+    $oldTimer=$mtime;
+    echo("<pre style=\"border:1px solid red\">$str</pre>");
 }
 
 ?>

@@ -2,6 +2,7 @@
 #cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd /home/speleoalex/public_html/flatnux
 
+
 ######################### rimozione sitemap ####################################
 rm ./*sitemap*.xml
 rm ./index-*.html
@@ -44,12 +45,33 @@ for i in $(find . -type f); do
 		chmod a-x $i
 	fi;
 done
+
+
+
+
 ######################### scrittura versione ###################################
 pwd=$(basename $PWD) 
+
 oldpwd=$PWD
 echo $pwd-$(date +"%Y-%m.%d") > VERSION
 echo $pwd-$(date +"%Y-%m.%d") > ../FLATNUXDEVEL
 echo $pwd-$(date +"%Y-%m.%d") > ../FLATNUXSTABLE
+
+###########################         minimal       ##############################
+rm -rf /home/speleoalex/public_html/flatnux_minimal/*
+while read F  ; do
+#        ls  $F
+if [ -d $F ]
+then
+#    echo "$F Directory"
+    mkdir /home/speleoalex/public_html/flatnux_minimal/$F
+else
+ #   echo "$F File"
+    cp -p ./$F /home/speleoalex/public_html/flatnux_minimal/$F
+fi
+done <minimal.txt
+
+
 ########################    creazione zip   ####################################
 cd ..
 if [ -d "$pwd" ]; then
@@ -73,6 +95,7 @@ if [ -d "$pwd" ]; then
         #sposto esclusi
 	mv ./flatnux/.svn ./fnexlude/
 	mv ./flatnux/.git ./fnexlude/
+
         #creo zip devel
 	zip -r $namezip"-devel.zip" $pwd
 	mkdir ./fnbuild
@@ -92,10 +115,11 @@ if [ -d "$pwd" ]; then
 	echo "PULIZIA COMPLETATA";
         #creo zip release
 	zip -r $namezip $pwd -x "flatnux/.*"  flatnux/nbproject flatnux/.director\* flatnux/.project\* flatnux/.buildpath\* flatnux/\*.sh flatnux/.settings flatnux/.svn/\*
+	zip -r $nameminimal flatnux_minimal 
 
-        echo '<?php' > include/config.vars.local.php
-        echo '$_FN_display_errors = "on";' >> include/config.vars.local.php
-        echo '?>' >> include/config.vars.local.php
+        echo '<?php' > flatnux/include/config.vars.local.php
+        echo '$_FN_display_errors = "on";' >> flatnux/include/config.vars.local.php
+        echo '?>' >> flatnux/include/config.vars.local.php
 
 	echo "----UPDATE SVN----";
 	cd /home/speleoalex/Documents/SVN-flatnux/trunk/
@@ -125,6 +149,9 @@ if [ -d "$pwd" ]; then
 fi
 #########################ripristino i permessi##################################
 chown -R speleoalex ./flatnux/*
+chown -R speleoalex ./flatnux_minimal
+chmod 777 -R  ./flatnux_minimal/
+
 ###############################     fine    ####################################
 echo creato: $namezip
 chmod 777 -R ../.svn/

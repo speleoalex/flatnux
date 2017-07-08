@@ -2113,9 +2113,9 @@ function select_star(c)
 	for (var i in images)
 	{
 		if ((i) >= c)
-			images[i].src='modules/navigator/star_gray$s.png';
+			images[i].src='{$_FN['siteurl']}modules/navigator/star_gray$s.png';
 		else
-			images[i].src='modules/navigator/star$s.png';
+			images[i].src='{$_FN['siteurl']}modules/navigator/star$s.png';
 	}
 }
 </script>
@@ -2127,7 +2127,7 @@ function select_star(c)
     $votes=array(1=>FN_Translate("poor"),2=>FN_Translate("inadeguate"),3=>FN_Translate("adeguate"),4=>FN_Translate("good"),5=>FN_Translate("very good"));
     foreach($votes as $i=> $votes)
     {
-        $html .= "<img onmouseout=\"select_star(-1);document.getElementById('pdit_rank_desc').innerHTML='&nbsp;'\" onmouseover=\"select_star($i);document.getElementById('pdit_rank_desc').innerHTML='{$votes}'\" onclick=\"set_rank($i)\" style=\"vertical-align:middle;cursor:pointer;\" alt=\"\" src=\"modules/navigator/star_gray$s.png\" />";
+        $html .= "<img onmouseout=\"select_star(-1);document.getElementById('pdit_rank_desc').innerHTML='&nbsp;'\" onmouseover=\"select_star($i);document.getElementById('pdit_rank_desc').innerHTML='{$votes}'\" onclick=\"set_rank($i)\" style=\"vertical-align:middle;cursor:pointer;\" alt=\"\" src=\"{$_FN['siteurl']}modules/navigator/star_gray$s.png\" />";
     }
     $html .= "<div style=\"margin-left:10px;display:inline\" id=\"pdit_rank_desc\" >&nbsp;</div>";
     $html .= "</div>";

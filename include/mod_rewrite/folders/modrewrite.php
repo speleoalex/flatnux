@@ -197,8 +197,9 @@ if (!function_exists("FN_RewriteLink"))
 		}
 		if (true)
 		{
+                        $siteurl = empty($_FN['use_urlserverpath']) ? $_FN['siteurl'] : $_FN['sitepath'];
 
-			$href = $_FN['siteurl'].$href;
+			$href = $siteurl.$href;
 		}
 		return $href;
 	}

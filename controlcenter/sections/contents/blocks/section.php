@@ -155,6 +155,7 @@ function OnUpdate($newvalues,$oldvalues)
     {
         FN_Rename("blocks/{$oldvalues['id']}","blocks/{$newvalues['id']}");
     }
+    FN_ClearCache();
 }
 
 /**
@@ -165,6 +166,7 @@ function OnInsert($newvalues)
 {
     FN_MkDir("blocks/{$newvalues['id']}");
     FN_Log("created new block:{$newvalues['id']}");
+    FN_ClearCache();
 }
 
 /**
@@ -427,6 +429,7 @@ function html_BlocksEditor()
             }
         }
         //update blocks-----<
+        FN_ClearCache();
         FN_Alert(FN_Translate("the data were successfully updated"));
         FN_GetAllBlocks();
     }

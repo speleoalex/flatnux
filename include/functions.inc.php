@@ -180,7 +180,7 @@ function FN_HtmlSection($section="")
                 {
                     $editor_params['force_value']=file_get_contents($file_restore);
                     $linkcancel=$linkcancel=FN_RewriteLink("index.php?mod={$_FN['mod']}&amp;opt=$modcont&amp;mode=versions");
-                    $editor_params['text_save'] = FN_Translate("restore");
+                    $editor_params['text_save']=FN_Translate("restore");
                 }
                 $html=FN_HtmlEditContent($modcont,$linkform,$linkcancel,$editor_params);
                 if ($html!==false)
@@ -266,9 +266,17 @@ function FN_HtmlStaticContent($folder,$usecache=false)
 {
     global $_FN;
     static $cache=array();
-    if ($usecache&&!empty($cache[$folder]))
+
+    if ($usecache)
     {
-        return $cache[$folder]; //cache in memory
+        if (!empty($cache[$folder]))
+        {
+            return $cache[$folder]; //cache in memory
+        }
+        if (!empty($_FN['use_cache'])&&file_exists("{$_FN['datadir']}/_cache/{$_FN['lang']}".urlencode($folder).".cache"))
+        {
+            return file_get_contents("{$_FN['datadir']}/_cache/{$_FN['lang']}".urlencode($folder).".cache");
+        }
     }
     $filetoread="";
     $str="";
@@ -282,23 +290,13 @@ function FN_HtmlStaticContent($folder,$usecache=false)
     }
     if ($filetoread)
     {
-        $cachefile=str_replace("/","_",$filetoread);
-        $cachefile=str_replace("\\","_",$cachefile);
-        $cachefile="{$_FN['datadir']}/_cache/html/$cachefile";
-        if (empty($_FN['use_cache'])||$usecache==false||!file_exists($cachefile)||filemtime($cachefile)<=filemtime($filetoread))
-        {
-            $str=file_get_contents($filetoread);
-            $str=FN_RewriteLinksLocalToAbsolute($str,$folder);
-            $str=FN_FixEncoding($str);
-            if (!empty($_FN['use_cache']))
-                FN_Write($str,$cachefile);
-        }
-        else
-        {
-            $str=file_get_contents($cachefile); //cache in file
-        }
+        $str=file_get_contents($filetoread);
+        $str=FN_RewriteLinksLocalToAbsolute($str,$folder);
     }
+
     $cache[$folder]=$str;
+    if (!empty($_FN['use_cache']))
+        FN_Write($str,"{$_FN['datadir']}/_cache/{$_FN['lang']}".urlencode($folder).".cache");
     return $str;
 }
 
@@ -312,7 +310,12 @@ function FN_RewriteLinksLocalToAbsolute($str,$folder)
 {
     global $_FN;
 
+    $fullUrl=false;
     $sdir="{$_FN['siteurl']}$folder/";
+
+    if (!empty($_FN['use_urlserverpath']))
+        $sdir="http://____replace____/$folder/";
+
     $old="";
     $str=str_replace("href=\"index.php","ferh=\"index.php",$str);
     $str=str_replace("href='index.php","ferh='index.php",$str);
@@ -336,13 +339,15 @@ function FN_RewriteLinksLocalToAbsolute($str,$folder)
     $str=str_replace("src='/","s_r_c='/",$str);
     $str=str_replace("src=\"/","s_r_c=\"/",$str);
 
-
+    $sdir_=$sdir;
+    $i=0;
     while($str!=$old)
     {
         $old=$str;
-        $str=preg_replace("/<([^>]+)( background| href| src)=(\")([^#^:^{]*)(\")/im","<\\1\\2=\\3$sdir\\4\\3",$str);
-        $str=preg_replace("/<([^>]+)( background| href| src)=(\')([^#^:^{]*)(\')/im","<\\1\\2=\\3$sdir\\4\\3",$str);
-        $str=preg_replace('#<([^>]+)(url\(\'(?!http))#','<$1$2$3'.$sdir.'',$str);
+        $str=preg_replace("/<([^>]+)( background| href| src)=(\")([^#^:^{]*)(\")/im","<\\1\\2=\\3$sdir_\\4\\3",$str);
+        $str=preg_replace("/<([^>]+)( background| href| src)=(\')([^#^:^{]*)(\')/im","<\\1\\2=\\3$sdir_\\4\\3",$str);
+        $str=preg_replace('#<([^>]+)(url\(\'(?!http))#','<$1$2$3'.$sdir_.'',$str);
+        $str=preg_replace('#<([^>]+)(url\((?!http))#','<$1$2$3'.$sdir_.'',$str);
     }
     $str=str_replace("ferh=\"","href=\"",$str);
     $str=str_replace("ferh='","href='",$str);
@@ -362,6 +367,10 @@ function FN_RewriteLinksLocalToAbsolute($str,$folder)
             $str=preg_replace("/(href='index.php\?mod=)([A-Z0-9_]+)'/is","href=\"\$2.{$_FN['lang']}.html\"",$str);
         }
     }
+
+    if (!empty($_FN['use_urlserverpath']))
+        $str=str_replace("http://____replace____/",$_FN['sitepath'],$str);
+
     return $str;
 }
 
@@ -570,30 +579,37 @@ function FN_IncludeCSS($include_theme_css=true,$include_section_css=true)
 {
     global $_FN;
     $html="";
+    $css="";
     $sectionvalues=FN_GetSectionValues($_FN['mod']);
     if ($include_section_css&&!empty($sectionvalues['type'])&&file_exists("modules/{$sectionvalues['type']}/style.css"))
     {
-        $html.="\n\t<link rel='StyleSheet' type='text/css' href=\"{$_FN['siteurl']}modules/{$sectionvalues['type']}/style.css\" />";
+        $html.="\n\t<link rel='StyleSheet' type='text/css' href=\"{$_FN['sitepath']}modules/{$sectionvalues['type']}/style.css\" />";
+        $css.=file_get_contents("modules/{$sectionvalues['type']}/style.css")."\n";
     }
     if ($include_section_css&&file_exists("sections/{$_FN['mod']}/style.css"))
     {
-        $html.="\n\t<link rel='StyleSheet' type='text/css' href=\"{$_FN['siteurl']}sections/{$_FN['mod']}/style.css\" />";
+        $html.="\n\t<link rel='StyleSheet' type='text/css' href=\"{$_FN['sitepath']}sections/{$_FN['mod']}/style.css\" />";
+        $css.=file_get_contents("sections/{$_FN['mod']}/style.css")."\n";
     }
     $listcss=glob("include/css/*.css");
     foreach($listcss as $cssfile)
     {
-        $css=basename($cssfile);
-        $html.="\n\t<link rel='StyleSheet' type='text/css' href=\"{$_FN['siteurl']}$cssfile\" />";
+        $html.="\n\t<link rel='StyleSheet' type='text/css' href=\"{$_FN['sitepath']}$cssfile\" />";
+        $css.=file_get_contents($cssfile)."\n";
     }
     if ($include_theme_css)
     {
         $listcss=glob("themes/{$_FN['theme']}/*.css");
         foreach($listcss as $cssfile)
         {
-            $css=basename($cssfile);
-            $html.="\n\t<link rel='StyleSheet' type='text/css' href=\"{$_FN['siteurl']}$cssfile\" />";
+            $html.="\n\t<link rel='StyleSheet' type='text/css' href=\"{$_FN['sitepath']}$cssfile\" />";
+            $css.=file_get_contents($cssfile)."\n";
         }
     }
+    if (!empty($_FN['inline_css']))
+        $html="<style>$css</style>";
+    elseif(!empty($_FN['async_css']))
+        $html="<script>window.setTimeout(function(){document.getElementsByTagName('head')[0].innerHTML+='".addslashes(str_replace("\n","",$html))."';},10);</script>";
     return $html;
 }
 
@@ -608,8 +624,7 @@ function FN_IncludeJS()
     $listcss=glob("include/javascripts/*.js");
     foreach($listcss as $file)
     {
-        $css=basename($file);
-        $html.="\n\t<script type=\"text/javascript\" src=\"{$_FN['siteurl']}$file\"></script>";
+        $html.="\n\t<script defer=\"defer\" type=\"text/javascript\" src=\"{$_FN['sitepath']}$file\"></script>";
     }
     return $html;
 }
@@ -1121,8 +1136,6 @@ function FN_XmlForm($tablename,$params=false)
     {
         $t->SetlayoutTemplate(file_get_contents("themes/{$_FN['theme']}/form.tp.html"));
     }
-
-
     return $t;
 }
 
@@ -1343,6 +1356,8 @@ function FN_FixSections()
 function FN_GetAllBlocks()
 {
     global $_FN;
+    if (!empty($_FN['blocks']))
+        return $_FN['blocks'];
     $table=FN_XmlForm("fn_blocks");
     $all=$table->xmltable->GetRecords();
     if (!is_array($all))
@@ -1365,6 +1380,10 @@ function FN_GetAllBlocks()
 function FN_GetAllSections()
 {
     global $_FN;
+    if (!empty($_FN['sections']))
+    {
+        return $_FN['sections'];
+    }
     $table=FN_XmlForm("fn_sections");
     $all=$table->xmltable->GetRecords();
     if (!is_array($all))
@@ -1394,6 +1413,10 @@ function FN_GetAllSections()
 function FN_GetAllSectionTypes()
 {
     global $_FN;
+    if (!empty($_FN['sectionstypes']))
+    {
+        return $_FN['sectionstypes'];
+    }
     $table=FN_XmlForm("fn_sectionstypes");
     $all=$table->xmltable->GetRecords();
     if (!is_array($all))
@@ -1427,7 +1450,11 @@ function FN_GetSections($section="",$recursive=false,$onlyreadable=true,$hidden=
     static $allsections=false;
     if ($nocache||!$allsections)
     {
-        $_FN['sections']=FN_GetAllSections();
+        if (empty($_FN['sections'])||$nocache)
+        {
+            $_FN['sections']=false;
+            $_FN['sections']=FN_GetAllSections();
+        }
         $cache=array();
         $allsections=$_FN['sections'];
     }
@@ -1495,7 +1522,8 @@ function FN_GetSections($section="",$recursive=false,$onlyreadable=true,$hidden=
             $sectionvalues['image']=FN_FromTheme("sections/{$sectionvalues['id']}/icon.png",false);
         if (!file_exists($sectionvalues['image']))
             $sectionvalues['image']=FN_FromTheme("images/section.png",false);
-        $sectionvalues['image']=$_FN['siteurl'].$sectionvalues['image'];
+        $siteurl=empty($_FN['use_urlserverpath']) ? $_FN['siteurl'] : $_FN['sitepath'];
+        $sectionvalues['image']=$siteurl.$sectionvalues['image'];
         FN_GetAccessKey($title,"index.php?mod={$sectionvalues['id']}",$sectionvalues['accesskey']);
         $sect_db[$sectionvalues['id']]=$sectionvalues;
     }
@@ -2637,6 +2665,15 @@ function FN_SetUserSessionValue($varname,$value)
     {
         $t->InsertRecord(array("username"=>$_FN['user'],"varname"=>$varname,"varvalue"=>$value));
     }
+}
+
+/**
+ * 
+ */
+function FN_ClearCache()
+{
+    FN_RemoveDir("misc/_cache");
+    mkdir("misc/_cache");
 }
 
 ?>

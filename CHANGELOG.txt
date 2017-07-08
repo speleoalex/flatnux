@@ -1,7 +1,12 @@
+7/2017
+    -spostata barra di amministrazione in basso
+    
 6/2017
     -ottimizzazione inclusioni non necessarie
     -supporto vecchie versioni di files
     -creato modulo html_template 
+    -implementazione cache
+
 
 5/2017
     -bug fix

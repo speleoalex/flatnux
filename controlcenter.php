@@ -7,6 +7,7 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License
  */
 ob_start();
+
 $script_name=basename(__FILE__);
 require_once ("include/flatnux.php");
 $_FN['controlcenter']=$script_name;
@@ -15,6 +16,8 @@ if (empty($_FN['controlcenter_theme'])||!file_exists("controlcenter/themes/{$_FN
 if (file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/theme.php"))
     require_once("controlcenter/themes/{$_FN['controlcenter_theme']}/theme.php");
 header("Content-Type: text/html; charset={$_FN['charset_page']}");
+header("Cache-Control: no-cache");
+header("Pragma: no-cache");
 $_FN['theme']="base";
 $_FN['fneditmode']="0";
 $opt=FN_GetParam("opt",$_GET,"html");

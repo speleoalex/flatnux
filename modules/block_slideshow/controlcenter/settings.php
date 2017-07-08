@@ -71,7 +71,7 @@ if ($pubobjectid!= "")
 
 $params=array();
 $params['fields']="image|title|status|[".FN_Translate("enable")."/".FN_Translate("disable")."]PubPhoto()";
-
+$params['enablenew']=true;
 
 FNCC_XmltableEditor("$tablename",$params);
 

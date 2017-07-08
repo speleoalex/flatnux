@@ -704,7 +704,17 @@ function FNCC_print_section($section,$level)
     $left=($level-1)*30;
     $linkdelete="{$_FN['controlcenter']}?page___xdb_fn_sections=1&order___xdb_fn_sections=id&op___xdb_fn_sections=del&pk___xdb_fn_sections=".$section['id'].'&opt='.$opt;
     $linkedit="{$_FN['controlcenter']}?page___xdb_fn_sections=1&order___xdb_fn_sections=id&op___xdb_fn_sections=insnew&pk___xdb_fn_sections=".$section['id'].'&opt='.$opt;
-    $html.="<tr onclick=\"this.style.backgroundColor='#ffff00'\" onmouseover=\"this.style.backgroundColor='#ffffaa'\" onmouseout=\"if(true){this.style.backgroundColor='#ffffff'}\" style=\"border:0px solid #000000;line-height:18px;padding:0px;margin:0px;font-size:12px;height:18px\" id=\"{$section['id']}\">";
+    
+    $bkcolor = "#ffffff";
+    $textdecoration="";
+    $disabled="";
+    if ($section['status'] !="1")
+    {
+        $disabled=" (".FN_Translate("disabled").")";
+         $textdecoration="text-decoration: line-through";
+        $bkcolor = "#ffdddd";
+    }
+    $html.="<tr onclick=\"this.style.backgroundColor='#ffff00'\" onmouseover=\"this.style.backgroundColor='#ffffaa'\" onmouseout=\"if(true){this.style.backgroundColor='$bkcolor'}\" style=\"background-color:$bkcolor;border:0px solid #000000;line-height:18px;padding:0px;margin:0px;font-size:12px;height:18px\" id=\"{$section['id']}\">";
 
     $t="";
     if ($section['level']!=""||$section['group_view']!="")
@@ -764,7 +774,7 @@ function FNCC_print_section($section,$level)
 
 //icon --->
     $html.="<span id=\"span_{$section['id']}\"  style=\"background-position: bottom right;background-image:url(controlcenter/sections/contents/sitemap/node.png);background-repeat:no-repeat;padding-left:{$left}px\"></span>";
-    $html.="<span><img style=\"vertical-align:middle;border:0px;\" src=\"".FN_FromTheme("images/mime/dir.png")."\" />$t&nbsp;<a title=\"".FN_Translate("preview")."\" href=\"#\" onclick=\"preview=window.open('".FN_RewriteLink("index.php?mod={$section['id']}")."','preview','top=10,left=10,scrollbars=yes');preview.focus();\" >{$section['title']}</a>";
+    $html.="<span><img style=\"vertical-align:middle;border:0px;\" src=\"".FN_FromTheme("images/mime/dir.png")."\" />$t&nbsp;<a style=\"$textdecoration\" title=\"".FN_Translate("preview")."\" href=\"#\" onclick=\"preview=window.open('".FN_RewriteLink("index.php?mod={$section['id']}")."','preview','top=10,left=10,scrollbars=yes');preview.focus();\" >{$section['title']}</a>$disabled";
     //icon ---<
 
     $html.="</td>";

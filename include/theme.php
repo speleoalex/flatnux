@@ -406,6 +406,8 @@ function FN_TPL_html_MakeThemeFromTemplate($templatefile)
     $vars['keywords']=$_FN['keywords'];
     $vars['site_subtitle']=$_FN['site_subtitle'];
     $vars['siteurl']=$_FN['siteurl'];
+    $vars['sitepath']=$_FN['sitepath'];
+    
     $vars['credits']=FN_HtmlCredits();
     $vars['navbar']=FN_HtmlNavbar();
     $vars['section_title']=$_FN['sectionvalues']['title'];
@@ -572,19 +574,23 @@ function FN_TPL_ApplyTplString($str,$vars,$basepath=false)
     $str=str_replace("src=\"//","rcs=\"//",$str);
     $str=str_replace("src='//","rcs='//",$str);
 
+    $siteurl=$_FN['siteurl'];
+    if (!empty($_FN['use_urlserverpath']))
+       $siteurl="http://____replace____/";
+    
     if ($basepath)
     {
         if ($_FN['enable_mod_rewrite']>0&&$_FN['links_mode']=="html")
         {
             if ($_FN['lang']==$_FN['lang_default'])
             {
-                $str=preg_replace("/(href=\"index.php\?mod=)([A-Z0-9_]+)\"/is","href=\"{$_FN['siteurl']}\$2.html\"",$str);
-                $str=preg_replace("/(href='index.php\?mod=)([A-Z0-9_]+)'/is","href=\"{$_FN['siteurl']}\$2.html\"",$str);
+                $str=preg_replace("/(href=\"index.php\?mod=)([A-Z0-9_]+)\"/is","href=\"{$siteurl}\$2.html\"",$str);
+                $str=preg_replace("/(href='index.php\?mod=)([A-Z0-9_]+)'/is","href=\"{$siteurl}\$2.html\"",$str);
             }
             else
             {
-                $str=preg_replace("/(href=\"index.php\?mod=)([A-Z0-9_]+)\"/is","href=\"{$_FN['siteurl']}\$2.{$_FN['lang']}.html\"",$str);
-                $str=preg_replace("/(href='index.php\?mod=)([A-Z0-9_]+)'/is","href=\"{$_FN['siteurl']}\$2.{$_FN['lang']}.html\"",$str);
+                $str=preg_replace("/(href=\"index.php\?mod=)([A-Z0-9_]+)\"/is","href=\"{$siteurl}\$2.{$_FN['lang']}.html\"",$str);
+                $str=preg_replace("/(href='index.php\?mod=)([A-Z0-9_]+)'/is","href=\"{$siteurl}\$2.{$_FN['lang']}.html\"",$str);
             }
         }
 
@@ -592,9 +598,9 @@ function FN_TPL_ApplyTplString($str,$vars,$basepath=false)
         while($old!=$str)
         {
             $old=$str;
-            $str=preg_replace("/<([^>]+)( background| href| src)=(\")([^:^{]*)(\")/im","<\\1\\2=\\3{$_FN['siteurl']}$basepath\\4\\3",$str);
-            $str=preg_replace("/<([^>]+)( background| href| src)=(\')([^:^{]*)(\')/im","<\\1\\2=\\3{$_FN['siteurl']}$basepath\\4\\3",$str);
-            $str=preg_replace('#<([^>]+)(url\(\'(?!http))#','<$1$2$3'.$_FN['siteurl'].$basepath.'',$str);
+            $str=preg_replace("/<([^>]+)( background| href| src)=(\")([^:^{]*)(\")/im","<\\1\\2=\\3{$siteurl}$basepath\\4\\3",$str);
+            $str=preg_replace("/<([^>]+)( background| href| src)=(\')([^:^{]*)(\')/im","<\\1\\2=\\3{$siteurl}$basepath\\4\\3",$str);
+            $str=preg_replace('#<([^>]+)(url\(\'(?!http))#','<$1$2$3'.$siteurl.$basepath.'',$str);
         }
     }
     $str=str_replace("ferh=\"","href=\"",$str);
@@ -639,6 +645,8 @@ function FN_TPL_ApplyTplString($str,$vars,$basepath=false)
             $strout=str_replace("{i18n:$i18n_item}",FN_Translate(strtolower("$i18n_item"),$mode),$strout);
         }
     }
+    if (!empty($_FN['use_urlserverpath']))
+        $strout=str_replace($siteurl,$_FN['sitepath'],$strout);
 
 //    return str_replace($skeep,"{",$strout);
 
@@ -718,7 +726,7 @@ function FN_TPL_html_menu($str="",$part)
     if ($str=="")
         return "";
     $tp_menuitem['default']=FN_TPL_GetHtmlPart("menuitem",$str,"<a href=\"link\">title</a><br />");
-    $tp_menuitem['active']=FN_TPL_GetHtmlPart("menuitemactive",$str,$tp_menuitem);
+    $tp_menuitem['active']=FN_TPL_GetHtmlPart("menuitemactive",$str,$tp_menuitem['default']);
     $tp_menuitem['dropdown']=FN_TPL_GetHtmlPart("menuitemdropdown",$str);
     $tp_menuitem['dropdownactive']=FN_TPL_GetHtmlPart("menuitemdropdownactive",$str);
     foreach($tp_menuitem as $k=> $v)

@@ -284,6 +284,11 @@ Pages : <!-- start pages --><!-- start page --><a href=\"{pagelink}\">{pagetitle
         $paramsFRM['siteurl']=isset($params['siteurl']) ? $params['siteurl'] : "";
         $table=new FieldFrm("$dbname",$tablename,$path,$lang,$languages,$paramsFRM);
     }
+    $siteurl="";
+    if (isset($params['siteurl']))
+    {
+        $siteurl = $params['siteurl'];
+    }
     $table->charset_page=$param['charset_page'];
     if (isset($params['layout']))
     {
@@ -828,12 +833,12 @@ set_changed();
                                 {
                                     if ($reverse)
                                     {
-                                        $t="<img style=\"vertical-align:middle;float:right\" src=\"images/fn_up.png\" alt=\"\" />";
+                                        $t="<img style=\"vertical-align:middle;float:right\" src=\"{$siteurl}images/fn_up.png\" alt=\"\" />";
                                         $desclink="";
                                     }
                                     else
                                     {
-                                        $t="<img style=\"vertical-align:middle;float:right\" src=\"images/fn_down.png\" alt=\"\" />";
+                                        $t="<img style=\"vertical-align:middle;float:right\" src=\"{$siteurl}images/fn_down.png\" alt=\"\" />"; 
                                         $desclink="&amp;desc_{$postgetkey}=$key";
                                     }
                                 }

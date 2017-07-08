@@ -183,7 +183,9 @@ function FN_RewriteLink($href,$sep = "",$full = false)
     }
     if ($full)
     {
-        $href = $_FN['siteurl'].$href;
+        $siteurl = empty($_FN['use_urlserverpath']) ? $_FN['siteurl'] : $_FN['sitepath'];
+
+        $href = $siteurl.$href;
     }
     return $href;
 }

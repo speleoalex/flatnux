@@ -2,7 +2,7 @@
     <!-- Generator: Jssor Slider Maker -->
     <!-- Source: http://www.jssor.com -->
     <!-- This code works without jquery library. -->
-    <script src="js/jssor.slider-22.2.16.min.js" type="text/javascript"></script>
+    <script src="js/jssor.slider.min.js" type="text/javascript"></script>
     <script type="text/javascript">
         jssor_{block}_slider_init = function() {
 
@@ -115,6 +115,7 @@
         .jssora22l.jssora22lds { background-position: -10px -31px; opacity: .3; pointer-events: none; }
         .jssora22r.jssora22rds { background-position: -70px -31px; opacity: .3; pointer-events: none; }
     </style>
+    <div>
     <div id="jssor_{block}" style="position:relative;margin:0 auto;top:0px;left:0px;width:800px;height:600px;overflow:hidden;visibility:hidden;">
         <!-- Loading Screen -->
         <div data-u="loading" class="jssorl-oval" style="position:absolute;top:0px;left:0px;text-align:center;background-color:rgba(0,0,0,0.7);">
@@ -124,8 +125,8 @@
             
         <!-- include modslideshow -->
         <!-- imageitem -->
-        <div>
-                <img data-u="image" src="{urlimage}" />
+        <div style="padding:0px;">
+                <img style="margin:0px" data-u="image" src="{urlimage}" />
                 <div style="position:absolute;top:5px;left:5px;width:500px;height:90px;z-index:0;background-color:rgba(0,0,0,0.5);">
                     <div style="position:absolute;top:15px;left:15px;width:400px;height:40px;z-index:0;font-size:30px;color:#ffffff;line-height:40px;">{title}</div>
                     <div style="position:absolute;top:60px;left:15px;width:470px;height:40px;z-index:0;font-size:22px;color:#ffffff;line-height:38px;">{description}</div>
@@ -144,9 +145,11 @@
             <!-- bullet navigator item prototype -->
             <div data-u="prototype" style="width:16px;height:16px;"></div>
         </div>
+        
         <!-- Arrow Navigator -->
         <span data-u="arrowleft" class="jssora22l" style="top:0px;left:8px;width:40px;height:58px;" data-autocenter="2"></span>
         <span data-u="arrowright" class="jssora22r" style="top:0px;right:8px;width:40px;height:58px;" data-autocenter="2"></span>
+    </div>
     </div>
     <script type="text/javascript">jssor_{block}_slider_init();</script>
     <!-- #endregion Jssor Slider End -->

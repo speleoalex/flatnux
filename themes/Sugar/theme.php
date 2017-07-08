@@ -36,11 +36,11 @@ function FN_HtmlOpenBlock($title)
 	class=\"leftColumnModuleHead\">
 	<tr>
 		<th width=\"5\" valign=\"top\"><img
-			src=\"themes/{$_FN['theme']}/images/moduleTb.gif\"
+			src=\"{$_FN['siteurl']}themes/{$_FN['theme']}/images/moduleTb.gif\"
 			alt=\"$title\" width=\"5\" height=\"23\" border=\"0\"></th>
 		<th width=\"100%\" class=\"leftColumnModuleName\">{$title}</th>
 		<th width=\"7\" valign=\"top\"><img
-			src=\"themes/{$_FN['theme']}/images/moduleTc.gif\"
+			src=\"{$_FN['siteurl']}themes/{$_FN['theme']}/images/moduleTc.gif\"
 			alt=\"$title\" width=\"7\" height=\"23\" border=\"0\"></th>
 	</tr>
 </table>
@@ -112,14 +112,14 @@ function MyCreateMenuH()
 		echo "<td><table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"100%\">
 	<tr style=\"height: 25px\">
 		<td><img
-			src=\"themes/{$_FN['theme']}/images/$image\"
+			src=\"{$_FN['siteurl']}themes/{$_FN['theme']}/images/$image\"
 			width=\"5\" height=\"25\" border=\"0\" alt=\"Home\"></td>
 		<td class=\"$class\" nowrap><a class=\"$classl\" accesskey=\"$accesskey\"
 		href=\"" . fn_rewritelink("index.php?{$ll}mod=$linkh") . "\">$tmp</a></td>
 		<td class=\"$classr\"><img
-			src=\"themes/{$_FN['theme']}/images/blank000.gif\" width=\"2\"
+			src=\"{$_FN['siteurl']}themes/{$_FN['theme']}/images/blank000.gif\" width=\"2\"
 			height=\"1\" border=\"0\" title=\"$tmp\" alt=\"$tmp\"></td>
-		<td valign=\"bottom\" style=\"background-image : url(themes/{$_FN['theme']}/images/emptyTabSpace.gif);\"></td>
+		<td valign=\"bottom\" style=\"background-image : url({$_FN['siteurl']}themes/{$_FN['theme']}/images/emptyTabSpace.gif);\"></td>
 	</tr>
 </table>
 </td>";
@@ -141,11 +141,11 @@ function create_menu()
 		   class="leftColumnModuleHead">
 		<tr>
 			<th width="5" valign="top"><img
-					src="themes/<?php echo $_FN['theme']?>/images/moduleTb.gif" alt="Menu"
+					src="<?php echo $_FN['siteurl'];?>themes/<?php echo $_FN['theme']?>/images/moduleTb.gif" alt="Menu"
 					width="5" height="23" border="0"></th>
 			<th width="100%" class="leftColumnModuleName">Menu</th>
 			<th width="7" valign="top"><img
-					src="themes/<?php echo $_FN['theme']?>/images/moduleTc.gif" alt="Menu"
+					src="<?php echo $_FN['siteurl'];?>themes/<?php echo $_FN['theme']?>/images/moduleTc.gif" alt="Menu"
 					width="7" height="23" border="0"></th>
 		</tr>
 	</table>
@@ -165,10 +165,10 @@ function create_menu()
 
 		if (show == 'true') {
 			this.document.getElementById('leftCol').style.display='inline';
-			document['HideHandle'].src = 'themes/<?php echo $_FN['theme']?>/images/hide.gif';
+			document['HideHandle'].src = '<?php echo $_FN['siteurl']?>themes/<?php echo $_FN['theme']?>/images/hide.gif';
 		} else {
 			this.document.getElementById('leftCol').style.display='none';
-			document['HideHandle'].src = 'themes/<?php echo $_FN['theme']?>/images/show.gif';
+			document['HideHandle'].src = '<?php echo $_FN['siteurl']?>themes/<?php echo $_FN['theme']?>/images/show.gif';
 
 		}
 	</script>
@@ -236,7 +236,7 @@ function printsection2($path,$recursive = true)
 						if ($slevel == 1)
 						{
 							?>
-						<img src='<?php echo $icon?>' width='16' height='16'
+						<img src='<?php echo $_FN['siteurl'];?><?php echo $icon?>' width='16' height='16'
 							 alt='<?php echo $tmp?>' border='0' style="vertical-align: middle;">
 							 <?php
 						 }
@@ -307,7 +307,7 @@ function MyCreateMenu2()
 		$linkh=$mod ['id'];
 
 		echo fn_rewritelink("index.php?{$ll}mod=$linkh");
-		?>"><img src='<?php echo $icon?>'
+		?>"><img src='<?php echo $_FN['siteurl'];?><?php echo $icon?>'
 					   width='16' height='16' alt='<?php echo $tmp?>' border='0'
 					   style="vertical-align: middle;"></a></td>
 			<td nowrap id="CreateMeetings_sh<?php echo $accesskey?>"
@@ -332,7 +332,7 @@ function FN_CreateSubmenu()
 		echo FN_HtmlOpenTable();
 		foreach ($sections as $section)
 		{
-			$img="<img style=\"vertical-align:middle\" alt=\"\" src=\"themes/{$_FN['theme']}/images/subsection.png\" />";
+			$img="<img style=\"vertical-align:middle\" alt=\"\" src=\"{$_FN['siteurl']}themes/{$_FN['theme']}/images/subsection.png\" />";
 			$accesskey=FN_GetAccessKey($section['title'],$section['link']);
 			echo "$img&nbsp;<a accesskey=\"$accesskey\" title=\"{$section['description']}\" href=\"{$section['link']}\">{$section['title']}</a><br />";
 		}
@@ -444,13 +444,13 @@ function FN_OpenSection($title)
 					<td style="padding-top: 3px; padding-left: 5px;" align="right"
 						nowrap="nowrap" valign="top"><a
 							href="print.php?mod=<?php echo $_FN['mod'] . $l?>" class="utilsLink"> <img
-								src="themes/<?php echo $_FN['theme']?>/images/print.png"
+								src="<?php echo $_FN['siteurl'];?>themes/<?php echo $_FN['theme']?>/images/print.png"
 								alt="<?php echo FN_i18n("print")?>" style="vertical-align: middle;"
 								border="0" height="13" width="13"></a> &nbsp;<a
 							href="print.php?mod=<?php echo $_FN['mod'] . $l?>" onclick="window.open(this.href);return false;"
 							class="utilsLink"><?php echo $title ?></a> &nbsp;<a href="<?php echo fn_rewritelink("index.php?mod=help")?>"
 							class="utilsLink"><img
-								src="themes/<?php echo $_FN['theme']?>/images/help0000.gif"
+								src="<?php echo $_FN['siteurl'];?>themes/<?php echo $_FN['theme']?>/images/help0000.gif"
 								alt="<?php echo FN_i18n("help")?>" style="vertical-align: middle;"
 								border="0" height="13" width="13"></a>&nbsp;<a href="<?php echo fn_rewritelink("index.php?mod=help");?>"
 																	   class="utilsLink"><?php echo FN_i18n("help")?></a></td>
@@ -519,7 +519,7 @@ function FNNEWS_PrintNews_summary($item,$newsobject)
 								<tbody>
 
 									<tr>
-										<td style=\"text-align: left;\" class=\"tabDetailViewDL\">&nbsp;<img src=\"themes/{$_FN['theme']}/images/news.png\" alt=\"News\">&nbsp;{$item['title']}</td>
+										<td style=\"text-align: left;\" class=\"tabDetailViewDL\">&nbsp;<img src=\"{$_FN['siteurl']}themes/{$_FN['theme']}/images/news.png\" alt=\"News\">&nbsp;{$item['title']}</td>
 									</tr>
 								</tbody>
 							</table>
