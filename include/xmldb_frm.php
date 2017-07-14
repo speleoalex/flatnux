@@ -1236,7 +1236,7 @@ $frm_endgroupfooter
     function GetByPost($oldvalues=array())
     {
         $newvalues=array();
-
+        ////dprint_r($_POST);
         foreach($this->formvals as $key=> $value)
         {
 
@@ -1317,7 +1317,7 @@ $frm_endgroupfooter
                 }
             }
         }
-        //dprint_r($newvalues);
+       // dprint_r($newvalues);
         return $newvalues;
     }
 
@@ -1354,8 +1354,10 @@ $frm_endgroupfooter
     function UpdateRecord($newvalues,$pkvalue=false)
     {
 
+              //      dprint_r($newvalues);
         foreach($newvalues as $k=> $v)
         {
+
             if (isset($this->formclass[$k]) && method_exists($this->formclass[$k],"formtovalue"))
             {
                 $newvalues[$k]=$this->formclass[$k]->formtovalue($v,$this->formvals[$k]);
@@ -1367,6 +1369,7 @@ $frm_endgroupfooter
         }
         foreach($newvalues as $k=> $v)
             $newvalues[$k]=XMLDB_ConvertEncoding($newvalues[$k],$this->charset_page,$this->charset_storage);
+      
         return $this->xmltable->UpdateRecord($newvalues,$pkvalue);
     }
 

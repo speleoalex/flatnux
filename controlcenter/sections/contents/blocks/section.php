@@ -89,22 +89,24 @@ else
     $params['list_onupdate']=false;
     $params['textviewlist']="";
     $params['textnew']="";
-    $params['textcancel']=FN_Translate("back")."/".FN_Translate("cancel");
+    $params['textcancel']=FN_Translate("list of blocks")."/".FN_Translate("cancel");
 
     $op___xdb_fn_blocks=FN_GetParam("op___xdb_fn_blocks",$_GET);
     //-----blocks editor ------------------------------------------------------>
     ob_start();
     if (empty($_POST['savefileconfig']))
     {
-        echo "<h3>".FN_Translate("list of blocks").":</h3>";
-        FN_xmltableeditor("fn_blocks",$params);
+        if (empty($_GET['op___xdb_fn_blocks']))
+            echo "<h3>".FN_Translate("list of blocks").":</h3>";
+        FNCC_xmltableeditor("fn_blocks",$params);
     }
     $htmleditor=ob_get_clean();
     //-----blocks editor ------------------------------------------------------<
     if ($op___xdb_fn_blocks==""||$op___xdb_fn_blocks=="del")
     {
-        echo "<img src=\"images/add.png\" alt=\"\" /> <a href=\"?op___xdb_fn_blocks=insnew&amp;opt=$opt\">".FN_Translate("create a new block")."</a>";
+        echo "<p><button type=\"button\" onclick=\"window.location='?op___xdb_fn_blocks=insnew&opt=$opt'\"><img src=\"images/add.png\" alt=\"\" /> ".FN_Translate("create a new block")."</button></p>";
     }
+
     echo html_BlocksEditor();
     echo $htmleditor;
     $pk___xdb_fn_blocks=FN_GetParam('pk___xdb_fn_blocks',$_GET);
@@ -441,8 +443,17 @@ function html_BlocksEditor()
         $blocks_top=FN_GetBlocks("top",false,false);
         $blocks_bottom=FN_GetBlocks("bottom",false,false);
         $opt=FN_GetParam("opt",$_GET);
+
+        $html.= "<p>";
+        $html.=FN_Translate("move left")."<img title=\"".FN_Translate("move left")."\" src=\"images/fn_left.png\" alt=\"\"> ";
+        $html.=FN_Translate("move up")."<img title=\"".FN_Translate("move up")."\" src=\"images/fn_up.png\" alt=\"\"> ";
+        $html.=FN_Translate("move down")."<img title=\"".FN_Translate("move down")."\"src=\"images/fn_down.png\" alt=\"\"> ";
+        $html.=FN_Translate("move right")."<img title=\"".FN_Translate("move right")."\" src=\"images/fn_right.png\" alt=\"\">";
+        $html.= "</p>";
+
+//----------------------------FORM----------------------------------------------       
         $html.="<form method=\"post\" action=\"?opt=$opt\">";
-        $html.="<div style=\"width:600px;display:block;border:1px solid #dddddd;padding:10px;margin:auto;background-color:#ffffff\">";
+        $html.="<div style=\"width:100%;display:block;border:1px solid #dddddd;padding:10px;margin:auto;background-color:#ffffff;border-radius:10px\">";
 //----------------------top---------------------------------------------------->
         $html.="<div id=\"blocks-top\"  style=\"border:1px solid #dadada;clear:both;margin:10px;margin-bottom:0px;\">";
         if (count($blocks_top)>0)

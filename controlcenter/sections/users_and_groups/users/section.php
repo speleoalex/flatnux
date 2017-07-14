@@ -176,5 +176,5 @@ echo "<a ".($getfilters=="active:1"?" style=\"font-weight:bold\" ":"")."href=\"?
 echo "<a ".($getfilters=="active:0"?" style=\"font-weight:bold\" ":"")."href=\"?mod={$_FN['mod']}&amp;opt=$op&amp;filter=active:0\"><img src=\"images/useronline/level_n.gif\" alt=\"\"/> ".FN_Translate("view only disabled")."</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
 echo "<a ".($getfilters=="level:10"?" style=\"font-weight:bold\" ":"")."href=\"?mod={$_FN['mod']}&amp;opt=$op&amp;filter=level:10\">".FN_Translate("view only administrators")."</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
 echo "<br />";
-FN_xmltableeditor($table,$params);
+FNCC_xmltableeditor($table,$params);
 ?>

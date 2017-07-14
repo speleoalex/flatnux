@@ -444,16 +444,19 @@ function FNCC_HtmlLanguages()
 /**
  * 
  */
-function FNCC_HtmlDashBoard()
+function FNCC_HtmlDashBoard($htmltemplate)
 {
     global $_FN;
     if (!FN_IsAdmin())
     {
         return;
     }
-    ob_start();
-
-
+    $html="";
+    if (strstr($htmltemplate,"dashboard_contents")===false)
+    {
+        $htmltemplate="<h2>{dashboard_title}</h2>
+                    <div>{dashboard_contents}</div>";
+    }
 
     $sectiondirs=glob("sections/*");
     foreach($sectiondirs as $sectiondir)
@@ -463,12 +466,13 @@ function FNCC_HtmlDashBoard()
         if (!empty($section['type']))
         {
             $sectiondir="modules/{$section['type']}";
-            if (is_dir($sectiondir) && file_exists("$sectiondir/controlcenter/fncc_dashboard.php"))
+            if (is_dir($sectiondir)&&file_exists("$sectiondir/controlcenter/fncc_dashboard.php"))
             {
-                echo "<div class=\"fncc_dashboard_item\">";
-                echo "<div  class=\"fncc_dashboard_itemtitle\" >".$section['title']."</div>";
+                $params['dashboard_title']=$section['title'];
+                ob_start();
                 include "$sectiondir/controlcenter/fncc_dashboard.php";
-                echo "</div>";
+                $params['dashboard_contents']=ob_get_clean();
+                $html.=FN_TPL_ApplyTplString($htmltemplate,$params);
             }
         }
         $_FN['mod']="";
@@ -478,12 +482,14 @@ function FNCC_HtmlDashBoard()
     {
         $section=basename($sectiondir);
         $title=FN_GetFolderTitle($sectiondir);
-        if (is_dir($sectiondir) && file_exists("$sectiondir/controlcenter/fncc_dashboard.php"))
+        if (is_dir($sectiondir)&&file_exists("$sectiondir/controlcenter/fncc_dashboard.php"))
         {
-            echo "<div class=\"fncc_dashboard_item\">";
-            echo "<div  class=\"fncc_dashboard_itemtitle\" >".$title."</div>";
+
+            $params['dashboard_title']=$title;
+            ob_start();
             include "$sectiondir/controlcenter/fncc_dashboard.php";
-            echo "</div><hr />";
+            $params['dashboard_contents']=ob_get_clean();
+            $html.=FN_TPL_ApplyTplString($htmltemplate,$params);
         }
     }
 
@@ -494,18 +500,20 @@ function FNCC_HtmlDashBoard()
             $sectiondirs=glob("$cc_sectiondir/*");
             foreach($sectiondirs as $sectiondir)
             {
-                if (is_dir($sectiondir) && file_exists("$sectiondir/fncc_dashboard.php"))
+                if (is_dir($sectiondir)&&file_exists("$sectiondir/fncc_dashboard.php"))
                 {
-                    $sectiontitle=FN_GetFolderTitle($sectiondir);
-                    echo "<div class=\"fncc_dashboard_item\">";
-                    echo "<div  class=\"fncc_dashboard_itemtitle\" >".$sectiontitle."</div>";
+
+                    $params['dashboard_title']=FN_GetFolderTitle($sectiondir);
+                    ;
+                    ob_start();
                     include "$sectiondir/fncc_dashboard.php";
-                    echo "</div><hr />";
+                    $params['dashboard_contents']=ob_get_clean();
+                    $html.=FN_TPL_ApplyTplString($htmltemplate,$params);
                 }
             }
         }
     }
-    return ob_get_clean();
+    return $html;
 }
 
 /**
@@ -576,7 +584,7 @@ function FNCC_GetMenuItems()
         $sections=FN_ListDir("controlcenter/sections/$sectiongroup");
         FN_NatSort($sections);
         $sectionsIngroup=array();
-        foreach($sections as $section)
+        foreach($sections as $i=> $section)
         {
             $item['opt']="$sectiongroup/$section";
             $item['id']="$sectiongroup/$section";
@@ -588,7 +596,7 @@ function FNCC_GetMenuItems()
             else
             {
                 $item['link']="?opt={$item['opt']}";
-                $item['title']=FN_GetFolderTitle("controlcenter/sections/$sectiongroup/$section");
+                $item['title']="".FN_GetFolderTitle("controlcenter/sections/$sectiongroup/$section");
                 $item['description']=$item['title'];
                 $icon=FN_FromTheme("controlcenter/images/configure.png");
                 if (file_exists("controlcenter/sections/$sectiongroup/$section/icon.png"))
@@ -596,59 +604,57 @@ function FNCC_GetMenuItems()
                 $item['image']=$icon;
                 $sectionsIngroup[]=$item;
             }
-            if ($sectiongroup=="settings"&&$section=="cms")
-            {
+        }
+        if ($sectiongroup=="settings")
+        {
 //---------------get list of config.php in plugins and sections---------------->
+            $_sectionsIngroup=array();
+            $dirsconf=FNCC_GetSectionsConfigs();
+            foreach($dirsconf as $_section)
+            {
+                $item=array();
+                $item['opt']=$_section['opt'];
+                $item['id']="$sectiongroup/{$_section['opt']}";
+                $item['description']="";
 
-                $_sectionsIngroup=array();
-                $dirsconf=FNCC_GetSectionsConfigs();
-                foreach($dirsconf as $_section)
+                //  dprint_r($item);
+
+                if (is_array($toShow)&&!in_array($item['opt'],$toShow))
                 {
-                    $item=array();
-                    $item['opt']=$_section['opt'];
-                    $item['id']="$sectiongroup/{$_section['opt']}";
-                    $item['description']="";
-
-                    //  dprint_r($item);
-
-                    if (is_array($toShow)&&!in_array($item['opt'],$toShow))
-                    {
-                        continue;
-                    }
-                    $item['link']="?opt={$item['opt']}";
-                    $item['title']=$_section['title'];
-                    $item['image']=$_section['cc_icon'];
-                    $item['description']=$item['title'];
-                    $sectionsIngroup[]=$item;
+                    continue;
                 }
-
-                //customs configs----<
-                //plugins configs---->
-                $dirsconf=FNCC_GetPluginsConfigs();
-                foreach($dirsconf as $_section)
-                {
-                    $item['opt']="fnc_ccnf_config_plugin_{$_section['id']}";
-                    $item['id']="$sectiongroup/fnc_ccnf_config_plugin_{$_section['id']}";
-                    $item['description']="";
-
-                    if (is_array($toShow)&&!in_array($item['opt'],$toShow))
-                    {
-                        continue;
-                    }
-                    $item['link']="?opt={$item['opt']}";
-                    $item['title']=$_section['title'];
-                    $item['image']=$_section['cc_icon'];
-                    $item['description']=$item['title'];
-
-                    $sectionsIngroup[]=$item;
-                }
-                //plugins configs----<
-//---------------get list of config.php in plugins and sections----------------<				
+                $item['link']="?opt={$item['opt']}";
+                $item['title']=$_section['title'];
+                $item['image']=$_section['cc_icon'];
+                $item['description']=$item['title'];
+                $sectionsIngroup[]=$item;
             }
+
+            //customs configs----<
+            //plugins configs---->
+            $dirsconf=FNCC_GetPluginsConfigs();
+            foreach($dirsconf as $_section)
+            {
+                $item['opt']="fnc_ccnf_config_plugin_{$_section['id']}";
+                $item['id']="$sectiongroup/fnc_ccnf_config_plugin_{$_section['id']}";
+                $item['description']="";
+
+                if (is_array($toShow)&&!in_array($item['opt'],$toShow))
+                {
+                    continue;
+                }
+                $item['link']="?opt={$item['opt']}";
+                $item['title']=$_section['title'];
+                $item['image']=$_section['cc_icon'];
+                $item['description']=$item['title'];
+
+                $sectionsIngroup[]=$item;
+            }
+            //plugins configs----<
+//---------------get list of config.php in plugins and sections----------------<				
         }
         if ($sectiongroup=="contents")
         {
-
             $dirs=FNCC_GetSectionsSettings();
             //dprint_r($dirs);
             foreach($dirs as $section)
@@ -701,27 +707,7 @@ function FNCC_GetMenuItems()
     //customs configs config---->
 
     $sectionsIngroup=array();
-    /*
-      $dirs=FNCC_GetSectionsSettings();
-      foreach($dirs as $section)
-      {
-      $item['opt']="fnc_ccnf_section_{$section['id']}";
-      $item['id']="fnc_ccnf_section_{$section['id']}";
 
-      if (is_array($toShow) && !in_array($item['opt'],$toShow))
-      {
-      continue;
-      }
-      $item['link']="?opt={$item['opt']}";
-      $ttype="";
-      if (!empty($section['type']))
-      {
-      $ttype=" ({$section['type']})";
-      }
-      $item['title']=FN_Translate("page").": ".$section['title']."$ttype";
-      $item['image']=$section['cc_icon'];
-      $sectionsIngroup[]=$item;
-      } */
     //customs configs----<
     //plugins configs---->
     $dirs=FNCC_GetPluginsSettings();
@@ -755,7 +741,7 @@ function FNCC_GetMenuItems()
 function FN_TPL_tp_create_dashboard($params)
 {
     global $_FN;
-    $html=FNCC_HtmlDashBoard();
+    $html=FNCC_HtmlDashBoard($params);
     return $html;
 }
 
@@ -962,19 +948,32 @@ function FN_TPL_tp_create_ccsubmenu_($str,$sections)
  * @param type $tablename
  * @param type $params
  */
-function FNCC_XmltableEditor($tablename,$params=false)
+function FNCC_XmltableEditor($tablename,$params=false,$params2=false)
 {
     global $_FN;
-
-    if (empty($params['layout_template'])&&file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/form.tp.html"))
+    if (is_array($params2))
     {
-        $params['layout_template']=file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/form.tp.html");
+        if (empty($params2['layout_template'])&&file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/form.tp.html"))
+        {
+            $params2['layout_template']=file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/form.tp.html");
+        }
+        if (empty($params['html_template_grid'])&&file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/grid.tp.html"))
+        {
+            $params2['html_template_grid']=file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/grid.tp.html");
+        }
     }
-    if (empty($params['html_template_grid'])&&file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/grid.tp.html"))
+    else
     {
-        $params['html_template_grid']=file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/grid.tp.html");
+        if (empty($params['layout_template'])&&file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/form.tp.html"))
+        {
+            $params['layout_template']=file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/form.tp.html");
+        }
+        if (empty($params['html_template_grid'])&&file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/grid.tp.html"))
+        {
+            $params['html_template_grid']=file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/grid.tp.html");
+        }
     }
-    FN_XmltableEditor($tablename,$params);
+    FN_XmltableEditor($tablename,$params,$params2);
 }
 
 /**
@@ -993,13 +992,12 @@ function FN_HtmlModalWindow($body,$title="",$textbutton="ok")
     {
         $title="{$_FN['sitename']}";
     }
-    
+
     if ($html==""&&file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/modal.tp.html"))
     {
         $html=file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/modal.tp.html");
-    
     }
-    
+
     if ($html=="")
     {
         $html="\n<script language=\"javascript\">";
@@ -1012,4 +1010,5 @@ function FN_HtmlModalWindow($body,$title="",$textbutton="ok")
     //dprint_xml($html);
     //die();
 }
+
 ?>

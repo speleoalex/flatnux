@@ -9,7 +9,7 @@
 defined('_FNEXEC') or die('Restricted access');
 
 $params = false;
-FN_xmltableeditor("fn_avatars");
+FNCC_XmltableEditor("fn_avatars");
 
 
 ?>

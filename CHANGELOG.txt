@@ -1,6 +1,9 @@
 7/2017
+    -xmldb corretto bugs perdita alcuni caratteri html
     -spostata barra di amministrazione in basso
-    
+    -corretto tema flatnux-orange
+    -creazione nuovo tema da pannello di controllo
+    -migliorata gestione tema del pannello di controllo
 6/2017
     -ottimizzazione inclusioni non necessarie
     -supporto vecchie versioni di files

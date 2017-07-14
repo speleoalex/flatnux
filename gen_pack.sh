@@ -115,7 +115,7 @@ if [ -d "$pwd" ]; then
 	echo "PULIZIA COMPLETATA";
         #creo zip release
 	zip -r $namezip $pwd -x "flatnux/.*"  flatnux/nbproject flatnux/.director\* flatnux/.project\* flatnux/.buildpath\* flatnux/\*.sh flatnux/.settings flatnux/.svn/\*
-	zip -r $nameminimal flatnux_minimal 
+	zip -r $namezipminimal flatnux_minimal 
 
         echo '<?php' > flatnux/include/config.vars.local.php
         echo '$_FN_display_errors = "on";' >> flatnux/include/config.vars.local.php

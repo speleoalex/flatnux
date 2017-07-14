@@ -608,7 +608,7 @@ function FN_IncludeCSS($include_theme_css=true,$include_section_css=true)
     }
     if (!empty($_FN['inline_css']))
         $html="<style>$css</style>";
-    elseif(!empty($_FN['async_css']))
+    elseif (!empty($_FN['async_css']))
         $html="<script>window.setTimeout(function(){document.getElementsByTagName('head')[0].innerHTML+='".addslashes(str_replace("\n","",$html))."';},10);</script>";
     return $html;
 }
@@ -2122,6 +2122,10 @@ function FN_LoadConfig($fileconfig="",$sectionid="",$usecache=true)
             }
             else
             {
+                if ($sectionid=="")
+                {
+                    $sectionid=$_FN['mod'];
+                }
                 $fileconfig="sections/{$sectionid}/config.php";
             }
         }

@@ -409,17 +409,17 @@ var syncdiv = function (id)
         $htmlgrid.="<form stile=\"clear:both;\" method=\"post\" op=\"?opt={$opt}\">";
         $htmlgrid.="<div  id=\"sectionsdiv\" >";
         $tmp=false;
-        $htmlgrid.="<table border=\"0\"><thead style=\"padding:5px;font-size:12px;line-height:20px;background-color:#ffffff;color:#000000;border:1px inset;width:auto;white-space: nowrap\"><tr>";
-        $htmlgrid.="<td style=\"padding:3px\"><b>".FN_Translate("hidden")."</b></td>";
-        $htmlgrid.="<td style=\"padding:3px\"><b>".FN_Translate("page type")."</b></td>";
-        $htmlgrid.="<td style=\"padding:3px\"><b>".FN_Translate("contents")."</b></td>";
-        $htmlgrid.="<td style=\"padding:3px\"><b>".FN_Translate("move")."</b></td>";
-        $htmlgrid.="<td style=\"padding:3px\"><b>".FN_Translate("site map")."</b></td>";
-        $htmlgrid.="<td style=\"padding:3px\"><b>".FN_Translate("level")."</b></td>";
-        $htmlgrid.="<td style=\"padding:3px\"><b>".FN_Translate("groups for viewing")."</b></td>";
-        $htmlgrid.="<td style=\"padding:3px\"><b>".FN_Translate("groups for editing")."</b></td>";
-        $htmlgrid.="<td style=\"padding:3px\"><b>".FN_Translate("publication start date")."</b></td>";
-        $htmlgrid.="<td style=\"padding:3px\"><b>".FN_Translate("publication end date")."</b></td>";
+        $htmlgrid.="<table border=\"0\"><thead style=\"text-align:center;padding:5px;font-size:12px;line-height:20px;background-color:#f5f5f5;color:#000000;border:1px inset;width:auto;white-space: wrap\"><tr>";
+        $htmlgrid.="<td style=\"border:1px solid #eaeaea;padding:3px\">".FN_Translate("hidden")."</td>";
+        $htmlgrid.="<td style=\"border:1px solid #eaeaea;padding:3px\">".FN_Translate("page type")."</td>";
+        $htmlgrid.="<td style=\"border:1px solid #eaeaea;padding:3px\">".FN_Translate("contents")."</td>";
+        $htmlgrid.="<td style=\"border:1px solid #eaeaea;padding:3px\">".FN_Translate("move")."</td>";
+        $htmlgrid.="<td style=\"border:1px solid #eaeaea;padding:3px\">".FN_Translate("site map")."</td>";
+        $htmlgrid.="<td style=\"border:1px solid #eaeaea;padding:3px\">".FN_Translate("level")."</td>";
+        $htmlgrid.="<td style=\"border:1px solid #eaeaea;padding:3px\">".FN_Translate("groups for viewing")."</td>";
+        $htmlgrid.="<td style=\"border:1px solid #eaeaea;padding:3px\">".FN_Translate("groups for editing")."</td>";
+        $htmlgrid.="<td style=\"border:1px solid #eaeaea;padding:3px\">".FN_Translate("publication start date")."</td>";
+        $htmlgrid.="<td style=\"border:1px solid #eaeaea;padding:3px\">".FN_Translate("publication end date")."</td>";
 
         $htmlgrid.="</tr></thead><tbody style=\"padding:5px;font-size:12px;line-height:20px;background-color:#ffffff;color:#000000;border:1px inset;width:auto;white-space: nowrap\">";
         $htmlgrid.=FNCC_print_node("",$sections,$tmp);
@@ -427,7 +427,7 @@ var syncdiv = function (id)
         $htmlgrid.="</tbody></table>";
         $htmlgrid.="</div>";
         $htmlgrid.="<input type=\"hidden\" id=\"sectionstring\" name=\"sectionstring\" size=\"200\"  value=\"\"/>";
-        $htmlgrid.="<button type=\"submit\">".FN_i18n("save")."</button>";
+        $htmlgrid.="<br /><p><button type=\"submit\">".FN_i18n("save")."</button></p>";
         $htmlgrid.="</form>";
         $htmlgrid.="
 <script language=\"javascript\">

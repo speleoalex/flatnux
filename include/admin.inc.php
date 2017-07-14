@@ -21,7 +21,9 @@ function FN_HtmlAdminOnOff()
     if (FN_IsAdmin()||FN_CanModify($_FN['user'],"sections/{$_FN['mod']}"))
     {
         $img=FN_GetUserImage($_FN['user']);
-        $stout.="<div id=\"fn_adminonoff\" style=\"\" class=\"fn_admin\"><span class=\"fn_admin_username\"><img src=\"$img\"  /> ".FN_Translate("username").": {$_FN['user']}</span>";
+        $stout.="<div id=\"fn_adminonoff\" style=\"\" class=\"fn_admin\"><span class=\"fn_admin_username\"><img src=\"$img\"  /> "." {$_FN['user']}";
+        $stout.=" <a href=\"{$_FN['siteurl']}?fnlogin=logout\">".FN_Translate("logout")."</a></span>";
+        
         //$stout .= "<a href=\"javascript:document.getElementById('fn_adminonoff').style.display='none';\" >x</a>";
         if (!empty($_FN['maintenance']))
         {
@@ -33,6 +35,7 @@ function FN_HtmlAdminOnOff()
             $stout.="<img class=\"fn_admin_ccicon\" style=\"cursor:pointer\" title=\"".FN_Translate("control center")."\"  onclick=\"window.location='{$_FN['siteurl']}controlcenter.php'\"  alt=\"".FN_Translate("control center")."\" style=\"border:0px;vertical-align:middle\" src=\"".FN_FromTheme("images/configure.png")."\" />";
             //$stout .= "</a>";
         }
+
         $stout.="<select  title=\"".FN_Translate("edit mode")."\" style=\"vertical-align:middle\" onchange=\"window.location=this.options[this.selectedIndex].value\" >";
         //$stout .=FN_i18n("edit mode")."<select >";
         $s=$_FN['fneditmode']==0 ? "selected=\"selected\"" : "";

@@ -29,6 +29,7 @@
 	<field>
 		<name>emailhidden</name>
 		<type>check</type>
+		<frm_type>check</frm_type>                
 		<frm_i18n>hide email to other users</frm_i18n>
 		<frm_required>0</frm_required>
 		<frm_show>1</frm_show>

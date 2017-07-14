@@ -90,7 +90,7 @@ switch ($op)
 		show_tools();
 		$params ['link'] = "op=editdata&amp;opt=$opt&amp;t=$tablename";
 		
-		FN_xmltableeditor ( $tablename, "fndatabase", $params );
+		FNCC_xmltableeditor ( $tablename, "fndatabase", $params );
 		break;
 		
 	case "editxml":
@@ -244,7 +244,7 @@ function edit_table($tablename,$path,$databasename)
 	$params ['bordercolor'] = "#ff0000";
 	
 	$params ['link'] = "op=edit&amp;opt=$opt&amp;t=$tablename";
-	FN_xmltableeditor ( false, "tables", $params );
+	FNCC_xmltableeditor ( false, "tables", $params );
 	return;
 }
 

@@ -391,8 +391,10 @@ if (!defined("FNNEWS_FUNCTIONS"))
             $item['txt_POSTED']=FN_Translate("posted");
             //dprint_r($item);
             $item['txt_DATE']=$this->HtmlDate($item['date']);
+
             $item['news_SUMMARY']=FN_Tag2Html(str_replace("\r","",str_replace("\n","",($item['summary']))));
             $item['news_BODY']=FN_Tag2Html(str_replace("\r","",str_replace("\n","",($item['body']))));
+
             $item['news_TITLE']=htmlentities($item['title'],ENT_QUOTES,$_FN['charset_page']);
             $view=$this->GetNewsStat($tablename,$item,"unirecid");
             $item['news_VIEWS']=$view;
@@ -962,7 +964,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             $newstoprint=false;
             $locktop=$this->ReadVarFromCache("locktop{$_FN['mod']}");
             $newstoprint=$this->ReadVarFromCache("newstoprint{$_FN['mod']}");
-            if (!is_array($newstoprint) || !is_array($locktop))
+            if (!is_array($newstoprint)||!is_array($locktop))
             {
                 $locktop=array();
                 $newstoprint=array();
@@ -1003,6 +1005,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             }
             else
             {
+                
             }
             //if (count($locktop) > 0)
             //    echo "<div class=\"news_locktop\">";
@@ -1325,7 +1328,14 @@ if (!defined("FNNEWS_FUNCTIONS"))
             $params['fields']="title|icon";
             $params['textnew']=$imgnew.FN_Translate("new argument");
             echo "<div class=\"news_editor\">";
-            FN_XmlTableEditor($tablename."_arguments",$params);
+            if (basename($_FN['self'])=="controlcenter.php")
+            {
+                FNCC_XmlTableEditor($tablename."_arguments",$params);
+            }
+            else
+            {
+                FN_XmlTableEditor($tablename."_arguments",$params);
+            }
             echo "</div>";
         }
 
@@ -1584,7 +1594,14 @@ if (!defined("FNNEWS_FUNCTIONS"))
             $params['layout']="flat";
             $html.="<div class=\"news_editor\">";
             ob_start();
-            FN_XmlTableEditor($tablename,$params);
+            if (basename($_FN['self'])=="controlcenter.php")
+            {
+                FNCC_XmlTableEditor($tablename,$params);
+            }
+            else
+            {
+                FN_XmlTableEditor($tablename,$params);
+            }
             $html.=ob_get_clean();
             $html.="</div>";
 //generate RSS----->

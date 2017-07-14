@@ -24,7 +24,6 @@ function xmldb_frm_field_html_overwrite($name,$value,$rows,$cols,$tooltip)
     global $_FN;
     $html="";
     $editor=$_FN['htmleditor'];
-    //dprint_r("e=$editor");
     if (isset($_FN['force_htmleditor']) && $_FN['force_htmleditor']!= "")
     {
         $editor=$_FN['force_htmleditor'];

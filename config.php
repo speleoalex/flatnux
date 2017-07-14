@@ -9,72 +9,53 @@
 $_FN['sitename'] = "Flatnux-NEXT";
 #[i18n]site title
 $_FN['site_title'] = "Flatnux CMS";
-#[it]Sottotitolo del sito
-#[en]Site subtitle
+#[i18n]site subtitle
 $_FN['site_subtitle'] = "www.flatnux.org";
 #[i18n]Keywords
 $_FN['keywords']="";
-#[it]Lista lingue del sito {+languages/*}
-#[en]Contents languages {+languages/*}
+#[i18n]Contents languages {+languages/*}
 $_FN['languages'] = "en,it,fr";
-#[it]Tema preferito{./themes}
-#[en]Default theme{./themes}
+#[i18n]Default theme{./themes}
 $_FN['theme'] = "default";
-#[it]Tema preferito pannello di controllo{./controlcenter/themes}
-#[en]Default control center theme{./controlcenter/themes}
+#[i18n]default control center theme{./controlcenter/themes}
 $_FN['controlcenter_theme'] = "classic";
-#[it]Abilita il visitatore a cambiare il tema {1=SI,0=NO}
-#[en]Enable theme switch {1=YES,0=NO}
+#[i18n]enable theme switch {1=YES,0=NO}
 $_FN['switchtheme'] = 1;
-#[it]Url del sito (vuoto per autorilevamento)
-#[en]Site url (empty = autodetect)
+#[i18n]site url (empty = autodetect)
 $_FN['siteurl']="";
-#[it]Indirizzo email del sito 
-#[en]Site email address
+#[i18n]site email address
 $_FN['site_email_address'] = "nobody@site_email_address.set"; //{required}
-#[it]Indirizzo email per le notifiche
-#[en]Logs email address
+#[i18n]logs email address
 $_FN['log_email_address'] = ""; //{required}
-#[it]Comprimi pagina con gzip {1=SI,0=NO}
-#[en]Compress pages with gzip {1=YES,0=NO}
+#[i18n]compress pages with gzip {1=YES,0=NO}
 $_FN['enable_compress_gzip'] = 0;
-#[it]Pagina predefinita{0=Disabilitato,./sections}
-#[en]Default section{0=Disabilitato,./sections}
+#[i18n]default section{0=Disabilitato,./sections}
 $_FN['home_section'] = "home";
-#[it]Cartella scrivibile che contiene i dati (default=misc)
-#[en]Data folder (default=misc)
+#[i18n]data folder (default=misc)
 $_FN['datadir'] = "misc";
-#[it]Fuso orario
-#[en]time difference
+#[i18n]time difference
 $_FN['jet_lag'] = 0;
-#[it]Visualizza gli accesskey accanto al link {1=SI,0=NO}
-#[en]Show access key {1=YES,0=NO}
+#[i18n]show access key {1=YES,0=NO}
 $_FN['showaccesskey']=0;
-#[it]Invia email di log all' amministratore {1=SI,0=NO}
-#[en]Enable LOG email to administrator{1=YES,0=NO}
+#[i18n]enable LOG email to administrator{1=YES,0=NO}
 $_FN['enable_log_email']=0;
-#[it]Abilita mod_rewrite di Apache {1=SI,0=NO,2=FORZA}
-#[en]Enable Apache mod_rewrite {1=YES,0=NO,2=FORCE}
+#[i18n]enable Apache mod_rewrite {1=YES,0=NO,2=FORCE}
 $_FN['enable_mod_rewrite']=1;
-#[it]Metodo links{{0=Disabilitato,./include/mod_rewrite/}}
-#[en]Links mode {{0=Disabilitato,./include/mod_rewrite/}}
+#[i18n]links mode {{0=Disabilitato,./include/mod_rewrite/}}
 $_FN['links_mode']="html";
-#[it]Abilita registrazione utenti{1=SI,0=NO}
-#[en]Enable user registration {1=YES,0=NO}
+#[i18n]enable user registration {1=YES,0=NO}
 $_FN['enable_registration']=1;
-#[it]Utilizza l'indirizzo email come nome utente {1=SI,0=NO}
+#[i18n]use email address as username {1=yes,0=NO}
 $_FN['username_is_email']=0;
-#[it]Registrazione tramite email {1=SI,0=NO}
-#[en]Registration through email {1=YES,0=NO}
+#[i18n]registration by mail confirmation {1=YES,0=NO}
 $_FN['registration_by_email']=1;
 #[i18n]allow users to stay connected {1=YES,0=NO}
 $_FN['remember_login'] = 1;
-#[i18n]Enable captcha in login form {1=YES,0=NO}
+#[i18n]enable captcha in login form {1=YES,0=NO}
 $_FN['enable_captcha']=0;
-#[it]Editor html{0=Disabilitato,include/htmleditors}
-#[en]Editor html{0=Disable,include/htmleditors}
+#[i18n]html editor{0=Disable,include/htmleditors}
 $_FN['htmleditor']="ckeditor4";
-#[i18n]Allows online administration {1=YES,0=NO}
+#[i18n]allows online administration {1=YES,0=NO}
 $_FN['enable_online_administration']=1;
 #[i18n]credits
 $_FN['credits']="Powered by <a href='http://www.flatnux.org'>Flatnux</a>";
@@ -84,7 +65,7 @@ $_FN['maintenance'] = 0;
 $_FN['url_update'] = 'http://www.flatnux.altervista.org/updates/FLATNUXSTABLE';
 #[i18n]enable cache {1=yes,0=no}
 $_FN['use_cache'] = 0;
-#[i18n]Timezone {""=get from server,timezone_identifiers_list()}
+#[i18n]timezone {""=get from server,timezone_identifiers_list()}
 $_FN['timezone'] = "";
 
 

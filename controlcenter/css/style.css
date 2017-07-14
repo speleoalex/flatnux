@@ -220,11 +220,11 @@ input {vertical-align: middle}
     border:0px;
     padding:0px;
     margin-left:5px;
-    width:200px;
+    width:240px;
 
 }
 .fncc_leftmenu{
-    width:200px;
+    width:240px;
     border:1px solid #dadada;
     margin-bottom: 5px;
     border-radius:10px 10px 0px 0px;
@@ -239,7 +239,7 @@ input {vertical-align: middle}
 }
 .fncc_leftmenu a{
     text-decoration: none;
-    width:198px;
+    width:238px;
     display:block;
     height:24px;
     line-height:24px;
@@ -271,7 +271,7 @@ input {vertical-align: middle}
 }
 #fncc_contents{
     position:absolute;
-    left:220px;
+    left:260px;
     border:1px solid #dadada;
     background-color: #f4f4f4;
     padding:10px;

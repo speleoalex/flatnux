@@ -40,27 +40,29 @@
                     </div>
                 </td><td  width="50%" valign="top" >
                     <!-- include dashboard -->
+                    <h2>{dashboard_title}</h2>
+                    <div>{dashboard_contents}</div>
                     <!-- end include dashboard --></td></tr></table>
 
         <script type="text/javascript"> var myMenu = [
                 //<!-- include ccmenu -->
                 //<!-- menitems -->
                 //<!-- menuitemdropdown -->
-                [' ', '{title}', '{link}', '', ''
-                            //<!-- submenu -->
-                                    //<!-- submenuitems -->
-                                            //<!-- submenuitem -->
-                                            ['<img height="16" src="{image}" />', '{title}', '{link}', '', ''],
-                                            //<!-- endsubmenuitem -->
-                                            //<!-- endsubmenuitems -->
-                                            //<!-- endsubmenu -->
+                [' ', '{title}', '{link}', '', '',
+                    //<!-- submenu -->
+                    //<!-- submenuitems -->
+                    //<!-- submenuitem -->
+                    ['<img height="16" src="{image}" />', '{title}', '{link}', '', ''],
+                            //<!-- endsubmenuitem -->
+                            //<!-- endsubmenuitems -->
+                            //<!-- endsubmenu -->
 
-                                ],
-                                //<!-- endmenuitemdropdown -->
-                                //<!-- endmenitems -->
-                                //<!-- end include ccmenu -->
+                ],
+                        //<!-- endmenuitemdropdown -->
+                        //<!-- endmenitems -->
+                        //<!-- end include ccmenu -->
 
-                    ];
+            ];
             cmDraw('myMenuID', myMenu, 'hbr', cmThemeOffice);
 
         </script>        

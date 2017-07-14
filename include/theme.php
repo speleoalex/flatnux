@@ -525,7 +525,9 @@ function FN_TPL_include_tpl($str,$vars)
 function FN_TPL_ApplyTplFile($tplname,$vars)
 {
     global $_FN;
-    $str=file_get_contents($tplname);
+    $str="";
+    if (file_exists($tplname))
+        $str=file_get_contents($tplname);
     $basepath=dirname($tplname)."/";
     return FN_TPL_ApplyTplString($str,$vars,$basepath);
 }
@@ -807,6 +809,10 @@ function FN_TPL_html_menu($str="",$part)
                 if ($_FN['mod']==$sectionvalues['id']||FN_SectionIsInsideThis($sectionvalues['id'],$_FN['mod']))
                     $print_submenu=true;
             }
+        }
+        else
+        {
+            $print_submenu=true;
         }
         if ($print_submenu)
         {

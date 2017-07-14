@@ -205,9 +205,9 @@ function xmldec($str,$charset="ISO-8859-1")
     if (!is_string($str))
         return "";
     //return html_entity_decode($str, ENT_QUOTES, $charset);
-    $str=str_replace("&amp;","&",$str);
-    $str=str_replace("&lt;","<",$str);
     $str=str_replace("&gt;",">",$str);
+    $str=str_replace("&lt;","<",$str);
+    $str=str_replace("&amp;","&",$str);
     return $str;
 }
 
@@ -1761,6 +1761,7 @@ class XMLTable_xmlphp
             $fields=implode("|",$fields);
         }
         $all=xmldb_readDatabase($this->datafile,$fieldname,$fields,false);
+        
         if ($all === false) //il file non esiste
         {
             return false;
@@ -1882,6 +1883,7 @@ class XMLTable_xmlphp
             fclose($fp);
         }
         //cache su file----<
+        
         return $ret;
     }
 
@@ -1896,6 +1898,7 @@ class XMLTable_xmlphp
         $rec=$this->GetRecords($restr,0,1);
         if (is_array($rec) && isset($rec[0]))
         {
+             
             return $rec[0];
         }
         return null;
@@ -2145,6 +2148,11 @@ class XMLTable_xmlphp
         $path=$this->path;
         $this->numrecords=-1;
         $this->numrecordscache=array();
+        if ($tablename == "____empty_____")
+        {
+            if (!empty($this->datafile))
+                unlink($this->datafile);
+        }
         $oldfiles=glob("$path/$databasename/$tablename/*.php");
         xmldb_remove_dir_rec("$path/$databasename/$tablename");
         $this->ClearCachefile();

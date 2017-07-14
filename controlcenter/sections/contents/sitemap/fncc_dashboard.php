@@ -12,7 +12,7 @@ global $_FN;
 $sections=FN_GetSections("",true,false,true,false,true);
 $sections=FN_ArraySortByKey($sections,"position");
 $sections=FN_ArraySortByKey($sections,"parent");
-echo FNCC_HtmlOpenTable();
+echo "<table>";
 echo "<td>".FN_Translate("page type")."</td>";
 echo "<td>".FN_Translate("contents")."</td>";
 echo "<td>".FN_Translate("")."</td>";
@@ -20,8 +20,8 @@ echo "<td>".FN_Translate("")."</td>";
 $tmp=false;
 echo FNCC_print_node("",$sections,$tmp);
 echo "<tr><td colspan=\"9\"><button onclick=\"window.location='controlcenter.php?opt=contents/sitemap'\">".FN_Translate("modify")."</button></td></tr>";
+echo "</table>";
 
-echo FNCC_HtmlCloseTable();
 
 /**
  *
