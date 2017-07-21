@@ -1,4 +1,5 @@
 7/2017
+    -pannello di controllo bug fix su gestione blocchi e pagine
     -xmldb corretto bugs perdita alcuni caratteri html
     -spostata barra di amministrazione in basso
     -corretto tema flatnux-orange

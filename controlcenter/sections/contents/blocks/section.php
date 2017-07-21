@@ -9,7 +9,8 @@
 defined('_FNEXEC') or die('Restricted access');
 $modcont=FN_GetParam("edit",$_GET);
 $blockid=FN_GetParam("block",$_GET);
-
+global $editType;
+$editType=null;
 //----------------------modify------------------------------------------------->
 //----------------------modify------------------------------------------------->
 //----------------------modify------------------------------------------------->
@@ -90,7 +91,9 @@ else
     $params['textviewlist']="";
     $params['textnew']="";
     $params['textcancel']=FN_Translate("list of blocks")."/".FN_Translate("cancel");
-
+    $params['function_on_update']="FNCC_OnUpdateBlock";
+    $params['function_on_insert']="FNCC_OnInsertBlock";
+    
     $op___xdb_fn_blocks=FN_GetParam("op___xdb_fn_blocks",$_GET);
     //-----blocks editor ------------------------------------------------------>
     ob_start();
@@ -114,16 +117,17 @@ else
 
     if (!empty($_POST['id']))
     {
-        $block=FN_GetBlockValues($_POST['id']);
+        $block=FN_GetBlockValues($_POST['id'],false);
         $blockId=FN_GetParam("id",$_POST,"html");
     }
     elseif ($pk___xdb_fn_blocks)
     {
-        $block=FN_GetBlockValues($pk___xdb_fn_blocks);
+        $block=FN_GetBlockValues($pk___xdb_fn_blocks,false);
         $blockId=FN_GetParam("pk___xdb_fn_blocks",$_GET,"html");
     }
-
-    if (!empty($block['type'])&&file_exists("modules/{$block['type']}/config.php"))
+    if ($editType!==null)
+        $block['type']=$editType;
+    if (file_exists("blocks/{$block['id']}") && !empty($block['type'])&&file_exists("modules/{$block['type']}/config.php"))
     {
         //echo "<br /><div><a href=\"?edit=modules/block_calendar/config.php&opt=$opt&block=$pk___xdb_fn_blocks\">" . FN_Translate("configure module") . " {$block['type']}</a></div>";
         //---------------block settings---------------------------------------->
@@ -444,12 +448,12 @@ function html_BlocksEditor()
         $blocks_bottom=FN_GetBlocks("bottom",false,false);
         $opt=FN_GetParam("opt",$_GET);
 
-        $html.= "<p>";
+        $html.="<p>";
         $html.=FN_Translate("move left")."<img title=\"".FN_Translate("move left")."\" src=\"images/fn_left.png\" alt=\"\"> ";
         $html.=FN_Translate("move up")."<img title=\"".FN_Translate("move up")."\" src=\"images/fn_up.png\" alt=\"\"> ";
         $html.=FN_Translate("move down")."<img title=\"".FN_Translate("move down")."\"src=\"images/fn_down.png\" alt=\"\"> ";
         $html.=FN_Translate("move right")."<img title=\"".FN_Translate("move right")."\" src=\"images/fn_right.png\" alt=\"\">";
-        $html.= "</p>";
+        $html.="</p>";
 
 //----------------------------FORM----------------------------------------------       
         $html.="<form method=\"post\" action=\"?opt=$opt\">";
@@ -530,4 +534,37 @@ function html_BlocksEditor()
     }
     return $html;
 }
+
+/**
+ * 
+ * @global type $editType
+ * @param type $newvalues
+ * @param type $oldvalues
+ */
+function FNCC_OnUpdateBlock($newvalues,$oldvalues)
+{
+    global $editType;
+    if (isset($oldvalues["type"])&&isset($newvalues["type"]))
+    {
+        $editType=$newvalues["type"];
+        FN_OnSitemapChange();
+    }
+}
+
+/**
+ * 
+ * @global type $editType
+ * @param type $newvalues
+ */
+function FNCC_OnInsertBlock($newvalues)
+{
+    global $editType;
+    if (isset($oldvalues["type"]))
+    {
+        $editType=$newvalues["type"];
+        FN_OnSitemapChange();
+    }
+}
+
+
 ?>

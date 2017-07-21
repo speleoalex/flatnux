@@ -13,6 +13,8 @@ defined('_FNEXEC') or die('Restricted access');
 //echo FN_HtmlSectionEditor();
 
 global $_FN;
+global $editType;
+$editType=null;
 $opt=FN_GetParam("opt",$_GET);
 $modcont=FN_GetParam("edit",$_GET);
 $is_in_details=false;
@@ -33,6 +35,7 @@ if ($modcont)
     {
         $editor_params['css_file']=dirname($modcont)."/style.css";
     }
+
     if (!file_exists($modcont))
     {
         if (isset($_GET['create']))
@@ -83,7 +86,7 @@ if ($modcont)
             {
                 return filemtime($a)-filemtime($b);
             });
-            
+
             $bk_user="";
             foreach($files as $file)
             {
@@ -496,6 +499,7 @@ var syncdiv = function (id)
             $params['list_onupdate']=false;
             $params['textviewlist']="";
             $params['textcancel']="";
+            $params['function_on_update']="FNCC_OnUpdateSection";
             $mod=FN_GetParam("pk___xdb_fn_sections",$_GET,"html");
             if (!empty($mod))
             {
@@ -504,6 +508,7 @@ var syncdiv = function (id)
             }
             FNCC_XmltableEditor("fn_sections",$params); //editor
             $sectionvalues=FN_GetSectionValues($mod,false);
+
             if (!empty($mod))
             {
                 echo "</div>";
@@ -515,7 +520,9 @@ var syncdiv = function (id)
             if (!empty($mod))
             {
                 $sectiontype=$sectionvalues['type'];
-                if (file_exists("modules/$sectiontype/config.php"))
+                if ($editType!==null)
+                    $sectiontype=$editType;
+                if (file_exists("modules/$sectiontype/config.php") && file_exists("sections/{$mod}") )
                 {
                     $t=FN_XmlForm("fn_sectionstypes");
                     $values=$t->GetRecordTranslatedByPrimarykey("$sectiontype");
@@ -704,15 +711,15 @@ function FNCC_print_section($section,$level)
     $left=($level-1)*30;
     $linkdelete="{$_FN['controlcenter']}?page___xdb_fn_sections=1&order___xdb_fn_sections=id&op___xdb_fn_sections=del&pk___xdb_fn_sections=".$section['id'].'&opt='.$opt;
     $linkedit="{$_FN['controlcenter']}?page___xdb_fn_sections=1&order___xdb_fn_sections=id&op___xdb_fn_sections=insnew&pk___xdb_fn_sections=".$section['id'].'&opt='.$opt;
-    
-    $bkcolor = "#ffffff";
+
+    $bkcolor="#ffffff";
     $textdecoration="";
     $disabled="";
-    if ($section['status'] !="1")
+    if ($section['status']!="1")
     {
         $disabled=" (".FN_Translate("disabled").")";
-         $textdecoration="text-decoration: line-through";
-        $bkcolor = "#ffdddd";
+        $textdecoration="text-decoration: line-through";
+        $bkcolor="#ffdddd";
     }
     $html.="<tr onclick=\"this.style.backgroundColor='#ffff00'\" onmouseover=\"this.style.backgroundColor='#ffffaa'\" onmouseout=\"if(true){this.style.backgroundColor='$bkcolor'}\" style=\"background-color:$bkcolor;border:0px solid #000000;line-height:18px;padding:0px;margin:0px;font-size:12px;height:18px\" id=\"{$section['id']}\">";
 
@@ -878,12 +885,30 @@ function FNCC_UpdateSections()
             }
         }
 
+
         if (!$errors)
         {
+
             FN_Alert(FN_Translate("the data were successfully updated"));
             FN_Log("sitemap changed");
             FN_OnSitemapChange();
         }
+    }
+}
+
+/**
+ * 
+ * @global type $editType
+ * @param type $newvalues
+ * @param type $oldvalues
+ */
+function FNCC_OnUpdateSection($newvalues,$oldvalues)
+{
+    global $editType;
+    if (isset($oldvalues["type"])&&isset($newvalues["type"]))
+    {
+        $editType=$newvalues["type"];
+        FN_OnSitemapChange();
     }
 }
 

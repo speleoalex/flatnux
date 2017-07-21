@@ -40,12 +40,12 @@ function FN_HtmlHtmlArea($name,$cols,$rows,$text = "",$defaultdir = "",$editor_p
 	$str = str_replace("<","&lt;",$str);
 	$str = str_replace(">","&gt;",$str);
 	$l = "en";
-	if (file_exists("include/htmleditors/ckeditor4/ckeditor/lang/{$_FN['lang']}.js"))
+	if (file_exists("include/htmleditors/{$_FN['htmleditor']}/ckeditor/lang/{$_FN['lang']}.js"))
 		$l = $_FN['lang'];
 	$config['skin'] = "office2003";
 	$config['toolbar'] = "Full";
 	$config['fckcolor'] = "d4d7d0";
-	$config = FN_LoadConfig("include/htmleditors/ckeditor4/config.php");
+	$config = FN_LoadConfig("include/htmleditors/{$_FN['htmleditor']}/config.php");
 
 
 
@@ -54,7 +54,7 @@ function FN_HtmlHtmlArea($name,$cols,$rows,$text = "",$defaultdir = "",$editor_p
 	if ($jsfck)
 	{
 		$html .="
-<script type=\"text/javascript\" src=\"{$siteurl}include/htmleditors/ckeditor4/ckeditor/ckeditor.js\"></script>";
+<script type=\"text/javascript\" src=\"{$siteurl}include/htmleditors/{$_FN['htmleditor']}/ckeditor/ckeditor.js\"></script>";
 	}
 
 	$h = 200;
@@ -94,8 +94,8 @@ var css = new Array();
 	{
 		$config['toolbar'] = $editor_params['toolbar'];
 	}
-	if (file_exists("include/htmleditors/ckeditor4/toolbars/{$config['toolbar']}/toolbar.js"))
-		$config['toolbar'] = file_get_contents("include/htmleditors/ckeditor4/toolbars/{$config['toolbar']}/toolbar.js");
+	if (file_exists("include/htmleditors/{$_FN['htmleditor']}/toolbars/{$config['toolbar']}/toolbar.js"))
+		$config['toolbar'] = file_get_contents("include/htmleditors/{$_FN['htmleditor']}/toolbars/{$config['toolbar']}/toolbar.js");
 	else
 		$config['toolbar'] = "Full";
 
@@ -119,9 +119,9 @@ CKEDITOR.replace( 'fckeditor$name',
 		width: '$w',
 		height: '$h',
 		toolbar: {$config['toolbar']},
-		filebrowserBrowseUrl : '{$_FN['siteurl']}/filemanager.php?mode=t&filemanager_editor=ckeditor4&dir=$dirtoopen',
-		filebrowserImageBrowseUrl : '{$_FN['siteurl']}/filemanager.php?mode=t&filemanager_editor=ckeditor4&dir=$dirtoopen&mime=image',
-		filebrowserUploadUrl : '{$_FN['siteurl']}/filemanager.php?mode=t&filemanager_editor=ckeditor4&dir=$dirtoopen',
+		filebrowserBrowseUrl : '{$_FN['siteurl']}/filemanager.php?mode=t&filemanager_editor={$_FN['htmleditor']}&dir=$dirtoopen',
+		filebrowserImageBrowseUrl : '{$_FN['siteurl']}/filemanager.php?mode=t&filemanager_editor={$_FN['htmleditor']}&dir=$dirtoopen&mime=image',
+		filebrowserUploadUrl : '{$_FN['siteurl']}/filemanager.php?mode=t&filemanager_editor={$_FN['htmleditor']}&dir=$dirtoopen',
 		filebrowserWindowWidth : '640',
         filebrowserWindowHeight : '480',
 		fullPage : $fullpage ,
@@ -136,7 +136,7 @@ CKEDITOR.replace( 'fckeditor$name',
 ";
 	if ($jsfck && FN_IsAdmin())
 	{
-		$html .= "<div style=\"text-align:right\" ><a href=\"{$siteurl}?opt=include/htmleditors/ckeditor4/config.php\">  ".FN_i18n("configure")." ckeditor </a></div>";
+		$html .= "<div style=\"text-align:right\" ><a href=\"{$siteurl}?opt=include/htmleditors/{$_FN['htmleditor']}/config.php\">  ".FN_i18n("configure")." ckeditor </a></div>";
 	}
 	$jsfck = false;
 	return $html;
