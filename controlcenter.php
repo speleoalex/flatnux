@@ -174,7 +174,7 @@ function FN_TPL_tp_create_ccsection()
     if ($fileconfig_to_edit!=""&&file_exists($fileconfig_to_edit))
     {
         ob_start();
-        FN_EditConfFile("$fileconfig_to_edit","?opt=$opt");
+        echo FNCC_HtmlEditConfFile("$fileconfig_to_edit","?opt=$opt");
         return ob_get_clean();
     }
     //----edit config.php-----<
@@ -1011,4 +1011,27 @@ function FN_HtmlModalWindow($body,$title="",$textbutton="ok")
     //die();
 }
 
+
+/**
+ * 
+ * @param type $file
+ * @param type $formaction
+ * @param type $exit
+ * @param type $allow
+ * @param type $write_to_file
+ * @param type $mod
+ * @param type $block
+ * @param type $tableHtmlattibutes
+ */
+function FNCC_HtmlEditConfFile($file,$formaction="",$exit="",$allow=false,$write_to_file=false,$mod="",$block="",$tableHtmlattibutes="")
+{
+    global $_FN;
+    if ($tableHtmlattibutes=="" && file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/editconf.tp.html"))
+    {        
+        preg_match("/<!-- editconf table attributes -->(.*)<!-- end editconf table attributes -->/is",file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/editconf.tp.html"),$out);        
+        $tableHtmlattibutes=empty($out[1]) ? "" : $out[1];
+    }
+    
+    return FN_HtmlEditConfFile($file,$formaction,$exit,$allow,$write_to_file,$mod,$block,$tableHtmlattibutes);
+}
 ?>

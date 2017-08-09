@@ -863,6 +863,11 @@ function xmldb_array_natsort_by_key($data,$order,$desc=false)
     $ret=array();
     if (!is_array($data))
         return false;
+    
+    if (!isset($data[0][$order]))
+    {
+        return $data;
+    }
     foreach($data as $key=> $value)
     {
         $ret[$value[$order]][]=$value;

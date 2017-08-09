@@ -174,7 +174,7 @@ if (file_exists("misc/firstinstall"))
 						FN_Copy("include/install/section.$l.html","sections/home/section.$l.html");
 					}
 				}
-				$tabuser = FN_XmlForm("fn_users");
+				$tabuser = FN_GetUserForm();
 				foreach ($tabuser->formvals as $k=> $v)
 				{
 					if (!isset($v ['frm_required']) || $v ['frm_required'] != 1)

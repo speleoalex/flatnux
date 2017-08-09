@@ -52,7 +52,7 @@ function FN_EditConfFile($file,$formaction="",$exit="",$allow=false,$write_to_fi
  * @param string $block
  *
  */
-function FN_HtmlEditConfFile($file,$formaction="",$exit="",$allow=false,$write_to_file=false,$mod="",$block="")
+function FN_HtmlEditConfFile($file,$formaction="",$exit="",$allow=false,$write_to_file=false,$mod="",$block="",$tableHtmlattibutes="")
 {
     global $_FN;
     $opt=FN_GetParam("opt",$_GET);
@@ -62,7 +62,8 @@ function FN_HtmlEditConfFile($file,$formaction="",$exit="",$allow=false,$write_t
         $mod=$_FN['mod'];
     if ($block=="")
         $block=$_FN['block'];
-
+    if ($tableHtmlattibutes=="")
+        $tableHtmlattibutes="border=\"0\" cellpadding=\"1\" cellspacing=\"0\"";
     if (!strpos($filecontents,'$_FN')&&!strpos($filecontents,'$config'))
     {
         $write_to_file=true;
@@ -209,6 +210,7 @@ function FN_HtmlEditConfFile($file,$formaction="",$exit="",$allow=false,$write_t
     $lang=$_FN['lang'];
     if (!file_exists($file)) //check file
         return "";
+
     $html.="
 <script type=\"text/javascript\" src=\"include/javascripts/jscolor/jscolor.js\"></script>
 <script type=\"text/javascript\">
@@ -259,7 +261,7 @@ var movedown = function (node)
 }
 </script>
 <form action=\"$formaction\" method=\"post\">
-<table border=\"0\" cellpadding=\"1\" cellspacing=\"0\">
+<table   {$tableHtmlattibutes}>
 	<tbody>
 ";
     $ffile=$file;
@@ -414,7 +416,7 @@ var movedown = function (node)
                 $title=$varname;
 
             $html.="<tr><td style=\"border-bottom:1px dotted #dadada;text-align:left;\">";
-            $html.="\n<span>$title:</span>";
+            $html.="\n<label for=\"conf_$varkey\">$title:</label>";
             $html.="</td><td style=\"border-bottom:1px dotted #dadada;text-align:left;\">";
             if ($type=="{color}")
             {
@@ -439,7 +441,6 @@ var movedown = function (node)
             }
             else
             {
-
                 //---------checkbox----------------------->
                 if ($options[0][0]=="+")
                 {

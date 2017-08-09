@@ -1,5 +1,15 @@
 <?php
 
+if (!defined("FN_AUTH_COST"))
+{
+    define("FN_AUTH_COST",10);
+}
+if (!defined("FN_AUTH_METHOD"))
+{
+    //PASSWORD_DEFAULT OR PASSWORD_BCRYPT
+    define("FN_AUTH_METHOD",PASSWORD_DEFAULT);
+}
+
 /**
  * @package Flatnux_auth_local
  * @param array $arrayfilter
@@ -18,36 +28,13 @@ function FN_CountUsers($arrayfilter=false)
 function FN_GetUserForm()
 {
     $form=FN_XmlForm("fn_users");
-    $form->formvals['passwd']['frm_type']="md5passwd";
-    //$form->formvals['passwd']['frm_validator']="FN_ValidatePasswordLocal";
-
-
+    $form->formvals['passwd']['frm_type']="cryptpasswd";
     $op=FN_GetParam("op",$_GET,"html");
     $pk___xdb_fn_users=FN_GetParam("pk___xdb_fn_users",$_GET,"html");
-    if ($op == "editreg" || $pk___xdb_fn_users != "")
+    if ($op=="editreg"||$pk___xdb_fn_users!="")
         $form->formvals['passwd']['frm_required']="false";
-    //dprint_r($form->formvals['passwd']);
-
     $form->LoadFieldsClasses();
-
     return $form;
-}
-
-function FN_ValidatePasswordLocal($password,$IsUpdate,$newvalues)
-{
-    /*
-      if ($IsUpdate==false && $password!="")
-      {
-      return "this field is required";
-      }
-
-      dprint_r($par1);
-      dprint_r($par2);
-      dprint_r($par3);
-      die("ss");
-      return "error";
-     */
-    return "";
 }
 
 /**
@@ -76,7 +63,7 @@ function FN_ManageLogin()
     {
         $captcha=FN_GetSessionValue("captcha");
         $fnlogincode=FN_GetParam("fnlogin_code",$_POST);
-        if ($fnlogincode == "" || empty($captcha['fnlogin_code']) || $captcha['fnlogin_code'] != $fnlogincode)
+        if ($fnlogincode==""||empty($captcha['fnlogin_code'])||$captcha['fnlogin_code']!=$fnlogincode)
         {
             $captcha_ok=false;
             FN_SetSessionValue("captcha",array("fnlogin_code"=>rand(1000,9999)));
@@ -84,9 +71,9 @@ function FN_ManageLogin()
     }
     //-------------------captcha-----------------------------------------------<
     $rememberlogin=FN_GetParam("rememberlogin",$_POST);
-    if ($fnlogin == "login" && $fnuser != "" && $fnpwd != "")
+    if ($fnlogin=="login"&&$fnuser!=""&&$fnpwd!="")
     {
-        if ($captcha_ok && FN_VerifyUserPassword($fnuser,$fnpwd))
+        if ($captcha_ok&&FN_VerifyUserPassword($fnuser,$fnpwd))
         {
             FN_Login($fnuser,$rememberlogin);
         }
@@ -97,15 +84,14 @@ function FN_ManageLogin()
         }
     }
     $_FN['user']=FN_GetParam("fnuser",$_COOKIE);
-    if (!FN_CheckUser() || $fnlogin == "logout")
+    if (!FN_CheckUser()||$fnlogin=="logout")
     {
         FN_Logout();
     }
 }
 
 /**
- *
- * @global array $_FN
+ * 
  */
 function FN_LoginForm()
 {
@@ -143,10 +129,10 @@ function FN_HtmlLoginForm()
     {
         $captcha=FN_GetSessionValue("captcha");
         $fnlogincode=FN_GetParam("fnlogin_code",$_POST);
-        if ($fnlogincode == "" || empty($captcha['fnlogin_code']) || $captcha['fnlogin_code'] != $fnlogincode)
+        if ($fnlogincode==""||empty($captcha['fnlogin_code'])||$captcha['fnlogin_code']!=$fnlogincode)
             $captcha_ok=false;
         FN_SetSessionValue("captcha",array("fnlogin_code"=>rand(1000,9999)));
-        $htmlcaptcha.= "<img style=\"vertical-align:middle\" src=\"{$_FN['siteurl']}captcha.php?t=fnlogin_code&amp;".time()."\" alt=\"\" title=\"\" /> <input size=\"4\" name=\"fnlogin_code\"  value = \"\" />";
+        $htmlcaptcha.="<img style=\"vertical-align:middle\" src=\"{$_FN['siteurl']}captcha.php?t=fnlogin_code&amp;".time()."\" alt=\"\" title=\"\" /> <input size=\"4\" name=\"fnlogin_code\"  value = \"\" />";
         $tplvars['htmlcaptcha']=$htmlcaptcha;
     }
     else
@@ -224,17 +210,23 @@ function FN_LogoutForm()
 function FN_VerifyUserPassword($fnuser,$fnpwd)
 {
     global $_FN;
-    if (!empty($_FN['FN_VerifyUserPassword']) && $_FN['FN_VerifyUserPassword'] != "FN_VerifyUserPassword" && function_exists($_FN['FN_VerifyUserPassword']))
+    if (!empty($_FN['FN_VerifyUserPassword'])&&$_FN['FN_VerifyUserPassword']!="FN_VerifyUserPassword"&&function_exists($_FN['FN_VerifyUserPassword']))
     {
         return $_FN['FN_VerifyUserPassword']($fnuser,$fnpwd);
     }
     $lpass=md5($fnpwd);
     $us=FN_GetUser($fnuser);
     $passwd=$us['passwd'];
-    if ($passwd == $lpass)
+    if ($passwd==$lpass)
         return true;
-    else
-        return false;
+    if (function_exists("password_hash")&&function_exists("password_verify"))
+    {
+        if (password_verify($fnpwd,$passwd))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 /**
@@ -247,18 +239,18 @@ function FN_VerifyUserPassword($fnuser,$fnpwd)
  */
 function FN_GetUser($user,$usecache=true)
 {
-    if ($user == "")
+    if ($user=="")
         return false;
     static $usercache=false;
     global $_FN;
     if ($usecache)
     {
-        if ($usercache && is_array($usercache) && isset($usercache[$user]))
+        if ($usercache&&is_array($usercache)&&isset($usercache[$user]))
             return $usercache[$user];
     }
     $table=FN_GetUserForm();
     $UserValues=$table->xmltable->GetRecordByPrimaryKey($user);
-    if ($UserValues['level'] === "")
+    if ($UserValues['level']==="")
         $UserValues['level']="0";
     if (empty($UserValues['username']))
         return false;
@@ -276,10 +268,10 @@ function FN_GetUser($user,$usecache=true)
  */
 function FN_GetUserLevel($user,$usecache=true)
 {
-    $user=FN_GetUser($user,$usecache);
-    if (!isset($user['level']))
+    $uservalues=FN_GetUser($user,$usecache);
+    if (!isset($uservalues['level']))
         return -1;
-    return $user['level'];
+    return $uservalues['level'];
 }
 
 /**
@@ -297,17 +289,19 @@ function FN_GetPassword($user)
 }
 
 /**
- *
- * @global  $_FN
- * @param string $fnuser
- * @return bool
+ * 
+ * @global type $_FN
+ * @global type $_FN
+ * @param type $fnuser
+ * @param type $rememberlogin
+ * @return boolean
  */
 function FN_Login($fnuser,$rememberlogin=false)
 {
     global $_FN;
     $password=Fn_GetPassword($fnuser);
     $us=FN_GetUser($fnuser,false);
-    if ($us['active'] == 1)
+    if ($us['active']==1)
     {
 //---------------------url cookie---------------------------------------------->
         global $_FN;
@@ -317,20 +311,20 @@ function FN_Login($fnuser,$rememberlogin=false)
             $path=pathinfo($urlcookie);
             $urlcookie=$path["dirname"]."/";
             $urlcookie=str_replace("\\","/",$urlcookie);
-            if ($urlcookie == "" || $urlcookie == "\\" || $urlcookie == "//")
+            if ($urlcookie==""||$urlcookie=="\\"||$urlcookie=="//")
                 $urlcookie="/";
             $_FN['urlcookie']=$urlcookie;
         }
 //---------------------url cookie----------------------------------------------<
-        if (empty($_FN['remember_login']) || $rememberlogin == "")
+        if (empty($_FN['remember_login'])||$rememberlogin=="")
         {
             setcookie("fnuser",$fnuser,0,$_FN['urlcookie']);
             setcookie("secid",md5($fnuser.$password),0,$_FN['urlcookie']);
         }
         else
         {
-            setcookie("fnuser",$fnuser,time() + 99999999,$_FN['urlcookie']);
-            setcookie("secid",md5($fnuser.$password),time() + 99999999,$_FN['urlcookie']);
+            setcookie("fnuser",$fnuser,time()+99999999,$_FN['urlcookie']);
+            setcookie("secid",md5($fnuser.$password),time()+99999999,$_FN['urlcookie']);
         }
         FN_Log("User $fnuser login (function FN_Login).");
         $_FN['user']=$_COOKIE['fnuser']=$fnuser;
@@ -359,7 +353,7 @@ function FN_Logout()
         $path=pathinfo($urlcookie);
         $urlcookie=$path["dirname"]."/";
         $urlcookie=str_replace("\\","/",$urlcookie);
-        if ($urlcookie == "" || $urlcookie == "\\" || $urlcookie == "//")
+        if ($urlcookie==""||$urlcookie=="\\"||$urlcookie=="//")
             $urlcookie="/";
         $_FN['urlcookie']=$urlcookie;
     }
@@ -381,7 +375,7 @@ function FN_Logout()
 function FN_DeleteUser($user)
 {
     global $_FN;
-    if ($user != "")
+    if ($user!="")
     {
         $table=FN_GetUserForm();
         $uservalues=FN_GetUser($user,false);
@@ -403,24 +397,23 @@ function FN_DeleteUser($user)
  */
 function FN_UpdateUser($user,$newvalues,$password="")
 {
-    if ($user != "")
+    if ($user!="")
     {
         if (!isset($newvalues['username']))
             $newvalues['username']=$user;
-        if ($password != "")
+        if ($password!="")
             $newvalues['passwd']=$password;
-        if (isset($newvalues['passwd']) && $newvalues['passwd'] == "")
+        if (isset($newvalues['passwd'])&&$newvalues['passwd']=="")
         {
             unset($newvalues['passwd']);
         }
         $table=FN_GetUserForm();
         //dprint_r($newvalues);
         $newvalues=$table->UpdateRecord($newvalues);
-        if ($newvalues && function_exists("FN_OnUpdateUser"))
+        if ($newvalues&&function_exists("FN_OnUpdateUser"))
         {
             FN_OnUpdateUser($newvalues,$password);
         }
-
         FN_GetUser($user,false);
         return $newvalues;
     }
@@ -434,13 +427,13 @@ function FN_UpdateUser($user,$newvalues,$password="")
  */
 function FN_AddUser($newvalues,$password="")
 {
-    if ($newvalues['username'] != "")
+    if ($newvalues['username']!="")
     {
         $table=FN_GetUserForm();
         $newvalues['registrationdate']=FN_Now();
-        if ($password != "")
+        if ($password!="")
             $newvalues['passwd']=$password;
-        if (isset($newvalues['passwd']) && $newvalues['passwd'] == "")
+        if (isset($newvalues['passwd'])&&$newvalues['passwd']=="")
         {
             unset($newvalues['passwd']);
         }
@@ -466,10 +459,10 @@ function FN_CheckUser()
     global $_FN;
     $secid=FN_GetParam("secid",$_COOKIE);
     $UserValues=FN_GetUser($_FN['user']);
-    if (empty($secid) || empty($UserValues['passwd']))
+    if (empty($secid)||empty($UserValues['passwd']))
         return false;
     $RequiredSecid=md5($_FN['user'].$UserValues['passwd']);
-    if ($RequiredSecid == $secid)
+    if ($RequiredSecid==$secid)
         return true;
     return false;
 }
@@ -523,20 +516,19 @@ class xmldbfrm_field_md5passwd
     {
         
     }
-
     function show($params)
     {
         if ($params['is_update'])
             $params['value']="";
         $html="";
-        $toltips=($params['frm_help'] != "") ? "title=\"".$params['frm_help']."\"" : "";
-        $html .= "<input  $toltips value=\"".str_replace('"','\\"',$params['value'])."\" autocomplete=\"off\" name=\"".$params['name']."\" type=\"password\" />\n";
+        $toltips=($params['frm_help']!="") ? "title=\"".$params['frm_help']."\"" : "";
+        $html.="<input  $toltips value=\"".str_replace('"','\\"',$params['value'])."\" autocomplete=\"off\" name=\"".$params['name']."\" type=\"password\" />\n";
         return $html;
     }
 
     function view($params)
     {
-        $html.= "***";
+        $html.="***";
         return "***";
     }
 
@@ -548,9 +540,72 @@ class xmldbfrm_field_md5passwd
      */
     function formtovalue($str,$params)
     {
-        if ($str == "")
+        if ($str=="")
             return "";
         $str=md5($str);
+        return $str;
+    }
+
+    /**
+     * 
+     * @param type $str
+     * @return string
+     */
+    function valuetoform($str)
+    {
+        return "";
+    }
+
+}
+
+/**
+ * 
+ */
+class xmldbfrm_field_cryptpasswd
+{
+
+    function __construct()
+    {
+        
+    }
+
+    function show($params)
+    {
+        if ($params['is_update'])
+            $params['value']="";
+        $html="";
+        $toltips=($params['frm_help']!="") ? "title=\"".$params['frm_help']."\"" : "";
+        $html.="<input  $toltips value=\"".str_replace('"','\\"',$params['value'])."\" autocomplete=\"off\" name=\"".$params['name']."\" type=\"password\" />\n";
+        return $html;
+    }
+
+    function view($params)
+    {
+        $html.="***";
+        return "***";
+    }
+
+    /**
+     *
+     * @param string $str
+     * @param array $params
+     * @return string 
+     */
+    function formtovalue($str,$params)
+    {
+        if ($str=="")
+            return "";
+        $options=[
+            'cost'=>FN_AUTH_COST
+        ];
+        if (function_exists("password_hash"))
+        {
+            $str=@password_hash($str,FN_AUTH_METHOD,$options);
+        }
+        else
+        {
+            $str=md5($str);
+        }
         return $str;
     }
 

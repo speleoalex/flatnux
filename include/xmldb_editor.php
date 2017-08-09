@@ -287,7 +287,7 @@ Pages : <!-- start pages --><!-- start page --><a href=\"{pagelink}\">{pagetitle
     $siteurl="";
     if (isset($params['siteurl']))
     {
-        $siteurl = $params['siteurl'];
+        $siteurl=$params['siteurl'];
     }
     $table->charset_page=$param['charset_page'];
     if (isset($params['layout']))
@@ -632,7 +632,7 @@ set_changed();
                 break;
             default :
                 //---------------------------GRID------------------------------>
-                
+
                 $endloop=true;
                 if (!empty($params['function_grid'])&&function_exists($params['function_grid']))
                 {
@@ -698,17 +698,19 @@ set_changed();
                     {
                         foreach($__fieldstoread as $fieldname)
                         {
+                            $fieldname=preg_replace("/\[.*\]/s","",$fieldname);
                             if (isset($table->xmltable->fields[$fieldname]))
                             {
                                 $fieldstoread[]=$fieldname;
                             }
                         }
                     }
-
+                    //dprint_r($fields);
                     if ($params['defaultorder']==false)
                         $params['defaultorder']=is_array($table->xmltable->primarykey) ? $table->xmltable->primarykey[0] : $table->xmltable->primarykey;
                     if ($order==false)
                         $order=$params['defaultorder'];
+                    $order=preg_replace("/\[.*\]/s","",$order);
                     //echo "or=$order";
                     /*
                       if (!empty($params['searchfields']))
@@ -793,6 +795,7 @@ set_changed();
                     {
                         foreach($fields as $ofield)
                         {
+                            //$ofield=preg_replace("/\[.*\]/s","",$ofield);
                             if (isset($table->formvals[$ofield]))
                             {
                                 $orderfield[$ofield]=$table->formvals[$ofield];
@@ -803,9 +806,11 @@ set_changed();
                                 if (strstr($ofield,"]"))
                                 {
                                     $tf=explode("]",$ofield);
+                                    $__ofield=$tf[1];
+                                    $orderfield[$ofield]=isset($table->formvals[$__ofield])?$table->formvals[$__ofield]:"";
                                     $tf=$tf[0];
                                     $tf=str_replace("[","",$tf);
-                                    $orderfield[$ofield]=array("title"=>$tf);
+                                    $orderfield[$ofield]['title']=$tf;
                                 }
                                 else
                                     $orderfield[$ofield]="";
@@ -814,6 +819,7 @@ set_changed();
                     }
                     else
                         $orderfield=$table->formvals;
+                  // dprint_r($orderfield);
                     $numcols=0;
                     foreach($orderfield as $key=> $value)
                     {
@@ -824,6 +830,7 @@ set_changed();
                         if ($show_translations==true||!isset($table->formvals[$key]['frm_multilanguage'])||$table->formvals[$key]['frm_multilanguage']!="1")
                         {
                             $numcols++;
+                            $key=preg_replace("/\[.*\]/s","",$key);
                             if (isset($value['title']))
                             {
                                 $rev="";
@@ -838,7 +845,7 @@ set_changed();
                                     }
                                     else
                                     {
-                                        $t="<img style=\"vertical-align:middle;float:right\" src=\"{$siteurl}images/fn_down.png\" alt=\"\" />"; 
+                                        $t="<img style=\"vertical-align:middle;float:right\" src=\"{$siteurl}images/fn_down.png\" alt=\"\" />";
                                         $desclink="&amp;desc_{$postgetkey}=$key";
                                     }
                                 }
@@ -925,6 +932,7 @@ set_changed();
                                     $kfunction=explode("]",$kfunction);
                                     $kfunction=$kfunction[1];
                                 }
+
                                 if ($fields&&!in_array($key,$fields))
                                     continue;
                                 $vimage="";
@@ -954,6 +962,7 @@ set_changed();
                                     else
                                     {
                                         $value=$row[$field['name']];
+
                                         if ($field['frm_type']=="image")
                                         {
                                             $image=$table->xmltable->get_file($row,$field['name']);

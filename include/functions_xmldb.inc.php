@@ -153,7 +153,7 @@ function FN_XmltableEditor($tablename,$params=false,$params2=false)
     $params['textrequired']=isset($params['textrequired']) ? $params['textrequired'] : "*";
     $params['textfields']=isset($params['textfields']) ? $params['textfields'] : FN_Translate("required fields");
     $params['textcancel']=isset($params['textcancel']) ? $params['textcancel'] : FN_Translate("cancel");
-    $params['textnew']=isset($params['textnew']) ? $params['textnew'] : "<img style=\"vertical-align:middle;border:0px;\" alt=\"\"  src=\"".FN_FromTheme("images/add.png")."\" />[".FN_Translate("new")."]";
+    $params['textnew']=isset($params['textnew']) ? $params['textnew'] : "<img style=\"vertical-align:middle;border:0px;\" alt=\"\"  src=\"".FN_FromTheme("images/add.png")."\" /> ".FN_Translate("new")."";
     $params['textexitwithoutsaving']=isset($params['textexitwithoutsaving']) ? $params['textexitwithoutsaving'] : FN_Translate("want to exit without saving?");
     //messages---<
     if (empty($params['layout_template']) && file_exists("themes/{$_FN['theme']}/form.tp.html"))

@@ -14,8 +14,8 @@
 .fn_admin_ccicon{}
 .fn_admin_username{float:left;margin-left:10px;line-height: 22px;}
 .fn_admin_username img {height:16px;vertical-align: middle}
-#fn_adminonoff{width:100%;position:fixed;bottom:0px;right:0px;height:22px;line-height:22px;padding:2px;z-index:999;text-align:right}
-#fn_adminonoff a{background-color:#ffffff;color:#000000;border:1px solid #cccccc;height:18px;line-height:18px;display:inline-block;padding:1px;margin:1px;font-size:12px;text-decoration:none}
+#fn_adminonoff{width:100%;position:fixed;bottom:1px;right:0px;height:25px;line-height:25px;padding:2px;z-index:999;text-align:right}
+#fn_adminonoff a{background-color:#ffffff;color:#000000;border:1px solid #cccccc;height:18px;display:inline-block;padding:1px;margin:1px;font-size:12px;text-decoration:none}
 #fn_adminonoff a{display:inline}
 #fn_adminonoff>a{display:inline-block}
 #fn_adminonoff img{vertical-align:middle}

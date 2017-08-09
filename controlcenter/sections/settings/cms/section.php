@@ -7,5 +7,5 @@
  */
 defined('_FNEXEC') or die('Restricted access');
 $params = false;
-FN_EditConfFile("config.php");
+echo FNCC_HtmlEditConfFile("config.php");
 ?>

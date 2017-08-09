@@ -714,12 +714,16 @@ function FN_TPL_tp_create_menu($str="")
 }
 
 /**
- *
+ * 
+ * @global array $_FN
+ * @staticvar boolean $sections
+ * @param type $str
+ * @param type $part
+ * @param type $parent
  * @return string
  */
-function FN_TPL_html_menu($str="",$part)
+function FN_TPL_html_menu($str="",$part,$parent=false)
 {
-
     global $_FN;
     static $sections=false;
     $config=FN_LoadConfig("themes/{$_FN['theme']}/config.php");
@@ -766,7 +770,11 @@ function FN_TPL_html_menu($str="",$part)
         else
             $sectionradix=$config[$part.'_menu_parent'];
     }
-
+    if ($parent)
+    {
+        $sectionradix=$parent;
+    }
+//dprint_r($sectionradix);
     if (empty($sections[$sectionradix]))
         $sections[$sectionradix]=FN_GetSections($sectionradix);
 

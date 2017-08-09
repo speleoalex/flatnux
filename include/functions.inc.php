@@ -594,7 +594,8 @@ function FN_IncludeCSS($include_theme_css=true,$include_section_css=true)
     $listcss=glob("include/css/*.css");
     foreach($listcss as $cssfile)
     {
-        $html.="\n\t<link rel='StyleSheet' type='text/css' href=\"{$_FN['sitepath']}$cssfile\" />";
+        $ftime=@filemtime($cssfile);
+        $html.="\n\t<link rel='StyleSheet' type='text/css' href=\"{$_FN['sitepath']}$cssfile?$ftime\" />";
         $css.=file_get_contents($cssfile)."\n";
     }
     if ($include_theme_css)

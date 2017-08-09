@@ -531,7 +531,7 @@ var syncdiv = function (id)
                     $formaction="{$_FN['controlcenter']}?opt=$opt&amp;op___xdb_fn_sections=insnew&amp;pk___xdb_fn_sections=$mod";
                     $formexit="{$_FN['controlcenter']}?opt=$opt&amp;op___xdb_fn_sections=insnew&amp;pk___xdb_fn_sections=$mod";
                     //($file,$formaction = "",$exit = "",$allow = false,$write_to_file = false,$mod = "",$block = "")
-                    echo FN_HtmlEditConfFile("modules/$sectiontype/config.php",$formaction,"",false,false,$mod,$block);
+                    echo FNCC_HtmlEditConfFile("modules/$sectiontype/config.php",$formaction,"",false,false,$mod,$block);
                     echo "</div>";
                 }
 

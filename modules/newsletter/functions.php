@@ -18,7 +18,7 @@ function NS_GetMailUsers($group="_ALLUSERS")
 {
     global $_FN;
     $userlist=array();
-    if ($group == "_ALLUSERS")
+    if ($group=="_ALLUSERS")
     {
         $userlist=FN_XMLQuery("SELECT * FROM fn_users WHERE active LIKE '1'");
     }
@@ -85,7 +85,7 @@ function NS_SubscribeForm()
     global $_FN;
     $email=FN_GetParam("email",$_POST,"html");
     $group=FN_GetParam("group",$_POST,"html");
-    if (isset($_POST['email']) && FN_CheckMail($email))
+    if (isset($_POST['email'])&&FN_CheckMail($email))
     {
         if (isset($_POST['subscribe']))
         {
@@ -98,11 +98,12 @@ function NS_SubscribeForm()
     }
     else
     {
-        $action=FN_RewriteLink("index.php?mod={$_FN['mod']}");
+        $opt =FN_GetParam("opt",$_GET);
+        $action=FN_RewriteLink("index.php?mod={$_FN['mod']}&opt=$opt");
         $groups=NS_GetNsGroups();
         echo "<p>".FN_Translate("to get our newsletter please enter your email and click on ”subscribe”. If you want to cancel the newsletter please enter your email and click on ”remove”")."</p>";
         $txtmail=FN_Translate("email");
-        if (count($groups) == 1)
+        if (count($groups)==1)
         {
             $group=$groups[0];
             echo "<form method=\"post\" action=\"$action\">\n";
@@ -172,7 +173,7 @@ function NS_Subscribe($email,$group)
     //------------------newsletter_subscriptions------------------------------->
     $t=FN_XmlTable("newsletter_subscriptions");
     $recordToUpdate=$t->GetRecord(array("email"=>$email));
-    if ($inUsers == true && is_array($recordToUpdate))
+    if ($inUsers==true&&is_array($recordToUpdate))
     {
         $r=$t->DelRecord($recordToUpdate['id']);
     }
@@ -217,7 +218,7 @@ function NS_Unsubscribe($email,$group)
             $s=array();
             foreach($s_tmp as $it)
             {
-                if ($it != $group && $it !== "")
+                if ($it!=$group&&$it!=="")
                 {
                     $s[]=$group;
                 }
@@ -239,14 +240,14 @@ function NS_Unsubscribe($email,$group)
             $s=array();
             foreach($s_tmp as $it)
             {
-                if ($it != $group && $it !== "")
+                if ($it!=$group&&$it!=="")
                 {
                     $s[]=$group;
                 }
             }
             $s=array_unique($s);
             $recordToUpdate['newsletter']=implode(",",$s);
-            if ($recordToUpdate['newsletter'] == "")
+            if ($recordToUpdate['newsletter']=="")
             {
                 $r=$t->DelRecord($recordToUpdate['id']);
             }
@@ -271,7 +272,11 @@ function NS_Admin()
     $opt=FN_GetParam("opt",$_GET,"html");
     $forcenewvalues=array("date"=>date("Y/m/d"));
     echo "<h2>".FN_Translate("messages").":</h2>";
-
+    $xmldbeditor="FN_XmltableEditor";
+    if (basename($_FN['self'])=="controlcenter.php")
+    {
+        $xmldbeditor="FNCC_XmltableEditor";
+    }
     $imgedit="<img style=\"border:0px;vertical-align:middle\" src=\"".FN_FromTheme("images/modify.png")."\" alt=\"\" />";
     $imgedel="<img style=\"border:0px;vertical-align:middle\" src=\"".FN_FromTheme("images/delete.png")."\" alt=\"\" />";
     $imgeview="<img style=\"border:0px;vertical-align:middle\" src=\"".FN_FromTheme("images/news.png")."\" alt=\"\" />";
@@ -291,13 +296,15 @@ function NS_Admin()
     $params['defaultorder']="date";
     $params['defaultorderdesc']=true;
     $params['enableview']=true;
-    FN_XmltableEditor("newsletter",$params);
+    $editor=$_FN['htmleditor'];
+    $config=FN_LoadConfig("modules/newsletter/config.php");
+    $_FN['force_htmleditor']=$config['htmleditornewsletter'];
+    $xmldbeditor("newsletter",$params);
     echo "<h2>".FN_Translate("groups newsletter").":</h2>";
-    FN_XmltableEditor("newsletter_newsletters");
+    $xmldbeditor("newsletter_newsletters");
     echo "<br /><br /><button onclick=\"window.location='?mod={$_FN['mod']}&opt=$opt'\">";
     echo FN_Translate("cancel");
     echo "</button>";
-
     echo "<br /><br /><a href=\"?mod={$_FN['mod']}&opt=$opt&action=getall\">".FN_Translate("view all users emails")."</a>";
 }
 
@@ -323,14 +330,14 @@ function NS_SendNewsletter($id)
 		<input name=\"opt\" value=\"$opt\" type=\"hidden\" />
 		<input name=\"action\" value=\"send\" type=\"hidden\" />
 		<input name=\"message\" value=\"$id\" type=\"hidden\" />";
-        $html .= FN_Translate("sent to").":<select name=\"group\" >";
-        $html .= "<option value=\"_ALLUSERS\">".FN_Translate("all site users")."</option>";
+        $html.=FN_Translate("sent to").":<select name=\"group\" >";
+        $html.="<option value=\"_ALLUSERS\">".FN_Translate("all site users")."</option>";
         foreach($groups as $group)
         {
 
-            $html .= "<option value=\"{$group['id']}\">".$group['title']."</option>";
+            $html.="<option value=\"{$group['id']}\">".$group['title']."</option>";
         }
-        $html .="</select>
+        $html.="</select>
 		<button type=\"submit\">".FN_Translate("send")."</button>
 </form>";
         return $html;

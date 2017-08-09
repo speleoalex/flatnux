@@ -22,7 +22,7 @@ if ($modcont)
 
         $_FN['block']=$blockid;
         //die("pippo");
-        FN_EditConfFile($modcont,"{$_FN['controlcenter']}?opt=$opt&edit=$modcont&amp;block=$blockid","{$_FN['controlcenter']}?opt=$opt");
+        echo FNCC_HtmlEditConfFile($modcont,"{$_FN['controlcenter']}?opt=$opt&edit=$modcont&amp;block=$blockid","{$_FN['controlcenter']}?opt=$opt");
 
         $_FN['block']="";
     }
@@ -89,11 +89,11 @@ else
     $params['function_on_delete']="OnDelete";
     $params['list_onupdate']=false;
     $params['textviewlist']="";
-    $params['textnew']="";
+    $params['textnew']=FN_Translate("new");
     $params['textcancel']=FN_Translate("list of blocks")."/".FN_Translate("cancel");
     $params['function_on_update']="FNCC_OnUpdateBlock";
     $params['function_on_insert']="FNCC_OnInsertBlock";
-    
+
     $op___xdb_fn_blocks=FN_GetParam("op___xdb_fn_blocks",$_GET);
     //-----blocks editor ------------------------------------------------------>
     ob_start();
@@ -127,13 +127,12 @@ else
     }
     if ($editType!==null)
         $block['type']=$editType;
-    if (file_exists("blocks/{$block['id']}") && !empty($block['type'])&&file_exists("modules/{$block['type']}/config.php"))
+    if (file_exists("blocks/{$block['id']}")&&!empty($block['type'])&&file_exists("modules/{$block['type']}/config.php"))
     {
         //echo "<br /><div><a href=\"?edit=modules/block_calendar/config.php&opt=$opt&block=$pk___xdb_fn_blocks\">" . FN_Translate("configure module") . " {$block['type']}</a></div>";
         //---------------block settings---------------------------------------->
         $sectiontype=FN_GetParam("type",$_POST,"html");
         $mod="";
-
         if (!empty($blockId))
         {
             if (file_exists("modules/{$block['type']}/config.php"))
@@ -142,13 +141,14 @@ else
                 echo "<legend>".FN_Translate("module options that is loaded in this block")."</legend>";
                 $formaction="{$_FN['controlcenter']}?opt=$opt&amp;op___xdb_fn_blocks=insnew&amp;pk___xdb_fn_blocks=$blockId";
                 $formexit="{$_FN['controlcenter']}?opt=$opt";
-                echo FN_HtmlEditConfFile("modules/{$block['type']}/config.php",$formaction,$formexit,false,false,$mod,$blockId);
+                echo FNCC_HtmlEditConfFile("modules/{$block['type']}/config.php",$formaction,$formexit,false,false,$mod,$blockId,$tableHtmlattibutes);
                 echo "</fieldset>";
             }
         }
         //---------------block settings----------------------------------------<
     }
 }
+
 
 /**
  *
@@ -565,6 +565,4 @@ function FNCC_OnInsertBlock($newvalues)
         FN_OnSitemapChange();
     }
 }
-
-
 ?>
