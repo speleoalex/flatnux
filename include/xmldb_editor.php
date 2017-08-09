@@ -872,8 +872,8 @@ set_changed();
 
                     $template_gridheader_gridrow=str_replace("{numactions}",count($optionsedit),$template_gridheader_gridrow);
                     $template_gridheader_gridrow=str_replace("{bkheader}",$backgroundcolorheader,$template_gridheader_gridrow);
-                    $html_GridRow=preg_replace('/(<!-- start gridfields -->)(.*)(<!-- end gridfields -->)/is',$html_GridHeader,$template_gridheader_gridrow);
-                    $html_GridHeader=preg_replace('/(<!-- start gridrow -->)(.*)(<!-- end gridrow -->)/is',$template_gridheader_gridrow,$html_GridRow);
+                    $html_GridRow=preg_replace('/(<!-- start gridfields -->)(.*)(<!-- end gridfields -->)/is',xmldb_encode_preg_replace2nd($html_GridHeader),$template_gridheader_gridrow);
+                    $html_GridHeader=preg_replace('/(<!-- start gridrow -->)(.*)(<!-- end gridrow -->)/is',xmldb_encode_preg_replace2nd($template_gridheader_gridrow),$html_GridRow);
 
 
                     //----------------------header-----------------------------<
@@ -1065,7 +1065,7 @@ set_changed();
                             }
                             $tmp_html=str_replace("{bkrow}",$backgroundcolor,$template_gridbody_gridrow);
 
-                            $html_gridrow=preg_replace('/(<!-- start gridfields -->)(.*)(<!-- end gridfields -->)/is',$html_gridfields,$tmp_html);
+                            $html_gridrow=preg_replace('/(<!-- start gridfields -->)(.*)(<!-- end gridfields -->)/is',xmldb_encode_preg_replace2nd($html_gridfields),$tmp_html);
                             $html_gridbody.=$html_gridrow;
                         }
                     }
@@ -1074,10 +1074,10 @@ set_changed();
                         //$html = "<table border=\"\" style=\"background-color:$bordercolor\" cellpadding=\"2\" cellspacing=\"1\" >";
 //                        $html_gridbody .= "$textnorecord";
                     }
-                    $html_table=preg_replace('/(<!-- start table -->)(.*)(<!-- end table -->)/is',$html_gridbody,$template_grid);
-                    $html=preg_replace('/(<!-- start gridheader -->)(.*)(<!-- end gridheader -->)/is',$html_GridHeader,$params['html_template_grid']);
-                    $html=preg_replace('/(<!-- start gridbody -->)(.*)(<!-- end gridbody -->)/is',$html_gridbody,$html);
-                    $html=preg_replace('/(<!-- start pages -->)(.*)(<!-- end pages -->)/is',$htmlpages_full,$html);
+                    $html_table=preg_replace('/(<!-- start table -->)(.*)(<!-- end table -->)/is',xmldb_encode_preg_replace2nd($html_gridbody),$template_grid);
+                    $html=preg_replace('/(<!-- start gridheader -->)(.*)(<!-- end gridheader -->)/is',xmldb_encode_preg_replace2nd($html_GridHeader),$params['html_template_grid']);
+                    $html=preg_replace('/(<!-- start gridbody -->)(.*)(<!-- end gridbody -->)/is',xmldb_encode_preg_replace2nd($html_gridbody),$html);
+                    $html=preg_replace('/(<!-- start pages -->)(.*)(<!-- end pages -->)/is',xmldb_encode_preg_replace2nd($htmlpages_full),$html);
                 }
                 $endloop=true;
                 //---------------------------GRID------------------------------<
