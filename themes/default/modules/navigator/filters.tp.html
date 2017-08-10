@@ -1,0 +1,30 @@
+<!-- filtercategory -->
+<div class="art-block clearfix">
+    <div class="art-blockheader">
+        <h3 class="t">{filtertitle}</h3>
+    </div>
+    <div class="art-blockcontent"><!-- clearfilter -->
+        <a style="color:red" onclick="try {
+                    call_ajax(this.href, 'pageresults');
+                    return false;
+                } catch (e) {
+                }" href="{urlremovefilter}">[{i18n:remove filter}]</a>
+        <!-- end clearfilter -->
+        <div style="max-height:200px;overflow:auto">
+            <!-- filteritems -->
+            <!-- filteritem -->
+            <div ><b style="color:#297ddd;display:inline-block;width:40px;">({counteritem})</b>
+                <a onclick="try {
+                            call_ajax(this.href, 'pageresults');
+                            return false;
+                        } catch (e) {
+                        }"
+                   href="{urlfilteritem}"><span>{titleitem}</span></a></div>
+            <!-- end filteritem -->
+            <!-- end filteritems -->
+        </div></div>
+</div>
+<!-- end filtercategory -->
+
+
+

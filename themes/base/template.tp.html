@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="{lang}">
+    <head>
+        <title></title>
+        <style>
+            /* reset */
+            article,aside,details,figcaption,figure,footer,header,hgroup,hr,menu,nav,section{display:block}a,hr{padding:0}abbr,address,article,aside,audio,b,blockquote,body,canvas,caption,cite,code,dd,del,details,dfn,div,dl,dt,em,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,html,i,iframe,img,ins,kbd,label,legend,li,mark,menu,nav,object,ol,p,pre,q,samp,section,small,span,strong,sub,summary,sup,table,tbody,td,tfoot,th,thead,time,tr,ul,var,video{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:0 0}ins,mark{background-color:#ff9;color:#000}body{line-height:1}nav ul{list-style:none}blockquote,q{quotes:none}blockquote:after,blockquote:before,q:after,q:before{content:'';content:none}a{margin:0;font-size:100%;vertical-align:baseline;background:0 0}ins{text-decoration:none}mark{font-style:italic;font-weight:700}del{text-decoration:line-through}abbr[title],dfn[title]{border-bottom:1px dotted;cursor:help}table{border-collapse:collapse;border-spacing:0}hr{height:1px;border:0;border-top:1px solid #ccc;margin:1em 0}input,select{vertical-align:middle}
+            /* style */
+            body {font-family: Roboto, "Helvetica Neue", Helvetica, sans-serif;font-size: 16px;background-color: #ffffff;color:#444444;padding:1em;line-height: 2em;min-width:300px;}
+            a   {color: #4444ff;text-decoration: none}
+            a:hover{text-decoration: underline}
+            p    {color: #444444;}
+            nav ul li {display: inline;padding:1em;}
+            nav {padding:1em;border-bottom: 1px solid;}
+            section {padding:1em;}
+            footer {padding:1em;border-top: 1px solid}
+            aside{float:right;background-color: #ffffff;max-width:200px}
+            input{border:1px solid #dddddd;border-radius: 2px}
+            button,input[type=button],input[type=submit]{border:1px solid #dddddd;border-radius: 8px;background-color: #4444ff;color:#ffffff;padding:0.5em;border:1px solid #4444ff}
+            button:hover,input[type=button]:hover,input[type=submit]:hover{background-color: #54a8f5;}
+        </style>
+    </head>
+    <body>
+        <header>
+
+        <div style="text-align:right;">
+            <!-- include languages -->
+            <!-- langitem -->
+            <a href='{siteurl}?lang={langname}'><img src="{siteurl}/images/flags/{langname}.png" title="{langtitle}"/> </a>
+            <!-- endlangitem -->
+            <!-- end include languages -->          
+        </div>         
+        <img src="logo.png" alt="" style="float:right;height:50px;"/>
+            <nav>
+                <ul class="menu">
+                    <!-- include menu -->
+                    <!-- menuitems -->
+                    <!-- menuitem -->
+                    <li><a href="#">{title}</a></li>
+                    <!-- end menuitem -->
+                    <!-- menuitemactive -->
+                    <li><a href="#" class="active">{title}</a></li>
+                    <!-- end menuitemactive -->
+                    <!-- end menuitems -->
+                    <!-- end include menu -->
+                </ul>
+
+            </nav>
+            <!-- include blocks_top -->
+            <!-- end include blocks_top -->
+        </header>
+        <section>
+            <!-- include section -->
+            <!-- end include section -->
+        </section>        
+        <footer>
+            <!-- include blocks_bottom -->
+            <!-- blockitem -->
+            <div>
+                <!-- blockcontents -->
+                <!-- endblockcontents -->
+            </div>
+            <!-- endblockitem -->
+            <!-- end include blocks_bottom -->           
+            {credits}
+        </footer>
+    </body>
+</html>
