@@ -1011,7 +1011,6 @@ function FN_HtmlModalWindow($body,$title="",$textbutton="ok")
     //die();
 }
 
-
 /**
  * 
  * @param type $file
@@ -1026,12 +1025,13 @@ function FN_HtmlModalWindow($body,$title="",$textbutton="ok")
 function FNCC_HtmlEditConfFile($file,$formaction="",$exit="",$allow=false,$write_to_file=false,$mod="",$block="",$tableHtmlattibutes="")
 {
     global $_FN;
-    if ($tableHtmlattibutes=="" && file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/editconf.tp.html"))
-    {        
-        preg_match("/<!-- editconf table attributes -->(.*)<!-- end editconf table attributes -->/is",file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/editconf.tp.html"),$out);        
-        $tableHtmlattibutes=empty($out[1]) ? "" : $out[1];
+    if ($tableHtmlattibutes==""&&file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/editconf.tp.html"))
+    {
+        preg_match("/<!-- editconf table attributes -->(.*)<!-- end editconf table attributes -->/is",file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/editconf.tp.html"),$out);
+        $tableHtmlattibutes=empty($out[1]) ? "" : $out[1];       
     }
-    
+
     return FN_HtmlEditConfFile($file,$formaction,$exit,$allow,$write_to_file,$mod,$block,$tableHtmlattibutes);
 }
+
 ?>

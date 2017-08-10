@@ -13,8 +13,8 @@ defined('_FNEXEC') or die('Restricted access');
 //echo FN_HtmlSectionEditor();
 
 global $_FN;
-global $editType;
-$editType=null;
+global $currentSectionType;
+$currentSectionType=null;
 $opt=FN_GetParam("opt",$_GET);
 $modcont=FN_GetParam("edit",$_GET);
 $is_in_details=false;
@@ -60,7 +60,7 @@ if ($modcont)
             echo "<button onclick=\"window.location='{$_FN['controlcenter']}?opt=$opt'\" >".FN_Translate("no")."</button> ";
             echo "<button onclick=\"window.location='{$_FN['controlcenter']}?opt=$opt&amp;edit=$modcont&amp;create'\" >".FN_Translate("yes")."</button> ";
 
-            if ($lang!=$_FN['lang_default']&&file_exists("$filedir/section.{$_FN['lang_default']}.html"))
+            if ($lang!= $_FN['lang_default'] && file_exists("$filedir/section.{$_FN['lang_default']}.html"))
             {
                 echo " <a href=\"{$_FN['controlcenter']}?opt=$opt&amp;edit=$modcont&amp;create&amp;copy\" >[".FN_Translate("copy contents from the default translation and edit it")."]</a> ";
             }
@@ -69,7 +69,7 @@ if ($modcont)
     else
     {
         $file_restore=FN_GetParam("restore",$_GET);
-        if (!empty($file_restore)&&file_exists($file_restore)&&FN_GetFileExtension($file_restore)=="bak~")
+        if (!empty($file_restore) && file_exists($file_restore) && FN_GetFileExtension($file_restore)== "bak~")
         {
             $editor_params['force_value']=file_get_contents($file_restore);
             $editor_params['text_save']=FN_Translate("restore");
@@ -82,18 +82,15 @@ if ($modcont)
             $html.="<h3>".FN_Translate("old versions").":</h3>";
             $html.="<table><tr><td><b>".FN_Translate("creation date")."</b></td><td><b>".FN_Translate("created by")."</b></td><td><b>".FN_Translate("delete date")."</b></td><td><b>".FN_Translate("overwritten by")."</b></td><td></td></tr>";
             $files=glob("$modcont.*");
-            usort($files,function( $a,$b )
-            {
-                return filemtime($a)-filemtime($b);
-            });
+            usort($files,"FN_UsortFilemtime");
 
             $bk_user="";
             foreach($files as $file)
             {
                 $html.="<tr>";
                 $attr=explode(".",basename($file));
-                $date=DateTime::createFromFormat('YmdHis',$attr[count($attr)-3]);
-                $dateFile=$attr[count($attr)-4];
+                $date=DateTime::createFromFormat('YmdHis',$attr[count($attr) - 3]);
+                $dateFile=$attr[count($attr) - 4];
                 if (is_numeric($dateFile))
                 {
                     $dateFile=FN_FormatDate($dateFile);
@@ -112,7 +109,7 @@ if ($modcont)
                     $bk_date="";
                 }
                 $html.="<td>$dateFile</td><td>$bk_user</td><td>".$bk_date."</td>";
-                $bk_user=$attr[count($attr)-2];
+                $bk_user=$attr[count($attr) - 2];
                 $html.="<td>$bk_user</td>";
                 $html.="<td><button onclick=\"window.location='controlcenter.php?mod={$_FN['mod']}&opt=$opt&edit=$modcont&restore=$file'\">".FN_Translate("restore")."</button></td>";
                 $html.="</tr>";
@@ -454,7 +451,7 @@ var syncdiv = function (id)
         $pk___xdb_fn_sections=FN_GetParam("pk___xdb_fn_sections",$_GET,"html");
         $id=FN_GetParam("id",$_POST,"html");
         $error=false;
-        if ($id!=""&&$pk___xdb_fn_sections!=""&&$id!=$pk___xdb_fn_sections)
+        if ($id!= "" && $pk___xdb_fn_sections!= "" && $id!= $pk___xdb_fn_sections)
         {
             if (file_exists("sections/$id"))
             {
@@ -465,7 +462,7 @@ var syncdiv = function (id)
             }
             else
             {
-                if (false===FN_Rename("sections/$pk___xdb_fn_sections","sections/$id"))
+                if (false=== FN_Rename("sections/$pk___xdb_fn_sections","sections/$id"))
                 {
                     echo FN_Translate("error");
                     $error=true;
@@ -504,7 +501,7 @@ var syncdiv = function (id)
             if (!empty($mod))
             {
                 $sectionvalues=FN_GetSectionValues($mod);
-                echo "<h2>".FN_Translate("page")."</h2><div style=\"padding:5px;border:1px solid\">";
+                echo "<h2>".FN_Translate("page")."</h2><div style=\"padding:5px;border:1px solid #dadada\">";
             }
             FNCC_XmltableEditor("fn_sections",$params); //editor
             $sectionvalues=FN_GetSectionValues($mod,false);
@@ -520,14 +517,15 @@ var syncdiv = function (id)
             if (!empty($mod))
             {
                 $sectiontype=$sectionvalues['type'];
-                if ($editType!==null)
-                    $sectiontype=$editType;
-                if (file_exists("modules/$sectiontype/config.php") && file_exists("sections/{$mod}") )
+                if ($currentSectionType!== null)
+                    $sectiontype=$currentSectionType;
+                if ($sectiontype!= "" && file_exists("modules/$sectiontype/config.php") && file_exists("sections/{$mod}"))
                 {
                     $t=FN_XmlForm("fn_sectionstypes");
                     $values=$t->GetRecordTranslatedByPrimarykey("$sectiontype");
                     $title=isset($values['title']) ? $values['title'] : $sectiontype;
-                    echo "<h2>$title</h2><div style=\"padding:5px;border:1px solid\">";
+                    echo "<h2>$title</h2>";
+                    echo "<div style=\"padding:5px;border:1px solid #dadada\">";
                     $formaction="{$_FN['controlcenter']}?opt=$opt&amp;op___xdb_fn_sections=insnew&amp;pk___xdb_fn_sections=$mod";
                     $formexit="{$_FN['controlcenter']}?opt=$opt&amp;op___xdb_fn_sections=insnew&amp;pk___xdb_fn_sections=$mod";
                     //($file,$formaction = "",$exit = "",$allow = false,$write_to_file = false,$mod = "",$block = "")
@@ -545,10 +543,10 @@ var syncdiv = function (id)
         }
 
         //------del section----------------------------------------------------->
-        if (!empty($_GET['op___xdb_fn_sections'])&&$_GET['op___xdb_fn_sections']=="del")
+        if (!empty($_GET['op___xdb_fn_sections']) && $_GET['op___xdb_fn_sections']== "del")
         {
             $sid=FN_GetParam("pk___xdb_fn_sections",$_GET);
-            if ($sid!=""&&file_exists("sections/$sid"))
+            if ($sid!= "" && file_exists("sections/$sid"))
             {
                 FN_RemoveDir("sections/$sid");
             }
@@ -586,9 +584,9 @@ var syncdiv = function (id)
                 $newvalues['sectionpath']="sections";
 
                 $errors=$forminsert->VerifyInsert($newvalues);
-                if (count($errors)==0)
+                if (count($errors)== 0)
                 {
-                    if ($newvalues['type']!=""&&file_exists("modules/{$newvalues['type']}/section_template"))
+                    if ($newvalues['type']!= "" && file_exists("modules/{$newvalues['type']}/section_template"))
                     {
                         $r=FN_CopyDir("modules/{$newvalues['type']}/section_template","sections/{$newvalues['id']}",false);
                     }
@@ -605,9 +603,9 @@ var syncdiv = function (id)
                         {
                             $newsections[$k]=$section;
                             $newsections[$k]['position']=$i;
-                            if ($k==$before_after_section)
+                            if ($k== $before_after_section)
                             {
-                                if ($before_after=="before")
+                                if ($before_after== "before")
                                 {
                                     $newvalues['position']=$i;
                                     $i++;
@@ -621,11 +619,11 @@ var syncdiv = function (id)
                             }
                             $i++;
                         }
-                        if ($before_after=="inside")
+                        if ($before_after== "inside")
                             $newvalues['parent']=$before_after_section;
                         foreach($newsections as $k=> $newsection)
                         {
-                            if ($newsections[$k]['position']!=$sections[$k]['position'])
+                            if ($newsections[$k]['position']!= $sections[$k]['position'])
                             {
                                 // dprint_r("update {$newsections[$k]['position']} != {$sections[$k]['position']}");
                                 $forminsert->UpdateRecord(array("id"=>$newsections[$k]['id'],"position"=>$newsections[$k]['position']));
@@ -636,7 +634,7 @@ var syncdiv = function (id)
                         echo FN_i18n("the page has been created");
                         echo "<br />";
                         echo "<br /><a href=\"{$_FN['controlcenter']}?mod={$_FN['mod']}&amp;opt=$opt\">".FN_Translate("next")."</a> <img style=\"vertical-align:middle\" src=\"images/right.png\" alt=\"\"/>";
-                        if ($newvalues['type']!=""&&file_exists("modules/{$newvalues['type']}/config.php"))
+                        if ($newvalues['type']!= "" && file_exists("modules/{$newvalues['type']}/config.php"))
                         {
                             echo "<br /><a href=\"{$_FN['controlcenter']}?mod={$_FN['mod']}&amp;opt=$opt&amp;op___xdb_fn_sections=insnew&amp;pk___xdb_fn_sections={$newvalues['id']}\">".FN_Translate("module options that is loaded in this page")."</a> <img style=\"vertical-align:middle\" src=\"images/right.png\" alt=\"\"/>";
                         }
@@ -680,7 +678,7 @@ function FNCC_print_node($parent,$sections,&$list)
     $level++;
     foreach($sections as $section)
     {
-        if ($section['parent']==$parent)
+        if ($section['parent']== $parent)
         {
             if (in_array($section['id'],$list))
                 return;
@@ -708,14 +706,14 @@ function FNCC_print_section($section,$level)
     $opt=FN_GetParam("opt",$_GET);
     $html="";
     $id++;
-    $left=($level-1)*30;
+    $left=($level - 1) * 30;
     $linkdelete="{$_FN['controlcenter']}?page___xdb_fn_sections=1&order___xdb_fn_sections=id&op___xdb_fn_sections=del&pk___xdb_fn_sections=".$section['id'].'&opt='.$opt;
     $linkedit="{$_FN['controlcenter']}?page___xdb_fn_sections=1&order___xdb_fn_sections=id&op___xdb_fn_sections=insnew&pk___xdb_fn_sections=".$section['id'].'&opt='.$opt;
 
     $bkcolor="#ffffff";
     $textdecoration="";
     $disabled="";
-    if ($section['status']!="1")
+    if ($section['status']!= "1")
     {
         $disabled=" (".FN_Translate("disabled").")";
         $textdecoration="text-decoration: line-through";
@@ -724,11 +722,11 @@ function FNCC_print_section($section,$level)
     $html.="<tr onclick=\"this.style.backgroundColor='#ffff00'\" onmouseover=\"this.style.backgroundColor='#ffffaa'\" onmouseout=\"if(true){this.style.backgroundColor='$bkcolor'}\" style=\"background-color:$bkcolor;border:0px solid #000000;line-height:18px;padding:0px;margin:0px;font-size:12px;height:18px\" id=\"{$section['id']}\">";
 
     $t="";
-    if ($section['level']!=""||$section['group_view']!="")
+    if ($section['level']!= "" || $section['group_view']!= "")
     {
-        if ($section['level']!=="")
+        if ($section['level']!== "")
             $t="<img  alt=\"\" src=\"images/locked.png\" style=\"vertical-align:middle\" />";
-        if ($section['group_view']!=="")
+        if ($section['group_view']!== "")
             $t="<img  alt=\"\" src=\"images/locked.png\" style=\"vertical-align:middle\" />";
     }
     //-----hidden------>
@@ -802,9 +800,6 @@ function FNCC_print_section($section,$level)
     }
     $html.="<td style=\"text-align:left;border-left:1px solid #dadada\">{$start}</td>";
     $html.="<td style=\"text-align:left;border-left:1px solid #dadada\">{$end}</td>";
-
-//    else
-//        $html .= "<img alt=\"\" src=\"images/unlocked.png\" style=\"vertical-align:middle\" />";
     $html.="</td>";
     $html.="</tr>";
 
@@ -822,7 +817,7 @@ function FNCC_UpdateSections()
     $sectionstring=FN_GetParam("sectionstring",$_POST);
     $i=1;
     $sects=array();
-    if ($sectionstring!="")
+    if ($sectionstring!= "")
     {
         $str_sectionsvalues=explode(",",$sectionstring);
         {
@@ -850,23 +845,23 @@ function FNCC_UpdateSections()
             $oldvalues=FN_GetSectionValues($sects[$i]['id']);
             $newvalues['id']=$sects[$i]['id'];
             $newvalues['hidden']=$sects[$i]['hidden'];
-            $newvalues['position']=$sects[$i]['position']*10;
+            $newvalues['position']=$sects[$i]['position'] * 10;
 
-            if ($i==0)
+            if ($i== 0)
             {
                 $newvalues['parent']="";
             }
             else
             {
-                if ($sects[$i]['leveltree']>$sects[$i-1]['leveltree'])
+                if ($sects[$i]['leveltree'] > $sects[$i - 1]['leveltree'])
                 {
-                    $curparent=$newvalues['parent']=$sects[$i-1]['id'];
-                    $idtree=$idtree+($sects[$i]['leveltree']-$sects[$i-1]['leveltree'] );
+                    $curparent=$newvalues['parent']=$sects[$i - 1]['id'];
+                    $idtree=$idtree + ($sects[$i]['leveltree'] - $sects[$i - 1]['leveltree'] );
                     $tree[$idtree]=$curparent;
                 }
-                elseif ($sects[$i]['leveltree']<$sects[$i-1]['leveltree'])
+                elseif ($sects[$i]['leveltree'] < $sects[$i - 1]['leveltree'])
                 {
-                    $idtree=$idtree-($sects[$i-1]['leveltree']-$sects[$i]['leveltree']);
+                    $idtree=$idtree - ($sects[$i - 1]['leveltree'] - $sects[$i]['leveltree']);
                     if (isset($tree[$idtree]))
                         $curparent=$newvalues['parent']=$tree[$idtree];
                 }
@@ -875,7 +870,7 @@ function FNCC_UpdateSections()
                     $newvalues['parent']=$curparent;
                 }
             }
-            if ($newvalues['hidden']!=$oldvalues['hidden']||$newvalues['position']!=$oldvalues['position']||$newvalues['parent']!=$oldvalues['parent'])
+            if ($newvalues['hidden']!= $oldvalues['hidden'] || $newvalues['position']!= $oldvalues['position'] || $newvalues['parent']!= $oldvalues['parent'])
             {
                 //dprint_r($newvalues);
                 if (!$table->xmltable->UpdateRecord($newvalues))
@@ -898,16 +893,16 @@ function FNCC_UpdateSections()
 
 /**
  * 
- * @global type $editType
+ * @global type $currentSectionType
  * @param type $newvalues
  * @param type $oldvalues
  */
 function FNCC_OnUpdateSection($newvalues,$oldvalues)
 {
-    global $editType;
-    if (isset($oldvalues["type"])&&isset($newvalues["type"]))
+    global $currentSectionType;
+    if (isset($oldvalues["type"]) && isset($newvalues["type"]))
     {
-        $editType=$newvalues["type"];
+        $currentSectionType=$newvalues["type"];
         FN_OnSitemapChange();
     }
 }

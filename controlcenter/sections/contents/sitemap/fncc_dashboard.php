@@ -13,15 +13,21 @@ $sections=FN_GetSections("",true,false,true,false,true);
 $sections=FN_ArraySortByKey($sections,"position");
 $sections=FN_ArraySortByKey($sections,"parent");
 echo "<table>";
-echo "<td>".FN_Translate("page type")."</td>";
-echo "<td>".FN_Translate("contents")."</td>";
-echo "<td>".FN_Translate("")."</td>";
+echo "<thead><tr>";
+echo "<th>".FN_Translate("page type")."</th>";
+echo "<th>".FN_Translate("contents")."</th>";
+echo "<th>".FN_Translate("")."</th>";
+echo "</tr></thead>";
 
 $tmp=false;
 echo FNCC_print_node("",$sections,$tmp);
-echo "<tr><td colspan=\"9\"><button onclick=\"window.location='controlcenter.php?opt=contents/sitemap'\">".FN_Translate("modify")."</button></td></tr>";
-echo "</table>";
-
+echo "<tr><td colspan=\"9\">
+        
+</td></tr>";
+echo "</table><br />";
+echo "<p>    <button onclick=\"window.location='controlcenter.php?opt=contents/sitemap'\">".FN_Translate("modify")."</button>
+    <button onclick=\"window.location='controlcenter.php?mod=&opt=contents/sitemap&newsection=1'\">".FN_Translate("create a new page")."</button></p>
+";
 
 /**
  *

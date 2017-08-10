@@ -6,7 +6,7 @@
  * @copyright Copyright (c) 2011
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License
  */
-defined('_FNEXEC')||die('Restricted access');
+defined('_FNEXEC') || die('Restricted access');
 
 /**
  *
@@ -18,8 +18,8 @@ function FN_GetExecuteTimer()
     global $_FN;
     $mtime=microtime();
     $mtime=explode(" ",$mtime);
-    $mtime=doubleval($mtime[1])+doubleval($mtime[0]);
-    return sprintf("%.4f",abs($mtime-$_FN['timestart']));
+    $mtime=doubleval($mtime[1]) + doubleval($mtime[0]);
+    return sprintf("%.4f",abs($mtime - $_FN['timestart']));
 }
 
 /**
@@ -33,11 +33,11 @@ function FN_GetParam($key,$var=false,$type="")
 {
     global $_FN;
     $ret="";
-    if ($var===false)
+    if ($var=== false)
     {
         $var=$_REQUEST;
     }
-    if ($key===false)
+    if ($key=== false)
     {
         $ret=$var;
     }
@@ -55,17 +55,27 @@ function FN_GetParam($key,$var=false,$type="")
             $ret=htmlentities($ret,ENT_QUOTES,$charset);
             break;
         case "int":
-            if ($ret!="")
+            if ($ret!= "")
                 $ret=intval($ret);
             break;
         case "float":
-            if ($ret!="")
+            if ($ret!= "")
                 $ret=floatval($ret);
             break;
         default:
             break;
     }
     return FN_StripPostSlashes($ret);
+}
+/**
+ * 
+ * @param type $a
+ * @param type $b
+ * @return type
+ */
+function FN_UsortFilemtime($a,$b)
+{
+    return filemtime($a) - filemtime($b);
 }
 
 /**
@@ -78,7 +88,7 @@ function FN_GetParam($key,$var=false,$type="")
 function FN_HtmlSection($section="")
 {
     global $_FN;
-    if ($section=="")
+    if ($section== "")
         $section=$_FN['mod'];
     $sectionvalues=FN_GetSectionValues($section);
     //--language from module or section ----->
@@ -91,7 +101,7 @@ function FN_HtmlSection($section="")
 
     $html="";
     $htmlconfig="";
-    if (basename($_SERVER['SCRIPT_FILENAME'])=="index.php")
+    if (basename($_SERVER['SCRIPT_FILENAME'])== "index.php")
     {
         $htmlconfig.=FN_HtmlAdminOptions();
     }
@@ -101,26 +111,23 @@ function FN_HtmlSection($section="")
         return $html;
     }
     $modcont=FN_GetParam("opt",$_GET,"flat");
-    if ($modcont!="")
+    if ($modcont!= "")
     {
         $mode=FN_GetParam("mode",$_GET,"flat");
-        if ($mode=="versions")
+        if ($mode== "versions")
         {
             $html.="FILE: <b>$modcont</b><br />";
             $html.="".FN_Translate("versions").":<br />";
             $html.="<table><tr><td>".FN_Translate("creation date")."</td><td>".FN_Translate("created by")."</td><td>".FN_Translate("delete date")."</td><td>".FN_Translate("overwritten by")."</td><td></td></tr>";
             $files=glob("$modcont.*");
-            usort($files,function( $a,$b )
-            {
-                return filemtime($a)-filemtime($b);
-            });
+            usort($files,"FN_UsortFilemtime");
             $bk_user="";
             foreach($files as $file)
             {
                 $html.="<tr>";
                 $attr=explode(".",basename($file));
-                $date=DateTime::createFromFormat('YmdHis',$attr[count($attr)-3]);
-                $dateFile=$attr[count($attr)-4];
+                $date=DateTime::createFromFormat('YmdHis',$attr[count($attr) - 3]);
+                $dateFile=$attr[count($attr) - 4];
 
                 if (is_numeric($dateFile))
                 {
@@ -133,7 +140,7 @@ function FN_HtmlSection($section="")
                 $bk_date=$date->getTimestamp();
                 $bk_date=FN_FormatDate($bk_date);
                 $html.="<td>$dateFile</td><td>$bk_user</td><td>".$bk_date."</td>";
-                $bk_user=$attr[count($attr)-2];
+                $bk_user=$attr[count($attr) - 2];
                 $html.="<td>$bk_user</td>";
                 $html.="<td><button onclick=\"window.location='index.php?mod={$_FN['mod']}&opt=$modcont&restore=$file'\">".FN_Translate("restore")."</button></td>";
                 $html.="</tr>";
@@ -151,21 +158,21 @@ function FN_HtmlSection($section="")
             $title=$_FN['sectionvalues']['title'];
             if (FN_erg('config.php$',$modcont))
                 $title=FN_Translate("advanced settings","Aa")." $title";
-            if ($_FN['sectionvalues']['type']!=""&&is_dir("modules/{$_FN['sectionvalues']['type']}"))
+            if ($_FN['sectionvalues']['type']!= "" && is_dir("modules/{$_FN['sectionvalues']['type']}"))
                 $title.=" (".FN_Translate("page like","Aa")." ".FN_GetFolderTitle("modules/{$_FN['sectionvalues']['type']}").")";
 
             $t_exit="<button onclick=\"window.location='".FN_RewriteLink("index.php?mod={$_FN['mod']}","&")."';return false;\">".FN_HtmlArrowLeft()." ".FN_Translate("back to")." \"{$_FN['sectionvalues']['title']}\"</button>";
             //try edit module------------------------------------------------------>
-            if ($modcont=="fnc_ccnf_section_{$_FN['mod']}")
+            if ($modcont== "fnc_ccnf_section_{$_FN['mod']}")
             {
-                if (FN_UserCanEditSection()&&false!==($html=FN_HtmlEditSection($_FN['mod'])))
+                if (FN_UserCanEditSection() && false!== ($html=FN_HtmlEditSection($_FN['mod'])))
                 {
                     return "<div class=\"fn_admin\"><h4>".FN_Translate("administration tools")." $title $t_exit</h4>".$html."</div>";
                 }
             }
             //try edit module------------------------------------------------------<
             //try edit file-------------------------------------------------------->
-            elseif (is_dir(dirname($modcont))&&!is_dir($modcont)&&FN_CanModifyFile($_FN['user'],$modcont))
+            elseif (is_dir(dirname($modcont)) && !is_dir($modcont) && FN_CanModifyFile($_FN['user'],$modcont))
             {
                 $editor_params=array();
                 $linkcancel=FN_RewriteLink("index.php?mod={$_FN['mod']}");
@@ -176,14 +183,14 @@ function FN_HtmlSection($section="")
                 }
                 $_FN['editor_folder']="sections/{$_FN['mod']}";
                 $file_restore=FN_GetParam("restore",$_GET);
-                if (!empty($file_restore)&&file_exists($file_restore)&&FN_GetFileExtension($file_restore)=="bak~")
+                if (!empty($file_restore) && file_exists($file_restore) && FN_GetFileExtension($file_restore)== "bak~")
                 {
                     $editor_params['force_value']=file_get_contents($file_restore);
                     $linkcancel=$linkcancel=FN_RewriteLink("index.php?mod={$_FN['mod']}&amp;opt=$modcont&amp;mode=versions");
                     $editor_params['text_save']=FN_Translate("restore");
                 }
                 $html=FN_HtmlEditContent($modcont,$linkform,$linkcancel,$editor_params);
-                if ($html!==false)
+                if ($html!== false)
                 {
                     return "<div class=\"fn_admin\"><h4>$title $t_exit</h4>".$html."</div>";
                 }
@@ -192,7 +199,7 @@ function FN_HtmlSection($section="")
         }
     }
     //-------------print section----------------------------------------------->
-    if (!empty($sectionvalues['type'])&&file_exists("modules/{$sectionvalues['type']}"))
+    if (!empty($sectionvalues['type']) && file_exists("modules/{$sectionvalues['type']}"))
     {
         $html=FN_HtmlContent("modules/{$sectionvalues['type']}");
     }
@@ -217,7 +224,7 @@ function FN_HtmlBlock($block)
     global $_FN;
     $_FN['block']=$block;
     $blockvalues=FN_GetBlockValues($block);
-    if (!empty($blockvalues['type'])&&file_exists("modules/{$blockvalues['type']}")&&FN_erg("^block_",$blockvalues['type']))
+    if (!empty($blockvalues['type']) && file_exists("modules/{$blockvalues['type']}") && FN_erg("^block_",$blockvalues['type']))
     {
         $html=FN_HtmlContent("modules/{$blockvalues['type']}");
     }
@@ -273,7 +280,7 @@ function FN_HtmlStaticContent($folder,$usecache=false)
         {
             return $cache[$folder]; //cache in memory
         }
-        if (!empty($_FN['use_cache'])&&file_exists("{$_FN['datadir']}/_cache/{$_FN['lang']}".urlencode($folder).".cache"))
+        if (!empty($_FN['use_cache']) && file_exists("{$_FN['datadir']}/_cache/{$_FN['lang']}".urlencode($folder).".cache"))
         {
             return file_get_contents("{$_FN['datadir']}/_cache/{$_FN['lang']}".urlencode($folder).".cache");
         }
@@ -341,7 +348,7 @@ function FN_RewriteLinksLocalToAbsolute($str,$folder)
 
     $sdir_=$sdir;
     $i=0;
-    while($str!=$old)
+    while($str!= $old)
     {
         $old=$str;
         $str=preg_replace("/<([^>]+)( background| href| src)=(\")([^#^:^{]*)(\")/im","<\\1\\2=\\3$sdir_\\4\\3",$str);
@@ -354,9 +361,9 @@ function FN_RewriteLinksLocalToAbsolute($str,$folder)
     $str=str_replace("s_r_c=\"","src=\"",$str);
     $str=str_replace("s_r_c='","src='",$str);
 
-    if ($_FN['enable_mod_rewrite']>0&&$_FN['links_mode']=="html")
+    if ($_FN['enable_mod_rewrite'] > 0 && $_FN['links_mode']== "html")
     {
-        if ($_FN['lang']==$_FN['lang_default'])
+        if ($_FN['lang']== $_FN['lang_default'])
         {
             $str=preg_replace("/(href=\"index.php\?mod=)([A-Z0-9_]+)\"/is","href=\"\$2.html\"",$str);
             $str=preg_replace("/(href='index.php\?mod=)([A-Z0-9_]+)'/is","href=\"\$2.html\"",$str);
@@ -401,7 +408,7 @@ function FN_InitSections()
                 continue;
             }
             $sect_db[$section['id']]=$section;
-            if ($section['position']>=$posmax)
+            if ($section['position']>= $posmax)
                 $posmax=$section['position'];
         }
     }
@@ -420,7 +427,7 @@ function FN_InitSections()
             if (file_exists("sections/$section/default.xml"))
             {
                 $default=xmldb_xml2array(file_get_contents("sections/$section/default.xml"),"fn_sections");
-                if (isset($default[0])&&is_array($default[0]))
+                if (isset($default[0]) && is_array($default[0]))
                 {
                     $tmp=$default[0];
                 }
@@ -450,7 +457,7 @@ function FN_InitSections()
             {
                 if (empty($tmp['position']))
                 {
-                    $tmp['position']=$posmax+1;
+                    $tmp['position']=$posmax + 1;
                     $posmax++;
                 }
                 $table=FN_XmlForm("fn_sections");
@@ -473,7 +480,7 @@ function FN_InitSections()
                 if (file_exists("modules/$sectiontype/default.xml"))
                 {
                     $default=xmldb_xml2array(file_get_contents("modules/$sectiontype/default.xml"),"fn_sectionstype");
-                    if (isset($default[0])&&is_array($default[0]))
+                    if (isset($default[0]) && is_array($default[0]))
                     {
                         $tmp=$default[0];
                     }
@@ -534,7 +541,7 @@ function FN_InitBlocks()
             if (file_exists("blocks/$block/default.xml"))
             {
                 $default=xmldb_xml2array(file_get_contents("blocks/$block/default.xml"),"blocks");
-                if (isset($default[0])&&is_array($default[0]))
+                if (isset($default[0]) && is_array($default[0]))
                 {
                     $tmp=$default[0];
                 }
@@ -581,12 +588,12 @@ function FN_IncludeCSS($include_theme_css=true,$include_section_css=true)
     $html="";
     $css="";
     $sectionvalues=FN_GetSectionValues($_FN['mod']);
-    if ($include_section_css&&!empty($sectionvalues['type'])&&file_exists("modules/{$sectionvalues['type']}/style.css"))
+    if ($include_section_css && !empty($sectionvalues['type']) && file_exists("modules/{$sectionvalues['type']}/style.css"))
     {
         $html.="\n\t<link rel='StyleSheet' type='text/css' href=\"{$_FN['sitepath']}modules/{$sectionvalues['type']}/style.css\" />";
         $css.=file_get_contents("modules/{$sectionvalues['type']}/style.css")."\n";
     }
-    if ($include_section_css&&file_exists("sections/{$_FN['mod']}/style.css"))
+    if ($include_section_css && file_exists("sections/{$_FN['mod']}/style.css"))
     {
         $html.="\n\t<link rel='StyleSheet' type='text/css' href=\"{$_FN['sitepath']}sections/{$_FN['mod']}/style.css\" />";
         $css.=file_get_contents("sections/{$_FN['mod']}/style.css")."\n";
@@ -654,7 +661,7 @@ function FN_FromTheme($file,$absolute=true)
 function FN_Time()
 {
     global $_FN;
-    return time()+(3600*intval($_FN['jet_lag']));
+    return time() + (3600 * intval($_FN['jet_lag']));
 }
 
 /**
@@ -674,10 +681,10 @@ function FN_i18n($constant,$language="",$uppercasemode="")
     $old=false;
     $constant_clean=$constant;
     $lang=$_FN['lang'];
-    if ($language=="")
+    if ($language== "")
         $language=$lang;
     //--------------------init------------------------------------------------->
-    if ($ebabledb&&file_exists("{$_FN['datadir']}/{$_FN['database']}"))
+    if ($ebabledb && file_exists("{$_FN['datadir']}/{$_FN['database']}"))
     {
         if (!file_exists("{$_FN['datadir']}/{$_FN['database']}/fn_i18n_{$language}.php"))
             FN_Copy("include/install/fndatabase/fn_i18n.php","{$_FN['datadir']}/{$_FN['database']}/fn_i18n_{$language}.php");
@@ -689,10 +696,10 @@ function FN_i18n($constant,$language="",$uppercasemode="")
     {
         $_FNMESSAGE[$language]=FN_GetMessagesFromCsv("languages/$language/lang.csv");
     }
-    if (!isset($old["text"])||$old["text"]=="")
+    if (!isset($old["text"]) || $old["text"]== "")
     {
         $text="";
-        if ($constant!="")
+        if ($constant!= "")
         {
 
             if (isset($_FNMESSAGE[$language][$constant]))
@@ -711,9 +718,9 @@ function FN_i18n($constant,$language="",$uppercasemode="")
             if ($ebabledb)
             {
                 $values=array("id"=>$constant_clean,"text"=>$text);
-                if ($table&&$found&&!isset($old["text"]))
+                if ($table && $found && !isset($old["text"]))
                 {
-                    if ($_FN['lang']==$language)
+                    if ($_FN['lang']== $language)
                         $old=$table->InsertRecord($values);
                 }
             }
@@ -721,10 +728,10 @@ function FN_i18n($constant,$language="",$uppercasemode="")
     }
     else
     {
-        if (isset($old["text"])&&$old["text"]!="")
+        if (isset($old["text"]) && $old["text"]!= "")
             $text=$old["text"];
     }
-    if ($text=="")
+    if ($text== "")
         $text=$constant;
     switch($uppercasemode)
     {
@@ -756,7 +763,7 @@ function FN_i18n($constant,$language="",$uppercasemode="")
 function FN_Now($format="Y-m-d H:i:s")
 {
     global $_FN;
-    return date("$format",time()+(3600*intval($_FN['jet_lag'])));
+    return date("$format",time() + (3600 * intval($_FN['jet_lag'])));
 }
 
 /**
@@ -773,13 +780,13 @@ function FN_GetAccessKey(&$title,$link,$forcekey="")
 {
     global $_FN;
     $link=str_replace("&amp;","&",$link);
-    if (!isset($_FN['accesskey'])||!is_array($_FN['accesskey']))
+    if (!isset($_FN['accesskey']) || !is_array($_FN['accesskey']))
         $_FN['accesskey']=array();
     $showaccesskey=$_FN['showaccesskey'];
     $titlel=strtolower($title);
-    if ($forcekey!="")
+    if ($forcekey!= "")
     {
-        if ($showaccesskey==1) // sottolinea gli accesskey
+        if ($showaccesskey== 1) // sottolinea gli accesskey
         {
             $title="[".$forcekey."]$title";
         }
@@ -787,24 +794,24 @@ function FN_GetAccessKey(&$title,$link,$forcekey="")
         return $forcekey;
     }
 //----------cerco un accesskey libero------------
-    for($i=0; $i<strlen($titlel); $i++)
+    for($i=0; $i < strlen($titlel); $i++)
     {
         $a=$titlel[$i];
         if (!FN_erg("[a-z]",$a))
             continue;
 //---------se esiste gia' per quel link esco --------------
-        if (isset($_FN['accesskey'][$a])&&$_FN['accesskey'][$a]==$link)
+        if (isset($_FN['accesskey'][$a]) && $_FN['accesskey'][$a]== $link)
         {
-            if ($showaccesskey==1) // sottolinea gli accesskey
+            if ($showaccesskey== 1) // sottolinea gli accesskey
                 $title="[".$a."]&nbsp;$title";
             $_FN['accesskey'][$a]=$link;
             return $a;
         }
 //-----tento con le altre lettere ------
-        if (!isset($_FN['accesskey'][$a])&&!is_numeric($a))
+        if (!isset($_FN['accesskey'][$a]) && !is_numeric($a))
         {
             $_FN['accesskey'][$a]=$link;
-            if ($showaccesskey==1) // sottolinea gli accesskey
+            if ($showaccesskey== 1) // sottolinea gli accesskey
             {
                 $title="[".$a."]&nbsp;$title";
             }
@@ -819,7 +826,7 @@ function FN_GetAccessKey(&$title,$link,$forcekey="")
     {
         if (!isset($_FN['accesskey'][$a]))
         {
-            if ($showaccesskey==1) // sottolinea gli accesskey
+            if ($showaccesskey== 1) // sottolinea gli accesskey
             {
                 $title="[".$a."]$title";
             }
@@ -875,7 +882,7 @@ function FN_Tag2Html($string)
 // text color---<
 // WIKIPEDIA --->
     $items=explode("[/wp]",$string);
-    for($i=0; $i<count($items); $i++)
+    for($i=0; $i < count($items); $i++)
     {
         $wp="";
         if (stristr($items[$i],"[wp"))
@@ -884,7 +891,7 @@ function FN_Tag2Html($string)
             $wp_lang=preg_replace("/\\].*/s","",$wp_lang);
             $wp=preg_replace("/.*\\[wp.*\\]/s","",$items[$i]);
             $wp=preg_replace("/\\[\\/wp\\].*/s","",$wp);
-            if ($wp!="")
+            if ($wp!= "")
             {
                 $nuovowp="<a style=\"text-decoration: none; border-bottom: 1px dashed; color: blue;\" target=\"new\" href=\"http://$wp_lang.wikipedia.org/wiki/$wp\">$wp</a>";
                 $string=str_replace("[wp lang=$wp_lang]".$wp."[/wp]",$nuovowp,$string);
@@ -895,16 +902,16 @@ function FN_Tag2Html($string)
     $items="";
 // URLs --->
     $items=explode("[/url]",$string);
-    for($i=0; $i<count($items); $i++)
+    for($i=0; $i < count($items); $i++)
     {
         $url="";
         if (stristr($items[$i],"[url]"))
         {
             $url=preg_replace("/.*\\[url\\]/s","",$items[$i]);
             $url=preg_replace("/\\[\/url\\].*/s","",$url);
-            if ($url!="")
+            if ($url!= "")
             {
-                if (stristr($url,"http://")==FALSE&&stristr($url,"https://")==FALSE)
+                if (stristr($url,"http://")== FALSE && stristr($url,"https://")== FALSE)
                 {
                     $nuovourl="<a target=\"new\" href=\"http://$url\">$url</a>";
                 }
@@ -954,7 +961,7 @@ function FN_Log($txt)
             echo "$flog/$datelog-log.php:".FN_i18n("is read-only")."<br />";
         }
     }
-    if ($_FN['enable_log_email']==1)
+    if ($_FN['enable_log_email']== 1)
     {
         $txtmail="Log from: {$_FN['sitename']}";
         $txtmail.="\n\nSite url:{$_FN['siteurl']}";
@@ -1018,7 +1025,7 @@ function FN_GetFileExtension($filename)
     if (!strstr($filename,"."))
         return "";
     $tmp=explode(".",$filename);
-    $extension=$tmp[count($tmp)-1];
+    $extension=$tmp[count($tmp) - 1];
     return $extension;
 }
 
@@ -1033,7 +1040,7 @@ function FN_InitTables($force=false)
         return;
     if (!file_exists($_FN['datadir']."/_cache"))
         FN_MkDir($_FN['datadir']."/_cache");
-    if (!empty($_FN['use_cache'])&&!file_exists("{$_FN['datadir']}/_cache/html"))
+    if (!empty($_FN['use_cache']) && !file_exists("{$_FN['datadir']}/_cache/html"))
     {
         FN_MkDir("{$_FN['datadir']}/_cache/html");
     }
@@ -1044,52 +1051,52 @@ function FN_InitTables($force=false)
         if (!$ret)
             dprint_r("error create folder: {$_FN['datadir']}{$_FN['slash']}{$_FN['database']}");
     }
-    if ($force||!file_exists("{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}/fn_i18n.php"))
+    if ($force || !file_exists("{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}/fn_i18n.php"))
     {
         FN_Copy("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_i18n.php","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_i18n.php");
     }
-    if ($force||!file_exists("{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_sections.php"))
+    if ($force || !file_exists("{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_sections.php"))
     {
         FN_Copy("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_sections.php","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_sections.php");
     }
-    if ($force||!file_exists("{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_sectionstypes.php"))
+    if ($force || !file_exists("{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_sectionstypes.php"))
     {
         FN_Copy("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_sectionstypes.php","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_sectionstypes.php");
     }
-    if ($force||!file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_blocks.php"))
+    if ($force || !file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_blocks.php"))
     {
         FN_Copy("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_blocks.php","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_blocks.php");
     }
-    if ($force||!file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_settings.php"))
+    if ($force || !file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_settings.php"))
     {
         FN_Copy("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_settings.php","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_settings.php");
     }
-    if ($force||!file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_users.php"))
+    if ($force || !file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_users.php"))
     {
         if (file_exists("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_users.custom.php"))
             FN_Copy("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_users.custom.php","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_users.php");
         else
             FN_Copy("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_users.php","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_users.php");
     }
-    if ($force||!file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_groups.php"))
+    if ($force || !file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_groups.php"))
     {
         FN_Copy("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_groups.php","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_groups.php");
         $table=FN_XmlTable("fn_groups");
         $r['groupname']='users';
         $table->InsertRecord($r);
     }
-    if ($force||!file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_avatars")&&file_exists("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_avatars"))
+    if ($force || !file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_avatars") && file_exists("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_avatars"))
     {
         FN_CopyDir("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_avatars","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}");
     }
-    if ($force||!file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_avatars.php")&&file_exists("include{$_FN['slash']}install{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_avatars.php"))
+    if ($force || !file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_avatars.php") && file_exists("include{$_FN['slash']}install{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_avatars.php"))
         FN_Copy("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_avatars.php","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_avatars.php");
-    if ($force||!file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_conditions.php"))
+    if ($force || !file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_conditions.php"))
     {
         FN_Copy("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_conditions.php","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_conditions.php");
         $tcond=FN_XmlForm("fn_conditions");
         $conditions=$tcond->xmltable->GetRecords();
-        if (!is_array($conditions)||count($conditions)==0)
+        if (!is_array($conditions) || count($conditions)== 0)
         {
 
             $value['text']=file_get_contents("modules/login/conditions/conditions.en.html");
@@ -1176,19 +1183,19 @@ function FN_StripPostSlashes($string)
 function FN_GetDateTime($time)
 {
     global $_FN;
-    if (strlen("$time")==19)
+    if (strlen("$time")== 19)
     {
         $time=strtotime($time);
     }
-    $ret=$_FN['days'][date("w",$time+(3600*$_FN['jet_lag']))];
-    $ret.=date(" d ",$time+(3600*$_FN['jet_lag']));
-    $tmp=date(" m",$time+(3600*$_FN['jet_lag']));
-    if ($tmp<10)
+    $ret=$_FN['days'][date("w",$time + (3600 * $_FN['jet_lag']))];
+    $ret.=date(" d ",$time + (3600 * $_FN['jet_lag']));
+    $tmp=date(" m",$time + (3600 * $_FN['jet_lag']));
+    if ($tmp < 10)
         $tmp=str_replace("0","",$tmp);
-    $ret.=$_FN['months'][$tmp-1];
-    $ret.=date(" Y - ",$time+(3600*$_FN['jet_lag']));
-    $ret.=date("H:",$time+(3600*$_FN['jet_lag']));
-    $ret.=date("i",$time+(3600*$_FN['jet_lag']));
+    $ret.=$_FN['months'][$tmp - 1];
+    $ret.=date(" Y - ",$time + (3600 * $_FN['jet_lag']));
+    $ret.=date("H:",$time + (3600 * $_FN['jet_lag']));
+    $ret.=date("i",$time + (3600 * $_FN['jet_lag']));
     return $ret;
 }
 
@@ -1202,21 +1209,21 @@ function FN_GetDateTime($time)
 function FN_FormatDate($time,$showtime=true)
 {
     global $_FN;
-    if (strlen("$time")==19||!is_numeric($time))
+    if (strlen("$time")== 19 || !is_numeric($time))
     {
         $time=strtotime($time);
     }
-    $ret=$_FN['days'][date("w",$time+(3600*$_FN['jet_lag']))];
-    $ret.=date(" d ",$time+(3600*$_FN['jet_lag']));
-    $tmp=date(" m",$time+(3600*$_FN['jet_lag']));
-    if ($tmp<10)
+    $ret=$_FN['days'][date("w",$time + (3600 * $_FN['jet_lag']))];
+    $ret.=date(" d ",$time + (3600 * $_FN['jet_lag']));
+    $tmp=date(" m",$time + (3600 * $_FN['jet_lag']));
+    if ($tmp < 10)
         $tmp=str_replace("0","",$tmp);
-    $ret.=$_FN['months'][$tmp-1];
-    $ret.=date(" Y ",$time+(3600*$_FN['jet_lag']));
+    $ret.=$_FN['months'][$tmp - 1];
+    $ret.=date(" Y ",$time + (3600 * $_FN['jet_lag']));
     if ($showtime)
     {
-        $ret.=date("- H:",$time+(3600*$_FN['jet_lag']));
-        $ret.=date("i",$time+(3600*$_FN['jet_lag']));
+        $ret.=date("- H:",$time + (3600 * $_FN['jet_lag']));
+        $ret.=date("i",$time + (3600 * $_FN['jet_lag']));
     }
     return $ret;
 }
@@ -1229,7 +1236,7 @@ function FN_FormatDate($time,$showtime=true)
 function FN_IsExternalReferer()
 {
     global $_FN;
-    if (empty($_SERVER['HTTP_REFERER'])||!FN_erg($_FN['siteurl'],$_SERVER['HTTP_REFERER']))
+    if (empty($_SERVER['HTTP_REFERER']) || !FN_erg($_FN['siteurl'],$_SERVER['HTTP_REFERER']))
     {
         return true;
     }
@@ -1250,16 +1257,16 @@ function FN_SendMail($to,$subject,$body,$ishtml=false,$from="")
 {
     global $_FN;
     $replyto=$from;
-    if ($from=="")
+    if ($from== "")
     {
         $from="\"{$_FN['sitename']}\" <{$_FN['site_email_address']}>";
         $replyto=$_FN['site_email_address'];
     }
-    if (!empty($_FN['FN_SendMail'])&&$_FN['FN_SendMail']!="FN_SendMail")
+    if (!empty($_FN['FN_SendMail']) && $_FN['FN_SendMail']!= "FN_SendMail")
     {
         return $_FN['FN_SendMail']($to,$subject,$body,$ishtml,$from);
     }
-    if ($to!="")
+    if ($to!= "")
     {
         if ($ishtml)
         {
@@ -1294,11 +1301,11 @@ function FN_SendMail($to,$subject,$body,$ishtml=false,$from="")
  */
 function FN_FixNewline($text)
 {
-    if (strtoupper(substr(PHP_OS,0,3)=='WIN'))
+    if (strtoupper(substr(PHP_OS,0,3)== 'WIN'))
     {
         $eol="\r\n";
     }
-    elseif (strtoupper(substr(PHP_OS,0,3)=='MAC'))
+    elseif (strtoupper(substr(PHP_OS,0,3)== 'MAC'))
     {
         $eol="\r";
     }
@@ -1332,7 +1339,7 @@ function FN_FixSections()
     $flag_mod=false;
     foreach($sections as $section)
     {
-        if ($section['parent']!="")
+        if ($section['parent']!= "")
         {
             if (!isset($sections[$section['parent']]))
             {
@@ -1449,9 +1456,9 @@ function FN_GetSections($section="",$recursive=false,$onlyreadable=true,$hidden=
     global $_FN;
     static $cache=false;
     static $allsections=false;
-    if ($nocache||!$allsections)
+    if ($nocache || !$allsections)
     {
-        if (empty($_FN['sections'])||$nocache)
+        if (empty($_FN['sections']) || $nocache)
         {
             $_FN['sections']=false;
             $_FN['sections']=FN_GetAllSections();
@@ -1459,7 +1466,7 @@ function FN_GetSections($section="",$recursive=false,$onlyreadable=true,$hidden=
         $cache=array();
         $allsections=$_FN['sections'];
     }
-    if ($section===false)
+    if ($section=== false)
         $section="";
     $idcache=$section."|".$recursive."|".$onlyreadable."|".$hidden."|".$onlyenabled;
     if (isset($cache[$idcache]))
@@ -1497,7 +1504,7 @@ function FN_GetSections($section="",$recursive=false,$onlyreadable=true,$hidden=
 //not hidden
         if (!$hidden)
         {
-            if ($sectionvalues['hidden']!=0)
+            if ($sectionvalues['hidden']!= 0)
                 continue;
         }
 //sections enabled
@@ -1511,7 +1518,7 @@ function FN_GetSections($section="",$recursive=false,$onlyreadable=true,$hidden=
 
         if (empty($sectionvalues["title".$suffix]))
         {
-            if ($_FN['lang']==$_FN['lang_default']&&empty($sectionvalues["title"]))
+            if ($_FN['lang']== $_FN['lang_default'] && empty($sectionvalues["title"]))
             {
                 $sectionvalues['title']="_{$_FN['lang_default']}_ $suffix __".FN_GetFolderTitle("sections/{$sectionvalues['id']}");
             }
@@ -1534,7 +1541,7 @@ function FN_GetSections($section="",$recursive=false,$onlyreadable=true,$hidden=
     {
         $pathParents=array();
         $parentId=$section['parent'];
-        while($parentId!=""&&!in_array($parentId,$pathParents))
+        while($parentId!= "" && !in_array($parentId,$pathParents))
         {
             $pathParents[]=$parentId;
             $parentId=isset($sect_db[$parentId]['parent']) ? $sect_db[$parentId]['parent'] : "";
@@ -1559,17 +1566,17 @@ function FN_GetBlocks($where,$onlyreadable=true,$onlyenabled=true)
     $ret_blocks=array();
     foreach($blocks as $blockvalues)
     {
-        if ($where!=$blockvalues['where'])
+        if ($where!= $blockvalues['where'])
         {
             continue;
         }
         if (!file_exists("blocks/{$blockvalues['id']}"))
             continue;
-        if ($onlyreadable&&FN_BlockIsEnabled($blockvalues['id'])==false)
+        if ($onlyreadable && FN_BlockIsEnabled($blockvalues['id'])== false)
         {
             continue;
         }
-        if ($onlyenabled&&FN_UserCanViewBlock($blockvalues['id'])==false)
+        if ($onlyenabled && FN_UserCanViewBlock($blockvalues['id'])== false)
         {
             continue;
         }
@@ -1650,7 +1657,7 @@ function FN_GetSectionValues($section,$usecache=true)
         $_FN['sections']=FN_GetAllSections();
         $cachesections=false;
     }
-    if ($usecache&&isset($cache[$_FN['lang']][$section]))
+    if ($usecache && isset($cache[$_FN['lang']][$section]))
     {
         return $cache[$_FN['lang']][$section];
     }
@@ -1666,7 +1673,7 @@ function FN_GetSectionValues($section,$usecache=true)
     $values=$cachesections[$section];
     if (empty($values["title".FN_LangSuffix()]))
     {
-        if ($_FN['lang']!=FN_LangSuffix()&&$values["title"]=="")
+        if ($_FN['lang']!= FN_LangSuffix() && $values["title"]== "")
         {
             $values['title']=FN_GetFolderTitle("sections/$section");
         }
@@ -1689,7 +1696,7 @@ function FN_GetSectionValues($section,$usecache=true)
 function FN_LangSuffix($lang="")
 {
     global $_FN;
-    if ($lang=="")
+    if ($lang== "")
         $lang=$_FN['lang'];
     /* 	if ( $lang == $_FN['lang_default'] )
       return "";
@@ -1706,17 +1713,17 @@ function FN_LangSuffix($lang="")
 function FN_SectionIsEnabled($section="")
 {
     global $_FN;
-    if ($section=="")
+    if ($section== "")
         $section=$_FN['mod'];
     $section=FN_GetSectionValues($section);
     if (empty($section['status']))
         return false;
     $curtime=FN_Time();
-    if ($section['startdate']!=""&&$curtime<strtotime($section['startdate']))
+    if ($section['startdate']!= "" && $curtime < strtotime($section['startdate']))
     {
         return false;
     }
-    if ($section['enddate']!=""&&$curtime>strtotime($section['enddate']))
+    if ($section['enddate']!= "" && $curtime > strtotime($section['enddate']))
     {
         return false;
     }
@@ -1729,7 +1736,7 @@ function FN_SectionIsEnabled($section="")
  */
 function FN_SectionIsHidden($section="")
 {
-    if ($section=="")
+    if ($section== "")
         $section=$_FN['mod'];
     $section=FN_GetSectionValues($section);
     if (!empty($section['hidden']))
@@ -1747,14 +1754,14 @@ function FN_BlockIsEnabled($block)
 {
     global $_FN;
     $block=FN_GetBlockValues($block);
-    if (isset($_FN['sectionvalues']['blocks'])&&!empty($_FN['sectionvalues']['blocksmode']))
+    if (isset($_FN['sectionvalues']['blocks']) && !empty($_FN['sectionvalues']['blocksmode']))
     {
         $blocks=explode(",",$_FN['sectionvalues']['blocks']);
-        if ($_FN['sectionvalues']['blocksmode']=="hide")
+        if ($_FN['sectionvalues']['blocksmode']== "hide")
         {
             if (in_array($block['id'],$blocks))
                 return false;
-        }elseif ($_FN['sectionvalues']['blocksmode']=="show")
+        }elseif ($_FN['sectionvalues']['blocksmode']== "show")
         {
             if (!in_array($block['id'],$blocks))
                 return false;
@@ -1764,11 +1771,11 @@ function FN_BlockIsEnabled($block)
     if (!empty($block['blocksmode']))
     {
         $sections=explode(",",$block['sections']);
-        if ($block['blocksmode']=="hide")
+        if ($block['blocksmode']== "hide")
         {
             if (in_array($_FN['sectionvalues']['id'],$sections))
                 return false;
-        }elseif ($block['blocksmode']=="show")
+        }elseif ($block['blocksmode']== "show")
         {
             if (!in_array($_FN['sectionvalues']['id'],$sections))
                 return false;
@@ -1778,11 +1785,11 @@ function FN_BlockIsEnabled($block)
     if (empty($block['status']))
         return false;
     $curtime=FN_Time();
-    if ($block['startdate']!=""&&$curtime<strtotime($block['startdate']))
+    if ($block['startdate']!= "" && $curtime < strtotime($block['startdate']))
     {
         return false;
     }
-    if ($block['enddate']!=""&&$curtime>strtotime($block['enddate']))
+    if ($block['enddate']!= "" && $curtime > strtotime($block['enddate']))
     {
         return false;
     }
@@ -1804,13 +1811,13 @@ function FN_SaveGetPostParam($param)
     if (isset($_POST [$param]))
     {
         $_COOKIE [$param]=$_POST [$param];
-        setcookie($param,$_POST [$param],time()+999999999,$_FN ['urlcookie']);
+        setcookie($param,$_POST [$param],time() + 999999999,$_FN ['urlcookie']);
         $retparam=FN_StripPostSlashes($_POST [$param]);
     }
     elseif (isset($_GET [$param]))
     {
         $_COOKIE [$param]=$_GET [$param];
-        setcookie($param,$_GET [$param],time()+999999999,$_FN ['urlcookie']);
+        setcookie($param,$_GET [$param],time() + 999999999,$_FN ['urlcookie']);
         $retparam=FN_StripPostSlashes($_GET [$param]);
     }
     return $retparam;
@@ -1884,7 +1891,7 @@ function FN_GetVarsFromTable($tablename)
     if (is_array($items))
         foreach($items as $item)
         {
-            if (isset($item['varname'])&&isset($item['varvalue']))
+            if (isset($item['varname']) && isset($item['varvalue']))
                 $var[$item['varname']]=$item['varvalue'];
         }
     return $var;
@@ -1937,7 +1944,7 @@ function FN_LoadVarsFromTable(&$var,$tablename,$ignore=array())
             }
             else
             {
-                if ($old['defaultvalue']!=$v)
+                if ($old['defaultvalue']!= $v)
                 {
                     $Table->UpdateRecord(array("varname"=>$k,"defaultvalue"=>$v));
                 }
@@ -1988,9 +1995,9 @@ function FN_GetMessagesFromCsv($filename)
     $messages[$filename]=array();
     $first=true;
     $handle=fopen("$filename","r");
-    while(($data=fgetcsv($handle,5000,","))!==false)
+    while(($data=fgetcsv($handle,5000,","))!== false)
     {
-        if ($first==true)
+        if ($first== true)
         {
             $first=false;
             continue;
@@ -2035,7 +2042,7 @@ function FN_LoadMessagesFolder($folder)
 function FN_SetFolderTitle($path,$title,$lang="")
 {
     global $_FN;
-    if ($lang=="")
+    if ($lang== "")
         $lang=$_FN['lang'];
     FN_Write($title,"$path/title.$lang.fn");
 }
@@ -2049,7 +2056,7 @@ function FN_SetFolderTitle($path,$title,$lang="")
 function FN_GetFolderTitle($path,$lang="")
 {
     global $_FN;
-    if ($lang=="")
+    if ($lang== "")
         $lang=$_FN['lang'];
     $title="";
     if (!is_dir($path))
@@ -2076,7 +2083,7 @@ function FN_GetFolderTitle($path,$lang="")
         $title=file_get_contents("$path/title.{$_FN['lang_default']}.fn");
     elseif (file_exists("$path/title.en.fn"))
         $title=file_get_contents("$path/title.en.fn");
-    if ($title==="")
+    if ($title=== "")
         $title=basename($path);
     $title=str_replace("{siteurl}",$_FN['siteurl'],$title);
     $title=str_replace("\n","",$title);
@@ -2100,9 +2107,9 @@ function FN_LoadConfig($fileconfig="",$sectionid="",$usecache=true)
         $cache=array();
     $tablename="";
     //---------------------------- empty fileconfig --------------------------->
-    if ($fileconfig=="")
+    if ($fileconfig== "")
     {
-        if ($_FN['block']!="")
+        if ($_FN['block']!= "")
         {
             $blockvalues=FN_GetBlockValues($_FN['block']);
             $module=$blockvalues['type'];
@@ -2123,7 +2130,7 @@ function FN_LoadConfig($fileconfig="",$sectionid="",$usecache=true)
             }
             else
             {
-                if ($sectionid=="")
+                if ($sectionid== "")
                 {
                     $sectionid=$_FN['mod'];
                 }
@@ -2134,20 +2141,20 @@ function FN_LoadConfig($fileconfig="",$sectionid="",$usecache=true)
     //---------------------------- empty fileconfig ---------------------------<
 
 
-    if (preg_match("/^blocks/is",$fileconfig)||preg_match("/^sections/is",$fileconfig)||preg_match("/^modules/is",$fileconfig))
+    if (preg_match("/^blocks/is",$fileconfig) || preg_match("/^sections/is",$fileconfig) || preg_match("/^modules/is",$fileconfig))
     {
-        if ($_FN['block']!="")
+        if ($_FN['block']!= "")
         {
             $sectionid=$_FN['block'];
             $tablename="fncf_block_{$sectionid}";
         }
 
-        if ($sectionid=="")
+        if ($sectionid== "")
         {
             $sectionid=$_FN['mod'];
         }
 
-        if ($sectionid!==""&&$_FN['block']=="")
+        if ($sectionid!== "" && $_FN['block']== "")
         {
 
             $tablename="fncf_{$sectionid}";
@@ -2155,7 +2162,7 @@ function FN_LoadConfig($fileconfig="",$sectionid="",$usecache=true)
     }
     else
     {
-        if ($fileconfig==="config.php"||$fileconfig==="./config.php")
+        if ($fileconfig=== "config.php" || $fileconfig=== "./config.php")
         {
             $tablename="fn_settings";
         }
@@ -2174,7 +2181,7 @@ function FN_LoadConfig($fileconfig="",$sectionid="",$usecache=true)
 
         return $cache["$tablename"];
     }
-    if ($tablename!=""&&!file_exists("{$_FN['datadir']}/fndatabase/$tablename.php"))
+    if ($tablename!= "" && !file_exists("{$_FN['datadir']}/fndatabase/$tablename.php"))
     {
         $xml="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <?php exit(0);?>
@@ -2204,7 +2211,7 @@ function FN_LoadConfig($fileconfig="",$sectionid="",$usecache=true)
     {
         include "$fileconfig";
     }
-    if ($tablename!="")
+    if ($tablename!= "")
     {
 
         FN_LoadVarsFromTable($config,$tablename);
@@ -2231,7 +2238,7 @@ function FN_RewriteLinksAbsoluteToLocal($str,$filefolder)
     $r="";
     foreach($reldirarray as $s)
     {
-        if ($s!=="")
+        if ($s!== "")
         {
             $r.="../";
         }
@@ -2292,7 +2299,7 @@ function FN_MakeSectionId($sectiontitle)
         }
         else
         {
-            if ($t=="")
+            if ($t== "")
                 $t=0;
         }
         $t++;
@@ -2321,7 +2328,7 @@ function FN_CheckMail($email)
  */
 function FN_SaveFile($filecontents,$filename,$HeaderContentType="application/force-download")
 {
-    while(false!==ob_get_clean()
+    while(false!== ob_get_clean()
     );
     if (!$filename)
     {
@@ -2345,9 +2352,9 @@ function FN_ReadCsvDatabase($filename,$separator)
         return array();
     $handle=fopen("$filename","r");
     $ret=array();
-    while(($data=fgetcsv($handle,5000,$separator))!==false)
+    while(($data=fgetcsv($handle,5000,$separator))!== false)
     {
-        if ($row===1)
+        if ($row=== 1)
         {
             foreach($data as $k)
             {
@@ -2382,7 +2389,7 @@ function FN_ReadCsvDatabase($filename,$separator)
 function FN_ConvertEncoding($str,$charsetFrom,$charsetTo)
 {
     $str_ret=@XMLDB_ConvertEncoding($str,$charsetFrom,$charsetTo);
-    if ($str_ret!="")
+    if ($str_ret!= "")
         return $str_ret;
     return $str;
 }
@@ -2425,13 +2432,13 @@ function FN_LoadMessagesFromFolder($folder,$lang)
 function FN_SectionIsInsideThis($section_to_check_id,$section="")
 {
     global $_FN;
-    if ($section=="")
+    if ($section== "")
         $section=$_FN['mod'];
     $tmpsection=FN_GetSectionValues($section);
     $section_to_check=FN_GetSectionValues($section_to_check_id);
-    while(isset($tmpsection['parent'])&&$tmpsection['parent']!=false)
+    while(isset($tmpsection['parent']) && $tmpsection['parent']!= false)
     {
-        if (isset($tmpsection['parent'])&&$tmpsection['parent']==$section_to_check['id'])
+        if (isset($tmpsection['parent']) && $tmpsection['parent']== $section_to_check['id'])
         {
             return true;
         }
@@ -2474,7 +2481,7 @@ function FN_Translate($english_string,$uppercasemode="Aa",$language="")
 function FN_GetSectionsTree($section="")
 {
     global $_FN;
-    if ($section=="")
+    if ($section== "")
     {
         $section=$_FN['mod'];
     }
@@ -2483,7 +2490,7 @@ function FN_GetSectionsTree($section="")
         return array();
     $tree[]=$section;
     $parents=array();
-    while($section['parent']!="")
+    while($section['parent']!= "")
     {
         $section=FN_GetSectionValues($section['parent']);
         if (in_array($section['id'],$parents))
@@ -2509,7 +2516,7 @@ function FN_GetSessionValue($varname)
     if (empty($_FN['fnsid']))
     {
         $_FN['fnsid']=uniqid("_");
-        setcookie("fnsid",$_FN['fnsid'],time()+999999999,$_FN ['urlcookie']);
+        setcookie("fnsid",$_FN['fnsid'],time() + 999999999,$_FN ['urlcookie']);
         $_COOKIE["fnsid"]=$_FN['fnsid'];
     }
     //---------------get sid---------------------------------------------------<
@@ -2541,7 +2548,7 @@ function FN_SetSessionValue($key,$value)
     if (empty($_FN['fnsid']))
     {
         $_FN['fnsid']=uniqid("_");
-        setcookie("fnsid",$_FN['fnsid'],time()+999999999,$_FN ['urlcookie']);
+        setcookie("fnsid",$_FN['fnsid'],time() + 999999999,$_FN ['urlcookie']);
         $_COOKIE["fnsid"]=$_FN['fnsid'];
     }
     //---------------get sid---------------------------------------------------<
@@ -2580,7 +2587,7 @@ function FN_ClearOldSessions()
     if (is_array($sessions))
         foreach($sessions as $sessionfile)
         {
-            if (time()-filectime($sessionfile)>3600)
+            if (time() - filectime($sessionfile) > 3600)
             {
                 FN_Unlink($sessionfile);
             }
@@ -2593,7 +2600,7 @@ function FN_ClearOldSessions()
  */
 function FN_Redirect($url)
 {
-    while(false!==ob_get_clean()
+    while(false!== ob_get_clean()
     );
     header("location:$url");
     die();
@@ -2631,7 +2638,7 @@ function FN_GetUserSessionValue($varname)
 function FN_SetUserSessionValue($varname,$value)
 {
     global $_FN;
-    if ($_FN['user']=="")
+    if ($_FN['user']== "")
         return;
     if (!file_exists("{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}/fn_userssessions.php"))
     {

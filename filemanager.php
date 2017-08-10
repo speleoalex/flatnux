@@ -23,22 +23,18 @@ if (strstr($sess_filemanager_editor, "..") || strstr($sess_filemanager_editor, '
             margin: 0px;
             padding: 0px;
         }
-
         td {
             font: 12px Arial, Helvetica, sans-serif;
         }
-
         form {
             font: 12px Arial, Helvetica, sans-serif;
         }
-
         body {
             background-color: #e2ddcf;
             color: #000000;
             margin: 0px;
             padding: 0px;
         }
-
         a {
             text-decoration: none;
             color: #000000;

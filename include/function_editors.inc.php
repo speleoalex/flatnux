@@ -68,7 +68,7 @@ function FN_HtmlEditConfFile($file,$formaction="",$exit="",$allow=false,$write_t
     {
         $write_to_file=true;
     }
-
+//die($tableHtmlattibutes);
     $html="";
     if ($file=="config.php")
     {
