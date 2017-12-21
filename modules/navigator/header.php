@@ -45,4 +45,10 @@ if ($config['enable_rss'])
 {
     $_FN['rss_link'] = $_FN['datadir'] . "/rss/$tablename/{$_FN['lang']}/rss.xml";
 }
+
+
+if (file_exists("themes/{$_FN['theme']}/modules/navigator/style.css"))
+{
+    $_FN['section_header_footer'].= "\n<style>\n".file_get_contents("themes/{$_FN['theme']}/modules/navigator/style.css")."\n</style>\n";
+}
 ?>

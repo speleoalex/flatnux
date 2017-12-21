@@ -7,7 +7,10 @@ if (!defined("FN_AUTH_COST"))
 if (!defined("FN_AUTH_METHOD"))
 {
     //PASSWORD_DEFAULT OR PASSWORD_BCRYPT
-    define("FN_AUTH_METHOD",PASSWORD_DEFAULT);
+    if (defined('PASSWORD_DEFAULT'))
+    {
+        define("FN_AUTH_METHOD",PASSWORD_DEFAULT);
+    }
 }
 
 /**
@@ -595,9 +598,7 @@ class xmldbfrm_field_cryptpasswd
     {
         if ($str=="")
             return "";
-        $options=[
-            'cost'=>FN_AUTH_COST
-        ];
+        $options=array('cost'=>FN_AUTH_COST);
         if (function_exists("password_hash"))
         {
             $str=@password_hash($str,FN_AUTH_METHOD,$options);

@@ -1,4 +1,15 @@
+11/2017
+    -aggiornato ckeditor
+    -aggiornato filemanager
+    -vari fix
+
+11/2017
+    -bug fix
+    -aggiunto ckeditor 4.7
+
 8/2017
+    -implementati templates in modulo navigator
+    -uniti moduli news archive e news
     -cambiato metodo predefinito di cifratura password
     -implementati nuovi temi
     -possibilità di cambiare le immagini di un tema dal pannello di controllo

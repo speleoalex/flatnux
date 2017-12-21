@@ -12,5 +12,8 @@ $config['usermail']="";
 $config['savemessage']="1";
 #[i18n]Enable captcha in contacts form {1=YES,0=NO}
 $config['enable_captcha']="1";
+#[i18n]Table name
+$config['tablename']="contact_message";
+
 
 ?>

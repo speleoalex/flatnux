@@ -89,8 +89,8 @@ else
     $params['function_on_delete']="OnDelete";
     $params['list_onupdate']=false;
     $params['textviewlist']="";
-    $params['textnew']=FN_Translate("new");
-    $params['textcancel']=FN_Translate("list of blocks")."/".FN_Translate("cancel");
+    $params['textnew']=FN_Translate("create a new block");
+    $params['textcancel']=FN_Translate("back to")." ".FN_Translate("list of blocks");
     $params['function_on_update']="FNCC_OnUpdateBlock";
     $params['function_on_insert']="FNCC_OnInsertBlock";
 
@@ -137,6 +137,7 @@ else
         {
             if (file_exists("modules/{$block['type']}/config.php"))
             {
+                $tableHtmlattibutes="";
                 echo "<fieldset>";
                 echo "<legend>".FN_Translate("module options that is loaded in this block")."</legend>";
                 $formaction="{$_FN['controlcenter']}?opt=$opt&amp;op___xdb_fn_blocks=insnew&amp;pk___xdb_fn_blocks=$blockId";
@@ -233,7 +234,7 @@ function PrintBlockOptions($block)
     if (file_exists("blocks/{$block['id']}/section.php"))
         $border="border:1px solid #00ff00";
     $html.="<a  title=\"".FN_Translate("configure block")."\" href=\"{$_FN['controlcenter']}?opt=$opt&amp;pk___xdb_fn_blocks={$block['id']}&amp;op___xdb_fn_blocks=insnew\"><img style=\"cursor:pointer;vertical-align:middle;border:1px solid transparent\" alt=\"\" src=\"images/configure.png\" /></a>&nbsp;";
-    $html.="<a href=\"{$_FN['controlcenter']}?edit=blocks/{$block['id']}/section.php&amp;opt=$opt\"><img style=\"cursor:pointer;vertical-align:middle;$border\" alt=\"\"  src=\"images/mime/php.png\" /></a>";
+    $html.="<a href=\"{$_FN['controlcenter']}?edit=blocks/{$block['id']}/section.php&amp;opt=$opt\"><img style=\"height:22px;cursor:pointer;vertical-align:middle;$border\" alt=\"\"  src=\"images/mime/php.png\" /></a>";
 
 
 

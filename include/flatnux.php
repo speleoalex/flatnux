@@ -68,7 +68,7 @@ if ($_FN['consolemode'])
     $_FN['datadir']=realpath($_FN['datadir']);
 }
 
-FN_LoadVarsFromTable($_FN,"fn_settings",array("timestart","consolemode","filesystempath","charset_lang","default_database_driver","section_header_footer"));
+FN_LoadVarsFromTable($_FN,"fn_settings",array("timestart","consolemode","filesystempath","charset_lang","default_database_driver","section_header_footer","FN_SendMail"));
 
 $_FN['use_urlserverpath']=false;
 

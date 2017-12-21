@@ -7,7 +7,7 @@ $_FN_display_errors = "on";
 //max upload file size
 $_FN_upload_max_filesize = "20M";
 //xmlphp,sqlite3,sqlite,csv,serialize,mysql,mssql
-$_FN_default_database_driver = "";
+$_FN_default_database_driver = "xmlphp";
 //
 $_FN_default_auth_method = "local";
 

@@ -1,5 +1,3 @@
-{html_header}
-<h2>{section_description}</h2>
 <div id="pageresults">
     <div class="art-block clearfix">
         <div class="art-blockcontent" >
@@ -9,13 +7,32 @@
     {html_export}
     {html_categories}{html_filters}
     <div class="navigatorresults">
-        <div class="pageresults">{html_pages}</div>
+        <!-- nav pagination -->
+        <div class="">
+            <div class="art-pager">
+                <a href="{linkpreviouspage}">« {i18n:Previous}</a>
+                <!-- pages -->
+                <!-- pageactive -->
+                <span  class="active">{txt_page}</span>
+                <!-- endpageactive -->
+                <!-- page -->
+                <a onclick="call_ajax('{link}', 'pageresults');return false" href="{link}">{txt_page}</a>
+                <!-- endpage -->
+                <!-- endpages -->
+                <a href="{linknextpage}">{i18n:Next} »</a>
+            </div>
+
+            &nbsp;<a title="{txtview}" onclick="call_ajax('{linkviewmode}', 'pageresults');return false" href="{linkviewmode}">
+                <img style="vertical-align:middle;border:0px" src="{imageviewmode}"></a> - {txt_rsults}</div>
+        <!-- end nav pagination -->
+
+
         <!-- items -->
         <!-- item -->
-        <div class="art-block clearfix" style="float:left">
+        <div class="art-block clearfix" >
             <div class="art-blockheader" style="height:37px;overflow:hidden"><h3 class="t">{item_title}</div>
             <div style="height:100px;text-align:center;padding:5px;"><a href="{item_urlview}"><img  style="max-width:100px;max-height: 100px;"
-                                                                                        alt="" src="{item_urlimage}"></a></div>
+                                                                                                    alt="" src="{item_urlimage}"></a></div>
             <div class="art-blockcontent" style="height:180px;overflow:auto">
                 <!-- itemvalues -->
                 <!-- field -->
@@ -51,4 +68,4 @@
     </div>
 </div>
 {html_footer}
-<!-- {listvars} -->
+

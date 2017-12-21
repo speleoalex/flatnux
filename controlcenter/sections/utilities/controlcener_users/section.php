@@ -10,6 +10,8 @@ global $_FN;
 $opt = FN_GetParam("opt",$_GET,"html");
 $table = FN_XmlForm("fn_cc_users");
 $table->formvals['ccsections']['options'] = FNCC_GetMenuItemsLinks();
+$table->formvals['default']['options'] = FNCC_GetMenuItemsLinks();
+
 FNCC_xmltableeditor($table);
 /**
  *

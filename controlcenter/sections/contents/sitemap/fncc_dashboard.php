@@ -102,7 +102,7 @@ function FNCC_print_section($section,$level)
     //icon --->
     $link = FN_RewriteLink("index.php?mod={$section['id']}");
     $html.="<span id=\"span_{$section['id']}\"  style=\"background-position: bottom right;background-image:url(controlcenter/sections/contents/sitemap/node.png);background-repeat:no-repeat;padding-left:{$left}px\"></span>";
-    $html.="<span><img style=\"vertical-align:middle;border:0px;\" src=\"".FN_FromTheme("images/mime/dir.png")."\" />$t&nbsp;<a title=\"".FN_Translate("preview")."\" href=\"$link\" onclick=\"preview=window.open('$link','preview','top=10,left=10,scrollbars=yes');preview.focus();return false;\" >{$section['title']}</a>";
+    $html.="<span><img style=\"vertical-align:middle;border:0px;height:22px;\" src=\"".FN_FromTheme("images/mime/dir.png")."\" />$t&nbsp;<a title=\"".FN_Translate("preview")."\" href=\"$link\" onclick=\"preview=window.open('$link','preview','top=10,left=10,scrollbars=yes');preview.focus();return false;\" >{$section['title']}</a>";
     //icon ---<
 
     $html.="</td>";

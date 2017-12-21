@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Flatnux_module_contacts
  * @author Alessandro Vernassa <speleoalex@gmail.com>
@@ -9,13 +10,15 @@
 defined('_FNEXEC') or die('Restricted access');
 global $_FN;
 FN_LoadMessagesFolder("sections/{$_FN['mod']}/");
-
+$config=FN_LoadConfig("modules/contacts/config.php");
+$tablename=empty($config['tablename']) ? "contact_message" : $config['tablename'];
 //session_start();
-if (!file_exists("{$_FN['datadir']}/{$_FN['database']}/contact_message.php"))
-    INS_InitTable("contact_message");
+if (!file_exists("{$_FN['datadir']}/{$_FN['database']}/$tablename.php"))
+    INS_InitTable("$tablename");
 echo FN_HtmlContent("sections/{$_FN['mod']}");
 echo "<a name=\"contactsform\"></a>";
-INS_GestInsert("contact_message");
+INS_GestInsert("$tablename");
+
 //dprint_r($_POST);
 /**
  *
@@ -23,7 +26,6 @@ INS_GestInsert("contact_message");
  * @param string $tablename
  * @param array $params
  */
-
 function INS_GestInsert($tablename,$params=array())
 {
     global $_FN,$_FNMESSAGE;
@@ -33,7 +35,7 @@ function INS_GestInsert($tablename,$params=array())
     $config=FN_LoadConfig("modules/contacts/config.php");
     $savemessage=$config['savemessage'];
     $usermail=$config['usermail'];
-    if ($usermail == "")
+    if ($usermail== "")
     {
         $usermail=$_FN['log_email_address'];
     }
@@ -53,20 +55,20 @@ function INS_GestInsert($tablename,$params=array())
         $newvalues['subject']=isset($newvalues['subject']) ? $newvalues['subject'] : $_FN['mod']." ".FN_FormatDate(time());
         $errors=$Table->Verify($newvalues);
         // checking the value of anti-spam code inserted
-        if ($config['enable_captcha'] != 0)
+        if ($config['enable_captcha']!= 0)
         {
-            if (empty($security_code) || $captcha != $security_code)
+            if (empty($security_code) || $captcha!= $security_code)
             {
                 FN_SetSessionValue("captcha",array("security_code"=>""));
                 $wrong_antispam=true;
             }
         }
-        if (count($errors) == 0 && !$wrong_antispam)
+        if (count($errors)== 0 && !$wrong_antispam)
         {
             //nuovo record---->
             if ($newvalues)
             {
-                if ($savemessage == 1)
+                if ($savemessage== 1)
                 {
                     $newvalues['ip']=FN_GetParam("REMOTE_ADDR",$_SERVER,"html");
                     $newvalues['date']=FN_Now();
@@ -74,10 +76,10 @@ function INS_GestInsert($tablename,$params=array())
                 }
                 $mailbody="<pre>\n";
                 $Table->SetLayoutView("table");
-                $mailbody .= $Table->HtmlShowView($newvalues,1);
-                $mailbody .= "<br />".FN_Translate("view all messages").":";
-                $mailbody .= "<br /><br /><a href=\"{$_FN['siteurl']}/controlcenter.php?mod=contacts&opt=fnc_ccnf_section_contacts\">{$_FN['siteurl']}/controlcenter.php?mod=contacts&opt=fnc_ccnf_section_contacts</a>";
-                $mailbody .= "</pre>";
+                $mailbody.=$Table->HtmlShowView($newvalues,1);
+                $mailbody.="<br />".FN_Translate("view all messages").":";
+                $mailbody.="<br /><br /><a href=\"{$_FN['siteurl']}/controlcenter.php?mod=contacts&opt=fnc_ccnf_section_contacts\">{$_FN['siteurl']}/controlcenter.php?mod=contacts&opt=fnc_ccnf_section_contacts</a>";
+                $mailbody.="</pre>";
                 FN_SendMail($usermail,$newvalues['subject'],$mailbody,true);
                 $template_path=file_exists("themes/{$_FN['theme']}/modules/contacts/contacts_form_success.tp.html") ? "themes/{$_FN['theme']}/modules/contacts/contacts_form_success.tp.html" : "modules/contacts/contacts_form_success.tp.html";
                 $basepath=dirname($template_path)."/";
@@ -107,10 +109,10 @@ function INS_GestInsert($tablename,$params=array())
     $tplvars['contactsform_action']=FN_RewriteLink("index.php?mod={$_FN['mod']}");
     $tplvars['url_captcha']="{$_FN['siteurl']}/captcha.php?t=security_code";
     $templateForm=FN_TPL_ReplaceHtmlPart("contacts_formfields",FN_TPL_encode($htmlFields),$templateForm);
-    
-    
+
+
 //antispam--------------------------------------------------------------------->
-    if ($config['enable_captcha'] != 0)
+    if ($config['enable_captcha']!= 0)
     {
         FN_SetSessionValue("captcha",array("security_code"=>rand(1000,9999)));
         if (!$wrong_antispam)
@@ -123,9 +125,9 @@ function INS_GestInsert($tablename,$params=array())
         $templateForm=FN_TPL_ReplaceHtmlPart("captcha","",$templateForm);
     }
 //antispam---------------------------------------------------------------------<
-   //   dprint_xml($templateForm);
+    //   dprint_xml($templateForm);
     $templateForm=FN_TPL_ApplyTplString($templateForm,$tplvars,$basepath);
-        
+
 
     echo $templateForm;
 }
@@ -148,6 +150,11 @@ function INS_InitTable($tablename)
 		<extra>autoincrement</extra>
 	</field>
 	<field>
+		<name>archived</name>
+		<frm_show>0</frm_show>
+                <frm_type>bool</frm_type>
+	</field>
+        <field>
 		<name>name</name>
 		<frm_i18n>name</frm_i18n>
 		<frm_help_i18n>insert your name here</frm_help_i18n>
@@ -197,6 +204,25 @@ function INS_InitTable($tablename)
 </tables>
 ';
     FN_Write($xml,"{$_FN['datadir']}/{$_FN['database']}/$tablename.php");
+
+
+    $t=FN_XmlTable("{$tablename}");
+    if (empty($t->fields['status']))
+    {
+        $field['name']="status";
+        $field['frm_i18n']="status";
+        $field['frm_show']=0;
+        addxmltablefield($t->databasename,$t->tablename,$field,$_FN['datadir']);
+        $t=FN_XmlTable("{$tablename}");
+    }
+    if (empty($t->fields['date']))
+    {
+        $field['name']="date";
+        $field['frm_i18n']="date";
+        $field['frm_show']="1";
+        addxmltablefield($t->databasename,$t->tablename,$field,$_FN['datadir']);
+        $t=FN_XmlTable("{$tablename}");
+    }    
 }
 
 /**
@@ -217,8 +243,8 @@ function INS_MakeLink($values,$sep="&amp;")
     $linkclean="";
     foreach($link as $k=> $v)
     {
-        if ($v != "")
-            $linkclean .= "$sep$k=".$v;
+        if ($v!= "")
+            $linkclean.="$sep$k=".$v;
     }
     $linkclean=FN_RewriteLink("index.php?mod={$_FN['mod']}$linkclean");
     ;

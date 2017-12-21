@@ -23,9 +23,16 @@ $_FN['fneditmode']="0";
 $opt=FN_GetParam("opt",$_GET,"html");
 $op=FN_GetParam("op",$_GET,"html");
 $modcont=FN_GetParam("modcont",$_GET,"flat");
-//-------------------------init table cc_users--------------------------------->
-if (!file_exists("{$_FN['datadir']}/{$_FN['database']}/fn_cc_users.php"))
+if ($opt=="")
 {
+    $section_enabled=FN_XMLQuery("SELECT * FROM fn_cc_users WHERE username LIKE '{$_FN['user']}'");
+    if (!empty($section_enabled[0]['default']))
+    {
+        $opt=$section_enabled[0]['default'];
+        $_GET['opt']=$opt;
+    }
+}
+//-------------------------init table cc_users--------------------------------->
     $xml='<?xml version="1.0" encoding="UTF-8"?>
 <?php exit(0);?>
 <tables>
@@ -38,8 +45,15 @@ if (!file_exists("{$_FN['datadir']}/{$_FN['database']}/fn_cc_users.php"))
 		<frm_type>multiselect</frm_type>
 		<frm_options>a,b</frm_options>
 	</field>
+	<field>
+		<name>default</name>
+		<frm_type>select</frm_type>
+		<frm_options>a,b</frm_options>
+	</field>
 </tables>
 ';
+if (!file_exists("{$_FN['datadir']}/{$_FN['database']}/fn_cc_users.php"))
+{
     FN_Write($xml,"{$_FN['datadir']}/{$_FN['database']}/fn_cc_users.php");
 }
 //-------------------------init table cc_users---------------------------------<
@@ -50,8 +64,6 @@ $editconf="";
 $fileconfig_to_edit="";
 $_FN['mod']="";
 
-
-$opt=FN_GetParam("opt",$_GET,"html");
 
 $_FN['configsection']=$configsection;
 $params=array();
@@ -111,6 +123,7 @@ else
     {
         $html=FN_TPL_include_tpl(FN_TPL_ApplyTplFile("controlcenter/themes/{$_FN['controlcenter_theme']}/controlcenter.dashboard.tp.html",$params),$params);
     }
+    $html = str_replace("</head>","{$_FN['section_header_footer']}</head>",$html);
 }
 //-----------------------------MAIN PAGE---------------------------------------<
 die($html);
@@ -567,9 +580,13 @@ function FNCC_GetMenuItems()
     $menu=array();
     $toShow=false;
     $section_enabled=FN_XMLQuery("SELECT * FROM fn_cc_users WHERE username LIKE '{$_FN['user']}'");
+    $default="";
     if (!empty($section_enabled[0]['ccsections']))
     {
         $toShow=explode(",",$section_enabled[0]['ccsections']);
+        $default = isset($section_enabled[0]['default'])?$section_enabled[0]['default']:"";
+        if ($default && !in_array($default,$toShow))
+            $toShow[]=$default;
     }
 
     $dirs=FN_ListDir("controlcenter/sections/",false);

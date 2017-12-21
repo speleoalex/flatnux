@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @author Alessandro Vernassa <speleoalex@gmail.com>
  * @copyright Copyright (c) 2003-2009
@@ -10,9 +9,10 @@
 /**
  * xmldb_mysql.php created on 13/gen/2009
  * driver mysql per xmldb
- * permette di inserire i dati in una tabella mysql
- * il descrittore della tabella deve contenere:
+ * allows you to enter data into a mysql table
+ * :
  *
+ * xml descriptor:
  * <driver>mysql</driver>
  * <host>mysqlserverhost</host>
  * <user>mysqlusername</user>
@@ -23,7 +23,6 @@
  * @author Alessandro Vernassa <speleoalex@gmail.com>
  */
 global $xmldb_mysqldatabase,$xmldb_mysqlusername,$xmldb_mysqlpassword,$xmldb_mysqlhost;
-
 global $xmldb_mysqlcurrentdb,$xmldb_mysqlconnection;
 
 class XMLTable_mysql
@@ -69,20 +68,19 @@ class XMLTable_mysql
         {
             $sqltable=$params['sqltable'];
         }
-        if ($sqltable=="")
+        if ($sqltable== "")
             $sqltable=$this->tablename;
         $this->sqltable=$sqltable;
 
 
-        // se sono impostate connessioni a livello globale nypasso le impostazioni della tabella
+        // se sono impostate connessioni a livello globale passo le impostazioni della tabella
         global $xmldb_mysqldatabase,$xmldb_mysqlusername,$xmldb_mysqlpassword,$xmldb_mysqlhost,$xmldb_timezone;
-        if ($xmldb_mysqlhost!=""&&$xmldb_mysqldatabase!=""&&$xmldb_mysqlusername!="")
+        if ($xmldb_mysqlhost!= "" && $xmldb_mysqldatabase!= "" && $xmldb_mysqlusername!= "")
         {
             $mysql['host']=$xmldb_mysqlhost;
             $mysql['user']=$xmldb_mysqlusername;
             $mysql['password']=$xmldb_mysqlpassword;
             $mysql['database']=$xmldb_mysqldatabase;
-            //dprint_r($mysql);
         }
         if (is_array($params))
         {
@@ -91,12 +89,12 @@ class XMLTable_mysql
                 $mysql[$k]=$v;
             }
         }
-        if ($mysql['database']=="")
+        if ($mysql['database']== "")
             $mysql['database']=$this->databasename;
         $this->mysqldatabasename=$mysql['database'];
-        if ($mysql['port']=="")
+        if ($mysql['port']== "")
             $mysql['port']=3306;
-        if ($mysql['host']!=""&&$mysql['user']!="")
+        if ($mysql['host']!= "" && $mysql['user']!= "")
         {
             $xmltable->connection=$mysql;
             $this->connection=& $xmltable->connection;
@@ -109,6 +107,11 @@ class XMLTable_mysql
         if ($xmldb_mysqlconnection)
         {
             $this->conn=$xmldb_mysqlconnection;
+            if (empty($this->mysqldatabasename))
+            {
+                $this->mysqldatabasename=$this->databasename;
+            }
+            //print_r($xmldb_mysqlconnection);
             $this->conn->query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
             if ($xmldb_timezone)
             {
@@ -119,18 +122,18 @@ class XMLTable_mysql
             $exists=false;
             //dprint_r($result);
             global $xmldb_mysqlcurrentdb;
-            if ($xmldb_mysqlcurrentdb==$this->mysqldatabasename)
+            if ($xmldb_mysqlcurrentdb== $this->mysqldatabasename)
             {
                 $exists=true;
             }
-            elseif (false!==$this->conn->select_db($this->mysqldatabasename))
+            elseif (false!== $this->conn->select_db($this->mysqldatabasename))
             {
                 $xmldb_mysqlcurrentdb=$this->mysqldatabasename;
                 $exists=true;
             }
             if (!$exists)
             {
-                if (false==$this->conn->query("CREATE DATABASE {$mysql['database']}"))
+                if (false== $this->conn->query("CREATE DATABASE {$mysql['database']}"))
                 {
                     echo ($this->conn->error);
                     return;
@@ -145,7 +148,7 @@ class XMLTable_mysql
             {
                 foreach($result as $tmp)
                 {
-                    if ($tmp['Tables_in_'.$mysql['database']]==$this->sqltable)
+                    if ($tmp['Tables_in_'.$mysql['database']]== $this->sqltable)
                         $exists=true;
                 }
             }
@@ -161,7 +164,7 @@ class XMLTable_mysql
                 foreach($fields as $field)
                 {
                     $field=get_object_vars($field);
-                    if (!isset($field['type'])||$field['type']=="string")
+                    if (!isset($field['type']) || $field['type']== "string")
                         $field['type']="varchar";
                     $query.="`".$field['name']."`";
                     $field['size']=isset($field['size']) ? $field['size'] : "";
@@ -181,22 +184,22 @@ class XMLTable_mysql
                             $field['size']="255";
                             break;
                     }
-                    if ($field['size']!="")
+                    if ($field['size']!= "")
                         $query.="(".$field['size'].")";
                     $query.=" ";
-                    if (isset($field['extra'])&&$field['extra']=="autoincrement")
+                    if (isset($field['extra']) && $field['extra']== "autoincrement")
                     {
-                        if ($field['type']=="int")
+                        if ($field['type']== "int")
                         {
                             $query.=" AUTO_INCREMENT ";
                         }
                     }
-                    if (isset($field['primarykey'])&&$field['primarykey']=="1")
+                    if (isset($field['primarykey']) && $field['primarykey']== "1")
                     {
                         $query.="  PRIMARY KEY ";
                     }
                     $query.="  NOT NULL ";
-                    if ($n-->1)
+                    if ($n-- > 1)
                         $query.=",";
                 }
                 $query.=") DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_bin";
@@ -226,7 +229,7 @@ class XMLTable_mysql
                     if (!is_array($tmp))
                         return true;
                     $mysql_fields[$tmp['Field']]=$tmp;
-                    if ($tmp['Null']=="YES")
+                    if ($tmp['Null']== "YES")
                     {
                         $this->nullfields[$tmp['Field']]=$tmp['Field'];
                     }
@@ -240,7 +243,7 @@ class XMLTable_mysql
             $flag_tablechanged=false;
             foreach($xmlfield as $fieldname=> $fieldvalues)
             {
-                if (!isset($mysql_fields[$fieldname])&&$fieldvalues->type!="innertable")
+                if (!isset($mysql_fields[$fieldname]) && $fieldvalues->type!= "innertable")
                 {
                     $field=get_object_vars($fieldvalues);
                     echo "add field $fieldname";
@@ -260,14 +263,14 @@ class XMLTable_mysql
                             $field['size']="255";
                             break;
                     }
-                    if ($field['size']!="")
+                    if ($field['size']!= "")
                         $query.="(".$field['size'].")";
-                    if ($field['type']!="int")
+                    if ($field['type']!= "int")
                         $query.=" CHARACTER SET utf8 COLLATE utf8_bin";
                     $query.=" ";
-                    if (isset($field['extra'])&&$field['extra']=="autoincrement")
+                    if (isset($field['extra']) && $field['extra']== "autoincrement")
                     {
-                        if ($field['type']=="int")
+                        if ($field['type']== "int")
                             $query.=" AUTO_INCREMENT ";
                     }
                     $query.=" NOT NULL";
@@ -322,7 +325,7 @@ class XMLTable_mysql
             $fields=implode("|",$fields);
         $fields='`'.str_replace("|","`,`",$fields).'`';
         $query="SELECT $fields FROM {$this->sqltable}";
-        if (is_array($restr)&&count($restr>0))
+        if (is_array($restr) && count($restr > 0))
         {
             $query.=" WHERE ";
             $and="";
@@ -332,27 +335,32 @@ class XMLTable_mysql
                 $and="AND";
             }
         }
-        if (is_string($restr))
+        elseif (is_string($restr))
         {
-            $query.=" WHERE $restr";
+            if (trim(ltrim($restr))!=="")
+            {
+                $query.=" WHERE $restr";
+            }
         }
 
-        if ($order!==false&&$order!==""&&isset($this->fields[$order]))
+        if ($order!== false && $order!== "" && isset($this->fields[$order]))
         {
             $query.=" ORDER BY  `$order`";
         }
         if ($reverse)
             $query.=" DESC";
-        if ($min!==false)
+        if ($min!== false)
         {
             $query.=" LIMIT $min";
-            if ($length!==false)
+            if ($length!== false)
             {
                 $query.=",$length";
             }
         }
-        //dprint_r(">>>>>".$query);
-        return $this->dbQuery($query);
+        $ret= $this->dbQuery($query);
+//        dprint_r(">>>>>".$query);
+//        dprint_r($ret);
+        return $ret;
     }
 
     /**
@@ -364,7 +372,7 @@ class XMLTable_mysql
     function GetRecord($restr=false)
     {
         $rec=$this->GetRecords($restr,0,1);
-        if (is_array($rec)&&isset($rec[0]))
+        if (is_array($rec) && isset($rec[0]))
         {
             return $rec[0];
         }
@@ -379,23 +387,23 @@ class XMLTable_mysql
     function dbQuery($query)
     {
         //          dprint_r($query);
-        if (!isset($this->conn)||!$this->conn)
+        if (!isset($this->conn) || !$this->conn)
         {
             echo ($this->conn->error);
             return false;
         }
         global $xmldb_mysqlcurrentdb;
-        if ($xmldb_mysqlcurrentdb!=$this->mysqldatabasename&&$this->conn->select_db($this->mysqldatabasename,$this->conn))
+        if ($xmldb_mysqlcurrentdb!= $this->mysqldatabasename && $this->conn->select_db($this->mysqldatabasename))
         {
             $xmldb_mysqlcurrentdb=$this->mysqldatabasename;
         }
         $result=$this->conn->query($query);
-        if ($result===false)
+        if ($result=== false)
         {
             return false;
         }
         $res=null;
-        if (is_object($result)&&method_exists($result,"fetch_assoc"))
+        if (is_object($result) && method_exists($result,"fetch_assoc"))
         {
             if (preg_match("/^UPDATE /is",$query))
                 return true;
@@ -466,11 +474,11 @@ class XMLTable_mysql
     function fix_null($res)
     {
         //print_r($this->nullfields);
-        if (is_array($this->nullfields)&&is_array($res))
+        if (is_array($this->nullfields) && is_array($res))
         {
             foreach($res as $k=> $v)
             {
-                if ($res[$k]===NULL)
+                if ($res[$k]=== NULL)
                     $res[$k]="";
             }
             /*
@@ -501,7 +509,7 @@ class XMLTable_mysql
             if (!$this->conn)
                 die($this->conn->error);
             $pkey=$this->primarykey;
-            if ($this->fields[$this->primarykey]->type=="int")
+            if ($this->fields[$this->primarykey]->type== "int")
                 $query="DELETE FROM {$this->sqltable} WHERE $pkey LIKE ".$pkvalue;
             else
                 $query="DELETE FROM {$this->sqltable} WHERE $pkey LIKE '".addslashes($pkvalue)."'";
@@ -512,7 +520,7 @@ class XMLTable_mysql
                 echo $this->conn->error;
                 return false;
             }
-            if (!strpos($pkvalue,"..")!==false&&file_exists("$path/$databasename/$tablename/$pkvalue/")&&is_dir("$path/$databasename/$tablename/$pkvalue/"))
+            if (!strpos($pkvalue,"..")!== false && file_exists("$path/$databasename/$tablename/$pkvalue/") && is_dir("$path/$databasename/$tablename/$pkvalue/"))
                 xmldb_remove_dir_rec("$path/$databasename/$tablename/$pkvalue");
             return true;
         }
@@ -545,10 +553,10 @@ class XMLTable_mysql
      * */
     function InsertRecord($values)
     {
-        if ($this->connection)
+        if (!empty($this->conn))
         {
 
-            if ($this->conn)
+           // if ($this->conn)
             {
                 $seldb=true;
                 $query="INSERT INTO `".$this->sqltable."` (";
@@ -561,11 +569,11 @@ class XMLTable_mysql
                     if (isset($this->fields[$k]))
                     {
                         //------autoincrement--->
-                        if (isset($this->fields[$k]->extra)&&$this->fields[$k]->extra=="autoincrement")
+                        if (isset($this->fields[$k]->extra) && $this->fields[$k]->extra== "autoincrement")
                         {
-                            if (!isset($this->fields[$k]->nativeautoincrement)||$this->fields[$k]->nativeautoincrement!=1)
+                            if (!isset($this->fields[$k]->nativeautoincrement) || $this->fields[$k]->nativeautoincrement!= 1)
                             {
-                                if (!isset($values[$k])||$values[$k]=="")
+                                if (!isset($values[$k]) || $values[$k]== "")
                                 {
                                     $newid=$this->GetAutoincrement($k);
                                     $values[$k]=$newid;
@@ -585,13 +593,13 @@ class XMLTable_mysql
                 {
                     if (isset($this->fields[$k])) // 'IF' ADDED BY DANIELE FRANZA 28/03/2009
                     {
-                        if (isset($this->mysqlfields[$k]['Null'])&&$this->mysqlfields[$k]['Null']=="YES"&&$v=="")
+                        if (isset($this->mysqlfields[$k]['Null']) && $this->mysqlfields[$k]['Null']== "YES" && $v== "")
                         {
                             $tf[]="NULL";
                         }
                         else
                         {
-                            if ($this->fields[$k]->type=="int"&&$v!==''&&$v!==NULL)
+                            if ($this->fields[$k]->type== "int" && $v!== '' && $v!== NULL)
                                 $tf[]=$v;
                             else
                             {
@@ -611,7 +619,7 @@ class XMLTable_mysql
                 echo ($this->conn->error);
                 return false;
             }
-            if (!isset($values[$this->primarykey])||$values[$this->primarykey]=="")
+            if (!isset($values[$this->primarykey]) || $values[$this->primarykey]== "")
             {
                 $lastid=$this->dbQuery("SELECT * FROM {$this->sqltable} where {$this->primarykey} LIKE LAST_INSERT_ID();");
                 /*
@@ -655,11 +663,11 @@ class XMLTable_mysql
                     if (isset($this->fields[$k]))
                     {
                         //------autoincrement--->
-                        if (isset($this->fields[$k]->extra)&&$this->fields[$k]->extra=="autoincrement")
+                        if (isset($this->fields[$k]->extra) && $this->fields[$k]->extra== "autoincrement")
                         {
-                            if (!isset($this->fields[$k]->nativeautoincrement)||$this->fields[$k]->nativeautoincrement!=1)
+                            if (!isset($this->fields[$k]->nativeautoincrement) || $this->fields[$k]->nativeautoincrement!= 1)
                             {
-                                if (!isset($values[$k])||$values[$k]=="")
+                                if (!isset($values[$k]) || $values[$k]== "")
                                 {
                                     $newid=$this->GetAutoincrement($k);
                                     $values[$k]=$newid;
@@ -679,13 +687,13 @@ class XMLTable_mysql
                 {
                     if (isset($this->fields[$k])) // 'IF' ADDED BY DANIELE FRANZA 28/03/2009
                     {
-                        if ($this->mysqlfields[$k]['Null']=="YES"&&$v=="")
+                        if ($this->mysqlfields[$k]['Null']== "YES" && $v== "")
                         {
                             $tf[]="NULL";
                         }
                         else
                         {
-                            if ($this->fields[$k]->type=="int")
+                            if ($this->fields[$k]->type== "int")
                                 $tf[]=$v;
                             else
                             {
@@ -699,9 +707,9 @@ class XMLTable_mysql
                 $query.=");";
             }
             global $xmldb_mysqlcurrentdb;
-            if ($xmldb_mysqlcurrentdb!=$this->mysqldatabasename&&$this->conn->select_db($this->mysqldatabasename,$this->conn))
+            if ($xmldb_mysqlcurrentdb!= $this->mysqldatabasename && $this->conn->select_db($this->mysqldatabasename,$this->conn))
             {
-                $xmldb_mysqlcurrentdb!=$this->mysqldatabasename;
+                $xmldb_mysqlcurrentdb!= $this->mysqldatabasename;
             }
             if (!$this->conn->query($query,$this->conn))
             {
@@ -742,7 +750,7 @@ class XMLTable_mysql
                         $values2[$k]=$values[$k];
                 }
                 $n=count($values2);
-                if ($n==0) //se non c'e' nulla da aggiornare
+                if ($n== 0) //se non c'e' nulla da aggiornare
                     return $existsvalues;
 
                 foreach($values2 as $k=> $value)
@@ -750,23 +758,23 @@ class XMLTable_mysql
                     if (isset($this->fields[$k]))
                     {
                         $query.="`$k`=";
-                        if ($this->mysqlfields[$k]['Null']=="YES"&&$value=="")
+                        if ($this->mysqlfields[$k]['Null']== "YES" && $value== "")
                         {
                             $query.="NULL";
                         }
                         else
                         {
-                            if ($this->fields[$k]->type=="int")
+                            if ($this->fields[$k]->type== "int")
                                 $query.=addslashes($value);
                             else
                                 $query.="'".addslashes($value)."'";
                         }
-                        if ($n-->1)
+                        if ($n-- > 1)
                             $query.=",";
                     }
                 }
                 $query.=" WHERE `$pkey`LIKE ";
-                if ($this->fields[$pkey]->type=="int")
+                if ($this->fields[$pkey]->type== "int")
                     $query.="$pvalue ";
                 else
                     $query.="'$pvalue' ";
@@ -807,30 +815,30 @@ class XMLTable_mysql
                         $values2[$k]=$values[$k];
                 }
                 $n=count($values2);
-                if ($n==0) //se non c'e' nulla da aggiornare
+                if ($n== 0) //se non c'e' nulla da aggiornare
                     return $this->GetRecordByPk($pvalue);;
                 foreach($values2 as $k=> $value)
                 {
                     if (isset($this->fields[$k]))
                     {
                         $query.="`$k`=";
-                        if ($this->mysqlfields[$k]['Null']=="YES"&&$value=="")
+                        if ($this->mysqlfields[$k]['Null']== "YES" && $value== "")
                         {
                             $query.="NULL";
                         }
                         else
                         {
-                            if ($this->fields[$k]->type=="int")
+                            if ($this->fields[$k]->type== "int")
                                 $query.=addslashes($value);
                             else
                                 $query.="'".addslashes($value)."'";
                         }
-                        if ($n-->1)
+                        if ($n-- > 1)
                             $query.=",";
                     }
                 }
                 $query.=" WHERE `$pkey`=";
-                if ($this->fields[$pkey]->type=="int"||$this->fields[$pkey]->type=="float")
+                if ($this->fields[$pkey]->type== "int" || $this->fields[$pkey]->type== "float")
                     $query.="$pvalue ";
                 else
                     $query.="'$pvalue' ";
@@ -859,7 +867,7 @@ class XMLTable_mysql
     function GetNumRecords($restr=null)
     {
         $query="SELECT COUNT(*) AS C FROM ".$this->sqltable;
-        if (is_array($restr)&&count($restr>0))
+        if (is_array($restr) && count($restr > 0))
         {
             $query.=" WHERE ";
             $and="";
@@ -869,7 +877,7 @@ class XMLTable_mysql
                 $and="AND";
             }
         }
-        if (is_string($restr))
+        elseif (is_string($restr) && trim(ltrim($restr))!=="")
         {
             $query.=" WHERE $restr";
         }
@@ -910,15 +918,15 @@ class XMLTable_mysql
         {
             $php_self=isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : "";
             $dirname=dirname($php_self);
-            if ($dirname=="/"||$dirname=="\\")
+            if ($dirname== "/" || $dirname== "\\")
             {
                 $dirname="";
             }
             $protocol="http://";
-            if (isset($_SERVER['HTTPS'])&&$_SERVER['HTTPS']=="on")
+            if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']== "on")
                 $protocol="https://";
             $siteurl="$protocol".$_SERVER['HTTP_HOST'].$dirname;
-            if (substr($siteurl,strlen($siteurl)-1,1)!="/")
+            if (substr($siteurl,strlen($siteurl) - 1,1)!= "/")
             {
                 $siteurl=$siteurl."/";
             }
@@ -941,7 +949,7 @@ class XMLTable_mysql
         static $last="";
         if (isset($this->maxautoincrement[$field]))
         {
-            return $this->maxautoincrement[$field]+1;
+            return $this->maxautoincrement[$field] + 1;
         }
         //todo autoincrement offset SHOW VARIABLES;
         //dprint_r ("SELECT MAX(CAST($field AS UNSIGNED)) AS $field FROM {$this->sqltable} WHERE $field NOT LIKE '%[a-z]%' ");
@@ -951,7 +959,7 @@ class XMLTable_mysql
             return 1;
         $max=$record[0][$field];
         //dprint_r($max);
-        return $max+1;
+        return $max + 1;
     }
 
 }
@@ -971,7 +979,7 @@ function xml_to_sql($databasename,$tablename,$xmlpath,$connection,$dropold=false
     {
         $connection['sqltable']=$tablename;
     }
-    if (isset($TableXml->connection)&&is_array($TableXml->connection))
+    if (isset($TableXml->connection) && is_array($TableXml->connection))
     {
         echo "this is already sql database";
         return false;
@@ -991,7 +999,7 @@ function xml_to_sql($databasename,$tablename,$xmlpath,$connection,$dropold=false
         echo $this->conn->error;
         return false;
     }
-    //modifico le propriet� della tabella xml
+    //modifico le proprieta' della tabella xml
     $oldfilestring=file_get_contents($xmlpath."/$databasename/$tablename.php");
     $strnew="\n\t<driver>mysql</driver>";
     $strnew.="\n\t<host>".$connection['host']."</host>";

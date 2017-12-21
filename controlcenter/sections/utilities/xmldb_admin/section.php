@@ -19,6 +19,7 @@ define("_XMLTABLESTRUCTURE","<tables>
 	</field>
 	<field>
 		<name>type</name>
+                <frm_i18n>type (db)</frm_i18n>
 		<type>select</type>
 		<frm_options>varchar,text,image,file,datetime,check,select,radio,html,password</frm_options>
 	</field>
@@ -35,12 +36,14 @@ define("_XMLTABLESTRUCTURE","<tables>
 	<field>
 		<name>frm_type</name>
 		<type>varchar</type>
-		<frm_type>select</frm_type>
+                <frm_i18n>type (form)</frm_i18n>
+		<frm_type>stringselect</frm_type>
 		<frm_options>varchar,text,image,file,localfile,datetime,check,select,radio,html,password</frm_options>
 		<frm_group>FORM</frm_group>
 	</field>
 	<field>
 		<name>frm_options</name>
+                <frm_i18n>list options</frm_i18n>
 		<type>text</type>
 	</field>
 	<field>
@@ -51,6 +54,11 @@ define("_XMLTABLESTRUCTURE","<tables>
 		<name>frm_show</name>
 		<type>select</type>
 		<frm_options>0,1</frm_options>
+	</field>
+	<field>
+		<name>frm_default</name>
+                <frm_i18n>default value</frm_i18n>
+		<type>text</type>
 	</field>
 	<field>
 		<name>frm_validator</name>

@@ -51,6 +51,9 @@ if (!file_exists($_FN['datadir']."/rss/{$CLASS_NEWS->config['tablename']}/{$_FN[
 
 switch($mode)
 {
+	case "archive" :
+                include ("modules/news/archive.php");
+		break;
 
 	case "edit" :
 		if ($CLASS_NEWS->IsNewsAdministrator())

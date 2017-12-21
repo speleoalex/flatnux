@@ -66,7 +66,7 @@
 	<field>
 		<name>hidden</name>
 		<frm_type>check</frm_type>
-		<frm_i18n>section hidden</frm_i18n>
+		<frm_i18n>page is hidden in menus</frm_i18n>
 	</field>
 	<field>
 		<name>level</name>

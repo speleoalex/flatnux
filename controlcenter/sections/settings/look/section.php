@@ -16,12 +16,12 @@ $editoptions=FN_GetParam("editoptions",$_GET);
 $edit=FN_GetParam("edit",$_GET);
 
 
-if ($themetoedit=="")
+if ($themetoedit== "")
 {
     $themetoedit=$_FN['theme_default'];
 }
 
-if ($edit!=""&&file_exists("themes/$themetoedit/$edit"))
+if ($edit!= "" && file_exists("themes/$themetoedit/$edit"))
 {
     //($file,$formaction = "",$exit = "",$editor_params = false)
     FN_EditContent(
@@ -31,10 +31,10 @@ if ($edit!=""&&file_exists("themes/$themetoedit/$edit"))
             ,array("css_file"=>"themes/$themetoedit/style.css","fullpage"=>true)
     );
 }
-elseif ($editconf!="")
+elseif ($editconf!= "")
 {
     $theme=$themetoedit;
-    if (count($_POST)>0&&empty($_POST['copy_theme_from'])&&empty($_POST['oldimageimage']))
+    if (count($_POST) > 0 && empty($_POST['copy_theme_from']) && empty($_POST['oldimageimage']))
     {
         FN_JsRedirect("?mod={$_FN['mod']}&opt=$opt&themetoedit=$themetoedit&editconf=$editconf");
     }
@@ -56,7 +56,7 @@ else
 
     $list_themes=get_list_themes();
     $theme=FN_GetParam("theme",$_POST,"html");
-    if ($theme!=""&&file_exists("themes/$theme"))
+    if ($theme!= "" && file_exists("themes/$theme"))
     {
         $t=FN_XmlTable("fn_settings");
         $t->UpdateRecord(array("varname"=>"theme","varvalue"=>$theme));
@@ -68,7 +68,7 @@ else
     foreach($list_themes as $theme_)
     {
         echo "\n<option ";
-        if ($themetoedit==$theme_)
+        if ($themetoedit== $theme_)
         {
             echo ' selected="selected" ';
         }
@@ -85,7 +85,7 @@ else
 
 
     $theme=$themetoedit;
-    if (count($_POST)>0&&empty($_POST['copy_theme_from'])&&empty($_POST['oldimageimage']))
+    if (count($_POST) > 0 && empty($_POST['copy_theme_from']) && empty($_POST['oldimageimage']))
     {
         FN_JsRedirect("?mod={$_FN['mod']}&opt=$opt&themetoedit=$themetoedit&editconf=$editconf");
     }
@@ -130,11 +130,11 @@ function resizeThumb(w,h){
 
 
     //--------------------CSS list ------------------------------------------->
-    if (is_writable("themes/$themetoedit")&&FN_UserCanEditFolder("themes/$themetoedit"))
+    if (is_writable("themes/$themetoedit") && FN_UserCanEditFolder("themes/$themetoedit"))
     {
         echo "<div style=\"\">";
         $listfiles=glob("themes/$themetoedit/*.css");
-        if (count($listfiles)>0)
+        if (count($listfiles) > 0)
         {
             echo "<table>";
             echo "<tr><td colspan=\"2\"><h3>CSS</h3></td></tr>";
@@ -152,18 +152,20 @@ function resizeThumb(w,h){
     //---------------------------images---------------------------------------->
     $errors=array();
     $oldimageimage=FN_GetParam("oldimageimage",$_POST,"flat");
-    if ($oldimageimage&&file_exists($oldimageimage)&&!empty(($_FILES['image']['tmp_name'])))
+
+
+    if ($oldimageimage!="" && file_exists($oldimageimage) && !empty($_FILES['image']['tmp_name']))
     {
         $oldimagevalues=getimagesize($oldimageimage);
         $newimagevalues=getimagesize($_FILES['image']['tmp_name']);
         //    if ($imagevalues[])
 
-        if ($oldimagevalues['mime']!=$newimagevalues['mime'])
+        if ($oldimagevalues['mime']!= $newimagevalues['mime'])
         {
             $errors[]=FN_Translate("the image must be of the same type and of the same size");
         }
 
-        if (count($errors)>0)
+        if (count($errors) > 0)
         {
             FN_Alert(implode($errors,", \n"));
         }
@@ -175,13 +177,13 @@ function resizeThumb(w,h){
             }
             else
             {
-                FN_Alert(FN_Translate("the data were successfully updated"));                
+                FN_Alert(FN_Translate("the data were successfully updated"));
             }
         }
         /*
-        dprint_r($errors);
-        dprint_r($oldimagevalues);
-        dprint_r($newimagevalues);
+          dprint_r($errors);
+          dprint_r($oldimagevalues);
+          dprint_r($newimagevalues);
          */
     }
 
@@ -210,16 +212,16 @@ function resizeThumb(w,h){
     echo "</div>";
     //---------------------------images----------------------------------------<
 
-    if (is_writable("themes")&&FN_UserCanEditFolder("themes"))
+    if (is_writable("themes") && FN_UserCanEditFolder("themes"))
     {
 
         $error="";
         $copy_theme_from=FN_GetParam("copy_theme_from",$_POST,"html");
         $copy_theme_to=FN_GetParam("copy_theme_to",$_POST,"html");
-        if ($copy_theme_to!=""&&$copy_theme_from!=""&&is_dir("themes/$copy_theme_from"))
+        if ($copy_theme_to!= "" && $copy_theme_from!= "" && is_dir("themes/$copy_theme_from"))
         {
             $copy_theme_to=str_replace(" ","_",$copy_theme_to);
-            if (preg_match("/[A-Za-z0-9_]+/",$copy_theme_to)!=true)
+            if (preg_match("/[A-Za-z0-9_]+/",$copy_theme_to)!= true)
             {
                 $error=FN_Translate("have entered illegal characters");
             }
@@ -227,10 +229,10 @@ function resizeThumb(w,h){
             {
                 $error=FN_Translate("a file already exists with this name");
             }
-            if ($error=="")
+            if ($error== "")
             {
                 $ret=FN_CopyDir("themes/$copy_theme_from","themes/$copy_theme_to");
-                if ($ret&&file_exists("themes/$copy_theme_to"))
+                if ($ret && file_exists("themes/$copy_theme_to"))
                 {
                     FN_JsRedirect("?mod={$_FN['mod']}&opt=$opt&themetoedit=$copy_theme_to&newthemesuccess=1");
                 }
@@ -241,7 +243,7 @@ function resizeThumb(w,h){
             }
         }
         $success=FN_GetParam("newthemesuccess",$_GET);
-        if ($success==1)
+        if ($success== 1)
         {
             FN_Alert(FN_Translate("the new theme has been created"));
         }
@@ -250,15 +252,15 @@ function resizeThumb(w,h){
         echo FN_i18n("Starting theme")." : ";
         echo "<select name=\"copy_theme_from\" >";
         $theme_sel=$copy_theme_from;
-        if ($theme_sel=="")
-            $theme_sel = $themetoedit;
-        if ($theme_sel=="")
-            $theme_sel = $_FN['theme'];
-        
+        if ($theme_sel== "")
+            $theme_sel=$themetoedit;
+        if ($theme_sel== "")
+            $theme_sel=$_FN['theme'];
+
         foreach($list_themes as $theme_)
         {
             echo "\n<option";
-            if ($theme_sel==$theme_)
+            if ($theme_sel== $theme_)
             {
                 echo ' selected="selected" ';
             }
@@ -280,9 +282,9 @@ function get_list_themes()
 {
     $handle=opendir("themes/");
     $list_themes=array();
-    while(false!==($file=readdir($handle)))
+    while(false!== ($file=readdir($handle)))
     {
-        if (!($file=="." or $file=="..") and is_dir("themes/$file"))
+        if (!($file== "." or $file== "..") and is_dir("themes/$file"))
         {
             array_push($list_themes,$file);
         }
@@ -302,7 +304,6 @@ function listimages($pattern,$flags=0)
 {
     $_files=glob($pattern,$flags);
     $files=array();
-
     foreach($_files as $_file)
     {
         if (!is_dir($_file))
@@ -319,9 +320,7 @@ function listimages($pattern,$flags=0)
             }
         }
     }
-
-
-    foreach(glob(dirname($pattern).'/*',GLOB_ONLYDIR|GLOB_NOSORT) as $dir)
+    foreach(glob(dirname($pattern).'/*',GLOB_ONLYDIR | GLOB_NOSORT) as $dir)
     {
         $files=array_merge($files,listimages($dir.'/'.basename($pattern),$flags));
     }

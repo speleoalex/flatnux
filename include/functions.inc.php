@@ -67,6 +67,7 @@ function FN_GetParam($key,$var=false,$type="")
     }
     return FN_StripPostSlashes($ret);
 }
+
 /**
  * 
  * @param type $a
@@ -1905,7 +1906,6 @@ function FN_GetVarsFromTable($tablename)
  */
 function FN_LoadVarsFromTable(&$var,$tablename,$ignore=array())
 {
-
     $Table=FN_XmlTable($tablename);
     if (!is_array($ignore))
         $ignore=array();
@@ -1953,6 +1953,7 @@ function FN_LoadVarsFromTable(&$var,$tablename,$ignore=array())
                 $var[$k]=$old['varvalue'];
         }
     }
+
     return $var;
 }
 
@@ -2217,8 +2218,10 @@ function FN_LoadConfig($fileconfig="",$sectionid="",$usecache=true)
         FN_LoadVarsFromTable($config,$tablename);
         $cache[$tablename]=$config;
     }
-
-
+    if (isset($config['id']))
+    {
+        unset($config['id']);
+    }
     return $config;
 }
 

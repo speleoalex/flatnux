@@ -196,6 +196,8 @@ Pages : <!-- start pages --><!-- start page --><a href=\"{pagelink}\">{pagetitle
     $enableedit=isset($params['enableedit']) ? $params['enableedit'] : true;
     $enablenew=isset($params['enablenew']) ? $params['enablenew'] : true;
     $reverse=isset($params['defaultorderdesc']) ? $params['defaultorderdesc'] : false;
+    $maxpages=isset($params['maxpages']) ? $params['maxpages'] : 100;
+
     if (!isset($params['isadmin']))
         $params['isadmin']=XMLDBEDITOR_IsAdmin();
     //function in insert form
@@ -259,7 +261,7 @@ Pages : <!-- start pages --><!-- start page --><a href=\"{pagelink}\">{pagetitle
     $pk=isset($_GET["pk_$postgetkey"]) ? ($_GET["pk_$postgetkey"]) : "";
     $page=isset($_GET["page_$postgetkey"]) ? htmlspecialchars($_GET["page_$postgetkey"]) : "";
     $order=isset($_GET["order_$postgetkey"]) ? htmlspecialchars($_GET["order_$postgetkey"]) : "";
-    if ($order!="")
+    if ($order!= "")
     {
         $reverse=isset($_GET["desc_$postgetkey"]) ? htmlspecialchars($_GET["desc_$postgetkey"]) : "";
     }
@@ -272,7 +274,7 @@ Pages : <!-- start pages --><!-- start page --><a href=\"{pagelink}\">{pagetitle
             $tlink.="&amp;".$key."=".$value;
             $mlink.="&amp;".$key."=".$value;
         }
-    if ($flink!="")
+    if ($flink!= "")
     {
         $tlink.="&amp;$flink";
         $mlink.="&amp;$flink";
@@ -369,10 +371,10 @@ set_changed();
     //-----tabella --------->
     $toupdate=false;
     //----eliminazione del record
-    if ($enabledelete&&$opmod=="del")
+    if ($enabledelete && $opmod== "del")
     {
         $oldvalues=$table->xmltable->GetRecordByPk($pk);
-        if ($function_on_delete&&function_exists($function_on_delete))
+        if ($function_on_delete && function_exists($function_on_delete))
         {
             ob_start();
             $function_on_delete($oldvalues);
@@ -382,12 +384,12 @@ set_changed();
     }
     $endloop=false;
     $num_records=$table->xmltable->GetNumRecords($restr);
-    if ($params['maxrows']&&$params['maxrows']<=$num_records)
+    if ($params['maxrows'] && $params['maxrows']<= $num_records)
     {
         $enablenew=false;
     }
 
-    while($endloop==false)
+    while($endloop== false)
     {
         switch($opmod)
         {
@@ -404,31 +406,31 @@ set_changed();
                     }
                 }
 
-                if (is_array($pk)&&count($pk)>0||$pk!="")
+                if (is_array($pk) && count($pk) > 0 || $pk!= "")
                 {
                     $oldvalues=$table->xmltable->GetRecordByPk($pk);
                     $toupdate=true; //se esiste la chiave primaria il record ï¿½ da aggiornare
                 }
 
-                if ($toupdate&&is_array($forcevaluesupdate))
+                if ($toupdate && is_array($forcevaluesupdate))
                 {
                     foreach($forcevaluesupdate as $k=> $v)
                     {
                         $newvalues[$k]=$v;
                     }
                 }
-                if (!$toupdate&&is_array($forcevaluesinsert))
+                if (!$toupdate && is_array($forcevaluesinsert))
                 {
                     foreach($forcevaluesinsert as $k=> $v)
                     {
                         $newvalues[$k]=$v;
                     }
                 }
-                if ($toupdate&&!$enableedit)
+                if ($toupdate && !$enableedit)
                     break;
-                if (!$toupdate&&!$enablenew)
+                if (!$toupdate && !$enablenew)
                     break;
-                if (isset($_POST["save_$postgetkey"])&&!isset($_POST["__NOSAVE"]))
+                if (isset($_POST["save_$postgetkey"]) && !isset($_POST["__NOSAVE"]))
                 {
                     if (is_array($table->xmltable->primarykey))
                     {
@@ -445,7 +447,7 @@ set_changed();
                             }
                         }
                     }
-                    elseif (isset($_POST[$table->xmltable->primarykey])&&$pk)
+                    elseif (isset($_POST[$table->xmltable->primarykey]) && $pk)
                     {
                         if ($table->xmltable->GetRecordByPk($_POST[$table->xmltable->primarykey]))
                         {
@@ -453,7 +455,7 @@ set_changed();
                         }
                     }
                     $errors=$table->Verify($newvalues,$toupdate);
-                    if (count($errors)==0)
+                    if (count($errors)== 0)
                     {
                         if ($toupdate)
                         {
@@ -470,7 +472,7 @@ set_changed();
                             {
                                 $pk=$newvalues[$table->xmltable->primarykey];
                             }
-                            if ($onupdate!="")
+                            if ($onupdate!= "")
                             {
                                 $html.=$onupdate;
                                 die("UPDATE");
@@ -478,7 +480,7 @@ set_changed();
                             }
                             if (is_array($newvalues))
                             {
-                                if ($function_on_update&&function_exists($function_on_update))
+                                if ($function_on_update && function_exists($function_on_update))
                                 {
                                     ob_start();
                                     $function_on_update($newvalues,$oldvalues);
@@ -501,17 +503,17 @@ set_changed();
                         {
                             //insert record
                             $newvalues=$table->InsertRecord($newvalues);
-                            if (is_array($newvalues)&&count($newvalues)>0)
+                            if (is_array($newvalues) && count($newvalues) > 0)
                             {
                                 $oldvalues=$newvalues;
                                 $pk=$newvalues[$table->xmltable->primarykey];
-                                if ($function_on_insert&&function_exists($function_on_insert))
+                                if ($function_on_insert && function_exists($function_on_insert))
                                 {
                                     ob_start();
                                     $function_on_insert($newvalues);
                                     $html.=ob_get_clean();
                                 }
-                                if ($oninsert!="")
+                                if ($oninsert!= "")
                                 {
                                     $html.=$oninsert;
                                     break;
@@ -597,20 +599,20 @@ set_changed();
                         }
                     $html.=$table->HtmlShowInsertForm($params['isadmin'],$newvalues,$errors);
                 }
-                if ($functioninsert!=""&&function_exists($functioninsert))
+                if ($functioninsert!= "" && function_exists($functioninsert))
                 {
                     ob_start();
                     $functioninsert($newvalues);
                     $html.=ob_get_clean();
                 }
                 $html.="<br /><input style=\"display:none\" id=\"frm$postgetkey\" type=\"hidden\" name=\"save_$postgetkey\" value=\"$postgetkey\"/><button  type=\"submit\"   >".$textsave."</button>";
-                if ($textcancel!="")
+                if ($textcancel!= "")
                     $html.="&nbsp;<button id='exit_$postgetkey' type=\"button\" onclick=\"window.location='?".str_replace("&amp;","&",$tlink)."'\" >".$textcancel."</button>";
                 $html.="\n</div></form>";
                 if ($textviewlist)
                     $html.="<br /><a  href=\"?page_$postgetkey=$page&amp;order_$postgetkey=$order&amp;desc_$postgetkey=$reverse&amp;$flink_listmode\">$textviewlist</a> ";
-                if ($enablenew)
-                    $html.="&nbsp;<a href=\"?page_$postgetkey=$page&amp;order_$postgetkey=$order&amp;desc_$postgetkey=$reverse&amp;op_{$postgetkey}=insnew$mlink\">$textnew</a>";
+               // if ($enablenew)
+               //     $html.="&nbsp;<a href=\"?page_$postgetkey=$page&amp;order_$postgetkey=$order&amp;desc_$postgetkey=$reverse&amp;op_{$postgetkey}=insnew$mlink\">$textnew</a>";
 
 
                 break;
@@ -634,7 +636,7 @@ set_changed();
                 //---------------------------GRID------------------------------>
 
                 $endloop=true;
-                if (!empty($params['function_grid'])&&function_exists($params['function_grid']))
+                if (!empty($params['function_grid']) && function_exists($params['function_grid']))
                 {
                     $params['function_grid']();
                     break;
@@ -685,7 +687,7 @@ set_changed();
                 else
                 {
                     $fieldstoread=$__fieldstoread=false;
-                    if ($fields!=false&&!is_array($fields))
+                    if ($fields!= false && !is_array($fields))
                     {
                         $fields=explode("|",$fields);
                         $__fieldstoread=$fields;
@@ -706,48 +708,38 @@ set_changed();
                         }
                     }
                     //dprint_r($fields);
-                    if ($params['defaultorder']==false)
+                    if ($params['defaultorder']== false)
                         $params['defaultorder']=is_array($table->xmltable->primarykey) ? $table->xmltable->primarykey[0] : $table->xmltable->primarykey;
-                    if ($order==false)
+                    if ($order== false)
                         $order=$params['defaultorder'];
                     $order=preg_replace("/\[.*\]/s","",$order);
-                    //echo "or=$order";
-                    /*
-                      if (!empty($params['searchfields']))
-                      {
-                      $html .= "<form method=\"post\" action=\"?$tlink&amp;order_{$postgetkey}=$order\">";
-                      $html .= "<button type=\"submit\">".  FN_Translate("search")."</button>";
-                      $html .= "</form>";
-                      } */
                     $numPages=1;
                     $all=false;
-                    if (!empty($params['recordset'])&&is_array($params['recordset']))
+                    if (!empty($params['recordset']) && is_array($params['recordset']))
                     {
                         $all=$params['recordset'];
                         $num_records=count($all);
                     }
-                    if (intval($recordsperpage)!=false)
+                    if (intval($recordsperpage)!= false)
                     {
-                        //die ("r=$recordsperpage");
-                        if ($page=="")
+                        if ($page== "")
                             $page=1;
-                        if ($all===false)
+                        if ($all=== false)
                             $num_records=$table->xmltable->GetNumRecords($restr);
-                        //echo "num_records=$num_records ";
-                        $numPages=ceil($num_records/$recordsperpage);
-                        if ($page>$numPages)
+                        $numPages=ceil($num_records / $recordsperpage);
+                        if ($page > $numPages)
                             $page=$numPages;
-                        $start=($page*$recordsperpage-$recordsperpage)+1;
-                        $end=$start+$recordsperpage-1;
+                        $start=($page * $recordsperpage - $recordsperpage) + 1;
+                        $end=$start + $recordsperpage - 1;
                     }
                     else
                     {
                         $start=false;
                     }
                     //die ("ds");
-                    if ($all===false)
+                    if ($all=== false)
                     {
-                        if ($order==false)
+                        if ($order== false)
                         {
                             $all=$table->xmltable->GetRecords($restr,$start,$recordsperpage,$order,$reverse,$fieldstoread);
                         }
@@ -756,31 +748,93 @@ set_changed();
                             $all=$table->xmltable->GetRecords($restr,false,false,false,false,$fieldstoread);
                         }
                     }
-                    $htmlpages="";
-                    if ($recordsperpage&&$numPages>1)
+                    $end=$start + $recordsperpage;
+                    if ($end > $num_records)
                     {
-                        for($i=1; $i<=$numPages; $i++)
+                        $end=$num_records;
+                    }
+                    if ($num_records > 0)
+                        $txt_num_records="$start-".($end)." ".XMLDB_i18n("of","aa")." ".$num_records;
+                    else
+                        $txt_num_records="0-0"." ".XMLDB_i18n("of","aa")." 0";
+                    $htmlpages="";
+                    $link_prevpage="";
+                    $link_nextpage="";
+                    $cp=false;
+                    if ($recordsperpage && $numPages > 1)
+                    {
+                        //$maxpages=100;
+                        $id_page=1;
+
+                        if ($numPages > $maxpages && $page > 1)
+                        {
+                            $id_page=$page;
+                            if ($numPages - $id_page < $maxpages)
+                            {
+                                $id_page=$id_page - $maxpages + 1;
+                            }
+                        }
+                        $cp=1;
+                        if ($id_page > 1)
+                        {
+                            $s=array("{pagelink}","{pagetitle}");
+                            $r=array();
+                            $r['pagelink']="?$tlink&amp;page_{$postgetkey}=1&amp;order_{$postgetkey}=$order";
+                            $r['pagetitle']="&lt;&lt;";
+                            $htmlpages.=str_replace($s,$r,$template_page);
+                        }
+                        if ($id_page > 1)
+                        {
+                            $s=array("{pagelink}","{pagetitle}");
+                            $r=array();
+                            $r['pagelink']="?$tlink&amp;page_{$postgetkey}=".($page - 1)."&amp;order_{$postgetkey}=$order";
+                            $r['pagetitle']="&lt;";
+                            $htmlpages.=str_replace($s,$r,$template_page);
+                        }
+                        for($i=$id_page; $i<= $numPages; $i++)
                         {
                             $s=array("{pagelink}","{pagetitle}");
                             $r=array();
                             $r['pagelink']="?$tlink&amp;page_{$postgetkey}=$i&amp;order_{$postgetkey}=$order";
                             $r['pagetitle']=$i;
-                            if ($page==$i)
-                                $htmlpages.=str_replace($s,$r,$template_currentpage); //" <a style=\"color:$linkcolor\" href=\"?$tlink&amp;page_{$postgetkey}=$i&amp;order_{$postgetkey}=$order\"><b>$i</b></a>";
+                            if ($page== $i)
+                                $htmlpages.=str_replace($s,$r,$template_currentpage);
                             else
-                                $htmlpages.=str_replace($s,$r,$template_page); // " <a style=\"color:$linkcolor\" href=\"?$tlink&amp;page_{$postgetkey}=$i&amp;order_{$postgetkey}=$order\">$i</a>";
+                                $htmlpages.=str_replace($s,$r,$template_page);
+                            if ($cp>= $maxpages)
+                            {
+                                break;
+                            }
+                            $cp++;
                         }
                     }
+                    if ($cp && $cp < $numPages)
+                    {
+                        $s=array("{pagelink}","{pagetitle}");
+                        $r=array();
+                        $r['pagelink']="?$tlink&amp;page_{$postgetkey}=".($page + 1)."&amp;order_{$postgetkey}=$order";
+                        $r['pagetitle']="&gt;";
+                        $htmlpages.=str_replace($s,$r,$template_page);
+                    }
+                    if ($cp && $cp < $numPages)
+                    {
+                        $s=array("{pagelink}","{pagetitle}");
+                        $r=array();
+                        $r['pagelink']="?$tlink&amp;page_{$postgetkey}=$numPages&amp;order_{$postgetkey}=$order";
+                        $r['pagetitle']="&gt;&gt;";
+                        $htmlpages.=str_replace($s,$r,$template_page);
+                    }
+
                     $htmlpages_full=$htmlpages;
                     //  $htmlpages_full=preg_replace('/(<!-- start pages -->)(.*)(<!-- end pages -->)/is',$htmlpages,$htmlpages_full);
 
 
-                    if ($order!=false)
+                    if ($order!= false)
                     {
                         if (is_array($all))
                             $all=xmldb_array_natsort_by_key($all,str_replace("{$postgetkey}","",$order));
                     }
-                    if ($reverse==true&&is_array($all))
+                    if ($reverse== true && is_array($all))
                     {
                         $all=array_reverse($all);
                     }
@@ -807,7 +861,7 @@ set_changed();
                                 {
                                     $tf=explode("]",$ofield);
                                     $__ofield=$tf[1];
-                                    $orderfield[$ofield]=isset($table->formvals[$__ofield])?$table->formvals[$__ofield]:"";
+                                    $orderfield[$ofield]=isset($table->formvals[$__ofield]) ? $table->formvals[$__ofield] : "";
                                     $tf=$tf[0];
                                     $tf=str_replace("[","",$tf);
                                     $orderfield[$ofield]['title']=$tf;
@@ -819,15 +873,15 @@ set_changed();
                     }
                     else
                         $orderfield=$table->formvals;
-                  // dprint_r($orderfield);
+                    // dprint_r($orderfield);
                     $numcols=0;
                     foreach($orderfield as $key=> $value)
                     {
-                        if ($fields&&!in_array($key,$fields))
+                        if ($fields && !in_array($key,$fields))
                         {
                             continue;
                         }
-                        if ($show_translations==true||!isset($table->formvals[$key]['frm_multilanguage'])||$table->formvals[$key]['frm_multilanguage']!="1")
+                        if ($show_translations== true || !isset($table->formvals[$key]['frm_multilanguage']) || $table->formvals[$key]['frm_multilanguage']!= "1")
                         {
                             $numcols++;
                             $key=preg_replace("/\[.*\]/s","",$key);
@@ -836,7 +890,7 @@ set_changed();
                                 $rev="";
                                 $t="";
                                 $desclink="";
-                                if ($order==$key)
+                                if ($order== $key)
                                 {
                                     if ($reverse)
                                     {
@@ -880,15 +934,15 @@ set_changed();
                     $i=0;
                     static $tablefk=array();
                     $html_gridbody="";
-                    if (is_array($all)&&count($all)>0)
+                    if (is_array($all) && count($all) > 0)
                     {
                         foreach($all as $row)
                         {
                             $html_gridrow="";
-                            $backgroundcolor=($i%2==0) ? $bgcolor : $bgcolor2;
+                            $backgroundcolor=($i % 2== 0) ? $bgcolor : $bgcolor2;
                             $i++;
                             //start - end --->
-                            if ($recordsperpage!=false&&($i<$start||$i>$end))
+                            if ($recordsperpage!= false && ($i < $start || $i > $end))
                                 continue;
                             //start -end ---<
                             $html_gridfields="";
@@ -915,28 +969,28 @@ set_changed();
 
                             if (!empty($params['actions_before_fields']))
                             {
-                                if ($enableview&&$numcols++)
+                                if ($enableview && $numcols++)
                                     $html_gridfields.=str_replace("{fieldvalue}","<a href=\"?$urlquery&amp;op_$postgetkey=view$mlink\">".$textview."</a>",$template_gridbody_gridrow_gridfield);
-                                if ($enableedit&&$numcols++)
+                                if ($enableedit && $numcols++)
                                     $html_gridfields.=str_replace("{fieldvalue}","<a href=\"?$urlquery&amp;op_$postgetkey=insnew$mlink\">".$textmodify."</a>",$template_gridbody_gridrow_gridfield);
-                                if ($enabledelete&&$numcols++)
+                                if ($enabledelete && $numcols++)
                                     $html_gridfields.=str_replace("{fieldvalue}","<a href=\"javascript:check('?$urlquery&op_$postgetkey=del&$flink_listmode');\">".$textdelete."</a>",$template_gridbody_gridrow_gridfield);
                             }
 
 
                             foreach($orderfield as $key=> $field)
                             {
-                                $kfunction=(false!==strpos($key,"()")) ? str_replace("()","",$key) : false;
-                                if (false!==strpos($kfunction,"]"))
+                                $kfunction=(false!== strpos($key,"()")) ? str_replace("()","",$key) : false;
+                                if (false!== strpos($kfunction,"]"))
                                 {
                                     $kfunction=explode("]",$kfunction);
                                     $kfunction=$kfunction[1];
                                 }
 
-                                if ($fields&&!in_array($key,$fields))
+                                if ($fields && !in_array($key,$fields))
                                     continue;
                                 $vimage="";
-                                if ($show_translations==true||!isset($table->formvals[$key]['frm_multilanguage'])||$table->formvals[$key]['frm_multilanguage']!="1")
+                                if ($show_translations== true || !isset($table->formvals[$key]['frm_multilanguage']) || $table->formvals[$key]['frm_multilanguage']!= "1")
                                 {
                                     if (isset($functionsview[$key]))
                                     {
@@ -950,7 +1004,7 @@ set_changed();
                                     {
                                         $value="";
                                     }
-                                    elseif (($field['frm_type']=="datetime")&&method_exists($table->formclass[$field['name']],"view"))
+                                    elseif (($field['frm_type']== "datetime") && method_exists($table->formclass[$field['name']],"view"))
                                     {
                                         $tparams=$field;
                                         $tparams['name']=$field['name'];
@@ -963,10 +1017,10 @@ set_changed();
                                     {
                                         $value=$row[$field['name']];
 
-                                        if ($field['frm_type']=="image")
+                                        if ($field['frm_type']== "image")
                                         {
                                             $image=$table->xmltable->get_file($row,$field['name']);
-                                            if ($image!="")
+                                            if ($image!= "")
                                             {
                                                 $himage=16;
                                                 if (isset($params['imagesize']))
@@ -978,7 +1032,7 @@ set_changed();
                                                 $value="";
                                             }
                                         }
-                                        if (!empty($field['foreignkey'])&&!empty($field['fk_show_field']))
+                                        if (!empty($field['foreignkey']) && !empty($field['fk_show_field']))
                                         {
                                             $r=array();
                                             if (function_exists("FN_XmlTable"))
@@ -989,7 +1043,7 @@ set_changed();
 
                                             $tablefk=$tfk[$field['fk_link_field']];
                                             $f=$field['fk_link_field'];
-                                            if ($field['fk_link_field']!=$field['fk_show_field'])
+                                            if ($field['fk_link_field']!= $field['fk_show_field'])
                                             {
                                                 $f.="|".$field['fk_show_field'];
                                             }
@@ -1010,9 +1064,9 @@ set_changed();
                                                 foreach($showfields as $showfield)
                                                 {
                                                     $tvalue=$tablefk->GetRecord(array($field['fk_link_field']=>$fname_tmp));
-                                                    if (isset($tvalue["{$showfield}_{$lang}"])&&$tvalue["{$showfield}_{$lang}"]!="")
+                                                    if (isset($tvalue["{$showfield}_{$lang}"]) && $tvalue["{$showfield}_{$lang}"]!= "")
                                                         $value.=$sep.$tvalue["{$showfield}_{$lang}"];
-                                                    elseif (isset($tvalue["{$showfield}_en"])&&$tvalue["{$showfield}_en"]!="")
+                                                    elseif (isset($tvalue["{$showfield}_en"]) && $tvalue["{$showfield}_en"]!= "")
                                                         $value.=$sep.$tvalue[$showfield."_en"];
                                                     else
                                                         $value.=$sep.$tvalue[$showfield];
@@ -1023,11 +1077,11 @@ set_changed();
                                         }
                                         else
                                         {
-                                            if (isset($field['options'])&&is_array($field['options']))
+                                            if (isset($field['options']) && is_array($field['options']))
                                             {
                                                 foreach($field['options'] as $opt)
                                                 {
-                                                    if ($row[$field['name']]==$opt['value'])
+                                                    if ($row[$field['name']]== $opt['value'])
                                                         $value=$opt['title'];
                                                 }
                                             }
@@ -1056,11 +1110,11 @@ set_changed();
 
                             if (empty($params['actions_before_fields']))
                             {
-                                if ($enableview&&$numcols++)
+                                if ($enableview && $numcols++)
                                     $html_gridfields.=str_replace("{fieldvalue}","<a href=\"?$urlquery&amp;op_$postgetkey=view$mlink\">".$textview."</a>",$template_gridbody_gridrow_gridfield);
-                                if ($enableedit&&$numcols++)
+                                if ($enableedit && $numcols++)
                                     $html_gridfields.=str_replace("{fieldvalue}","<a href=\"?$urlquery&amp;op_$postgetkey=insnew$mlink\">".$textmodify."</a>",$template_gridbody_gridrow_gridfield);
-                                if ($enabledelete&&$numcols++)
+                                if ($enabledelete && $numcols++)
                                     $html_gridfields.=str_replace("{fieldvalue}","<a href=\"javascript:check('?$urlquery&op_$postgetkey=del&$flink_listmode');\">".$textdelete."</a>",$template_gridbody_gridrow_gridfield);
                             }
                             $tmp_html=str_replace("{bkrow}",$backgroundcolor,$template_gridbody_gridrow);
@@ -1074,6 +1128,13 @@ set_changed();
                         //$html = "<table border=\"\" style=\"background-color:$bordercolor\" cellpadding=\"2\" cellspacing=\"1\" >";
 //                        $html_gridbody .= "$textnorecord";
                     }
+                    $params['html_template_grid']=str_replace("{txt_num_records}","$txt_num_records",$params['html_template_grid']);
+                    $params['html_template_grid']=str_replace("{start}","$start",$params['html_template_grid']);
+                    $params['html_template_grid']=str_replace("{end}","$end",$params['html_template_grid']);
+                    $params['html_template_grid']=str_replace("{num_records}","$num_records",$params['html_template_grid']);
+
+
+
                     $html_table=preg_replace('/(<!-- start table -->)(.*)(<!-- end table -->)/is',xmldb_encode_preg_replace2nd($html_gridbody),$template_grid);
                     $html=preg_replace('/(<!-- start gridheader -->)(.*)(<!-- end gridheader -->)/is',xmldb_encode_preg_replace2nd($html_GridHeader),$params['html_template_grid']);
                     $html=preg_replace('/(<!-- start gridbody -->)(.*)(<!-- end gridbody -->)/is',xmldb_encode_preg_replace2nd($html_gridbody),$html);
@@ -1085,7 +1146,7 @@ set_changed();
                 break;
         }
     }
-    if ($params['echo']==true)
+    if ($params['echo']== true)
         echo $html;
     //dprint_r($_POST);
     return $html;
@@ -1204,7 +1265,7 @@ function xmldb_go_download($file,$databasename,$tablename,$pathdatabase,$tablepa
     $stat=new XMLTable($databasename,$tablename."_download_stat",$pathdatabase);
     $oldval=$stat->GetRecordByPrimaryKey($file);
     $r['filename']=$file;
-    if ($oldval==null)
+    if ($oldval== null)
     {
         $r['numdownload']=1;
         $stat->InsertRecord($r);
@@ -1212,7 +1273,7 @@ function xmldb_go_download($file,$databasename,$tablename,$pathdatabase,$tablepa
     else
     {
         //incrementa download
-        $r['numdownload']=$oldval['numdownload']+1;
+        $r['numdownload']=$oldval['numdownload'] + 1;
         $stat->UpdateRecord($r);
     }
     $file="$pathdatabase/$databasename/$tablepath/$file";
@@ -1317,7 +1378,7 @@ function xmldb_go_download($file,$databasename,$tablename,$pathdatabase,$tablepa
 function xmldb_viewlink($row,$path,$databasename,$tablename,$field,$title,$value,$st,$et)
 {
     $htmlout="$st";
-    if ($value!="")
+    if ($value!= "")
     {
         if (!preg_match("/^http:\\/\\//si",$value))
         {
@@ -1392,11 +1453,11 @@ function xmldb_viewyoutubelink($row,$path,$databasename,$tablename,$field,$title
             $h=344;
             $w=425;
             $code=$code[1];
-            if (false!==strstr($code,"&"))
+            if (false!== strstr($code,"&"))
                 $code=substr($code,0,strpos($code,"&"));
-            if (false!==strstr($code,"?"))
+            if (false!== strstr($code,"?"))
                 $code=substr($code,0,strpos($code,"?"));
-            if ($code!="")
+            if ($code!= "")
             {
                 $code="http://www.youtube.com/$c/$code&amp;autoplay=0&amp;rel=0";
                 $html.="<div style=\"height:$h;width:$w;overflow:auto\">";

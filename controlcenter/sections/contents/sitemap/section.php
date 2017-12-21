@@ -747,7 +747,7 @@ function FNCC_print_section($section,$level)
     if (file_exists("sections/{$section['id']}/section.php"))
         $border="border:1px solid #00ff00";
     $html.="<img style=\"vertical-align:middle;cursor:pointer\" onclick=\"if(confirm ('".FN_i18n("you want to permanently delete this page?")."')){window.location='$linkdelete'} else {return false;}\" src=\"images/delete.png\" /></span>";
-    $html.="&nbsp;&nbsp;<img style=\"cursor:pointer;vertical-align:middle;$border\" alt=\"\" onclick=\"window.location='$link'\" src=\"images/mime/php.png\" />";
+    $html.="&nbsp;&nbsp;<img style=\"height:22px;cursor:pointer;vertical-align:middle;$border\" alt=\"\" onclick=\"window.location='$link'\" src=\"images/mime/php.png\" />";
     foreach($_FN['listlanguages'] as $l)
     {
         $border="border:1px solid #ffffff";
@@ -779,7 +779,7 @@ function FNCC_print_section($section,$level)
 
 //icon --->
     $html.="<span id=\"span_{$section['id']}\"  style=\"background-position: bottom right;background-image:url(controlcenter/sections/contents/sitemap/node.png);background-repeat:no-repeat;padding-left:{$left}px\"></span>";
-    $html.="<span><img style=\"vertical-align:middle;border:0px;\" src=\"".FN_FromTheme("images/mime/dir.png")."\" />$t&nbsp;<a style=\"$textdecoration\" title=\"".FN_Translate("preview")."\" href=\"#\" onclick=\"preview=window.open('".FN_RewriteLink("index.php?mod={$section['id']}")."','preview','top=10,left=10,scrollbars=yes');preview.focus();\" >{$section['title']}</a>$disabled";
+    $html.="<span><img style=\"vertical-align:middle;border:0px;height:20px;\" src=\"".FN_FromTheme("images/mime/dir.png")."\" />$t&nbsp;<a style=\"$textdecoration\" title=\"".FN_Translate("preview")."\" href=\"#\" onclick=\"preview=window.open('".FN_RewriteLink("index.php?mod={$section['id']}")."','preview','top=10,left=10,scrollbars=yes');preview.focus();\" >{$section['title']}</a>$disabled";
     //icon ---<
 
     $html.="</td>";

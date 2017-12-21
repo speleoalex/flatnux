@@ -28,6 +28,11 @@ function xmldb_frm_field_html_overwrite($name,$value,$rows,$cols,$tooltip)
     {
         $editor=$_FN['force_htmleditor'];
     }
+    $params = false;
+    if (isset($_FN['force_htmleditorparams']) && $_FN['force_htmleditorparams']!= "")
+    {
+        $params=$_FN['force_htmleditorparams'];
+    }
     if ($editor!= "0" && file_exists("include/htmleditors/".$editor."/htmlarea.php"))
     {
         require_once ("include/htmleditors/".$editor."/htmlarea.php");
@@ -36,7 +41,7 @@ function xmldb_frm_field_html_overwrite($name,$value,$rows,$cols,$tooltip)
         {
             $defaultdir=$_FN['editor_folder'];
         }
-        $html.=FN_HtmlHtmlArea($name,$cols,$rows,$value,$defaultdir);
+        $html.=FN_HtmlHtmlArea($name,$cols,$rows,$value,$defaultdir,$params);
     }
     else
     {

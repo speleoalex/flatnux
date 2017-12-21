@@ -456,59 +456,6 @@ function xmldb_removexmlcomments($data)
  * */
 function createxmltable($databasename,$tablename,$fields,$path=".",$singlefilename=false)
 {
-    //----MYSQL---------------->
-    if (is_array($singlefilename) && isset($singlefilename['host']) && isset($singlefilename['user']) && isset($singlefilename['password']))
-    {
-        if (false !== ($conn=mysql_connect($singlefilename['host'],$singlefilename['user'],$singlefilename['password'])))
-        {
-            $query="CREATE TABLE `$tablename` (";
-            $n=count($fields);
-            foreach($fields as $field)
-            {
-                if (!isset($field['type']) || $field['type'] == "string")
-                    $field['type']="varchar";
-                $query .= "`".$field['name']."`";
-                $field['size']=isset($field['size']) ? $field['size'] : "";
-                switch($field['type'])
-                {
-                    case "text" :
-                    case "html" :
-                        $query .= " TEXT";
-                        break;
-                    case "int" :
-                        $query .= " INT";
-                        break;
-                    default : //forzo tutto a varchar
-                        $query .= " VARCHAR";
-                        $field['size']=isset($field['size']) ? $field['size'] : 255;
-                        break;
-                }
-                if ($field['size'] != "")
-                    $query .= "(".$field['size'].")";
-                $query .= " ";
-                if (isset($field['extra']) && $field['extra'] == "autoincrement")
-                    $query .= " AUTO_INCREMENT ";
-                if (isset($field['primarykey']) && $field['primarykey'] == "1")
-                {
-                    $query .= "  PRIMARY KEY ";
-                }
-                if ($n-- > 1)
-                    $query .= ",";
-            }
-            $query .= ")";
-            if (!isset($singlefilename['database']))
-                $singlefilename['database']=$databasename;
-            mysql_select_db($singlefilename['database']);
-            $res=mysql_query($query);
-            print(mysql_error());
-            mysql_close();
-        }
-        else
-        {
-            return (mysql_error());
-        }
-    }
-    //<----MYSQL----------------
     if (!file_exists("$path/$databasename") || !is_dir("$path/$databasename"))
         return "xml databse not exists";
     if (file_exists("$path/$databasename/$tablename") && file_exists("$path/$databasename/$tablename.php"))
@@ -559,30 +506,8 @@ function createxmltable($databasename,$tablename,$fields,$path=".",$singlefilena
  * @param string $path
  * @return false se il databare e'stato creato oppure una stringa che contiene l' errore
  */
-function createxmldatabase($databasename,$path=".",$mysql=false)
+function createxmldatabase($databasename,$path=".")
 {
-    //----MYSQL---------------->
-    if (is_array($mysql))
-    {
-        if (!isset($mysql['database']))
-        {
-            $mysql['database']=$databasename;
-        }
-        if (false !== ($conn=mysql_connect($mysql['host'],$mysql['user'],$mysql['password'])))
-        {
-            $ret=mysql_query("CREATE DATABASE {$mysql['database']}");
-            mysql_close();
-            if (!$ret)
-                return (mysql_error());
-            else
-                return false;
-        }
-        else
-        {
-            return (mysql_error());
-        }
-    }
-    //<----MYSQL----------------
     if (file_exists("$path/$databasename"))
         return "database $databasename already exists";
     if (!is_writable("$path/"))
@@ -1099,8 +1024,6 @@ class XMLTable
     var
             $primarykey;
     var
-            $mysql;
-    var
             $filename;
     var
             $indexfield;
@@ -1189,6 +1112,7 @@ class XMLTable
         $this->datafile=$this->path."/".$this->databasename."/".$this->tablename."/";
         $this->xmlfieldname=$this->tablename;
         // cerca la chiave primaria
+        $this->primarykey=array();
         foreach($fields as $field)
         {
             if (isset($field['primarykey']) && $field['primarykey'] == "1")

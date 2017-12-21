@@ -18,7 +18,7 @@ $file=FN_GetParam("file",$_GET,"flat");
 
 
 
-if ((false === strpos($file,"..")) && $file != "" && file_exists("sections/{$_FN['mod']}/$file"))
+if ((false=== strpos($file,"..")) && $file!= "" && file_exists("sections/{$_FN['mod']}/$file"))
 {
     include "sections/{$_FN['mod']}/$file";
 }
@@ -33,7 +33,7 @@ else
     $config=FN_LoadConfig();
     $tablename=$config['tables'];
     $recordsperpage=FN_GetParam("rpp",$_GET);
-    if ($recordsperpage == "")
+    if ($recordsperpage== "")
         $recordsperpage=$config['recordsperpage'];
     $config['search_orders']=explode(",",$config['search_orders']);
     $config['search_options']=explode(",",$config['search_options']);
@@ -42,7 +42,7 @@ else
     $config['search_partfields']=explode(",",$config['search_partfields']);
 //-------------------------------config----------------------------------------<
 
-    if ($mode == "go")
+    if ($mode== "go")
     {
         FNNAV_GoDownload($downloadfile);
         exit();
@@ -52,7 +52,7 @@ else
     $Table=FN_XmlForm($tablename);
 
     $Search=new xmldb_searchform($_FN['database'],$tablename,$_FN['datadir'],$_FN['lang'],$_FN['languages'],false);
-    $html .= $Search->HtmlSearchForm();
+    $html.=$Search->HtmlSearchForm();
     if ($config['enable_permissions_each_records'])
     {
         if (!isset($Table->formvals['groupview']))
@@ -68,7 +68,7 @@ else
             addxmltablefield($_FN['database'],$tablename,$field,$_FN['datadir']);
         }
         $Table->formvals['groupview']['frm_show']=1;
-        if ($config['permissions_records_groups'] != "")
+        if ($config['permissions_records_groups']!= "")
         {
             $allAllowedGroups=explode(",",$config['permissions_records_groups']);
             if (isset($Table->formvals['groupview']['options']))
@@ -116,7 +116,7 @@ else
             $Table->formvals['groupinsert']['frm_allowupdate']="";
         }
 
-        if ($config['permissions_records_edit_groups'] != "")
+        if ($config['permissions_records_edit_groups']!= "")
         {
             $allAllowedGroups=explode(",",$config['permissions_records_edit_groups']);
             if (isset($Table->formvals['groupinsert']['options']))
@@ -196,13 +196,13 @@ else
                 $html.=FNNAV_DelRecordForm($unirecid); //  form nuovo record
                 break;
             case "updaterecord" :
-                if (count($_POST) == 0 || isset($_POST['__NOSAVE']) || !isset($_POST['xmldbsave']))
+                if (count($_POST)== 0 || isset($_POST['__NOSAVE']) || !isset($_POST['xmldbsave']))
                 {
                     $html.=FNNAV_EditRecordForm($unirecid,$Table);
                 }
                 else
                 {
-                    $html .=FNNAV_UpdateRecord($Table); // esegue aggiornamento record
+                    $html.=FNNAV_UpdateRecord($Table); // esegue aggiornamento record
                     FNNAV_GenerateRSS();
                 }
                 break;
@@ -218,12 +218,12 @@ else
                 {
                     FNNAV_GenerateRSS();
                 }
-                $html.= FN_HtmlContent("sections/{$_FN['mod']}");
+                $html.=FN_HtmlContent("sections/{$_FN['mod']}");
                 $html.=FNNAV_ViewGridForm(); //griglia con tutti i records
                 if (FN_IsAdmin() && $config['permissions_records_groups'] && $config['enable_permissions_each_records'])
                 {
                     $l=FN_RewriteLink("index.php?mod={$_FN['mod']}&amp;op=admingroups");
-                    $html.= "<div><a href=\"$l\">".FN_Translate("access control")."</a></div>";
+                    $html.="<div><a href=\"$l\">".FN_Translate("access control")."</a></div>";
                 }
 
                 break;
@@ -246,16 +246,16 @@ function FNNAV_ViewGridForm()
     //--config-->
     $config=FN_LoadConfig();
     $tables=explode(",",$config['tables']);
-    $search_fields=$config['search_fields'] != "" ? explode(",",$config['search_fields']) : array();
-    $search_partfields=$config['search_fields'] != "" ? explode(",",$config['search_partfields']) : array();
-    $search_orders=$config['search_orders'] != "" ? explode(",",$config['search_orders']) : array();
-    $navigate_groups=$config['navigate_groups'] != "" ? explode(",",$config['navigate_groups']) : array();
-    $search_options=$config['search_options'] != "" ? explode(",",$config['search_options']) : array();
-    $search_min=$config['search_min'] != "" ? explode(",",$config['search_min']) : array();
+    $search_fields=$config['search_fields']!= "" ? explode(",",$config['search_fields']) : array();
+    $search_partfields=$config['search_fields']!= "" ? explode(",",$config['search_partfields']) : array();
+    $search_orders=$config['search_orders']!= "" ? explode(",",$config['search_orders']) : array();
+    $navigate_groups=$config['navigate_groups']!= "" ? explode(",",$config['navigate_groups']) : array();
+    $search_options=$config['search_options']!= "" ? explode(",",$config['search_options']) : array();
+    $search_min=$config['search_min']!= "" ? explode(",",$config['search_min']) : array();
 
     //--config--<
     $recordsperpage=FN_GetParam("rpp",$_GET);
-    if ($recordsperpage == "")
+    if ($recordsperpage== "")
         $recordsperpage=$config['recordsperpage'];
     if (file_exists("sections/{$_FN['mod']}/top.php"))
     {
@@ -274,25 +274,25 @@ function FNNAV_ViewGridForm()
     $tplvars['html_header']=ob_get_clean();
     $tplvars['html_categories']="";
 
-    if ($config['navigate_groups'] != "")
+    if ($config['navigate_groups']!= "")
     {
-        $tplvars['html_categories'].= "<div class=\"FNNAV_CategoryShow\" style=\"\">";
-        if ($navigate == 0)
+        $tplvars['html_categories'].="<div class=\"FNNAV_CategoryShow\" style=\"\">";
+        if ($navigate== 0)
         {
             $linkpage=FNNAV_MakeLink(array("nav"=>1),"&amp;");
-            $tplvars['html_categories'].= "<a href=\"$linkpage\">".FN_Translate("browse by categories")."</a> "." <img alt=\"\" src=\"{$_FN['siteurl']}images/right.png\" />";
+            $tplvars['html_categories'].="<a href=\"$linkpage\">".FN_Translate("browse by categories")."</a> "." <img alt=\"\" src=\"{$_FN['siteurl']}images/right.png\" />";
         }
         else
         {
             $linkpage=FN_RewriteLink("index.php?mod={$_FN['mod']}&amp;nav=0","&amp;");
-            $tplvars['html_categories'].= "<a href=\"$linkpage\">".FN_Translate("hide categories")."</a>"." <img alt=\"\" src=\"{$_FN['siteurl']}images/right.png\" />";
+            $tplvars['html_categories'].="<a href=\"$linkpage\">".FN_Translate("hide categories")."</a>"." <img alt=\"\" src=\"{$_FN['siteurl']}images/right.png\" />";
         }
-        $tplvars['html_categories'].= "</div>";
+        $tplvars['html_categories'].="</div>";
     }
 
     //----------------barra si navigazione categorie--------------------------->
     $tplvars['html_filters']="";
-    if ($navigate == 1)
+    if ($navigate== 1)
     {
         $tplvars['html_filters']=FNNAV_Navigate($results,$navigate_groups);
     }
@@ -314,7 +314,7 @@ function FNNAV_ViewGridForm()
     if (file_exists("sections/{$_FN['mod']}/grid_footer.php"))
     {
         include("sections/{$_FN['mod']}/grid_footer.php");
-        $tplvars['html_footer'] .= ob_get_clean();
+        $tplvars['html_footer'].=ob_get_clean();
     }
     if (isset($_GET['debug']))
     {
@@ -349,7 +349,7 @@ function FNNAV_Navigate($results,$groups)
     {
         break;
     }
-    if ($tablename == "")
+    if ($tablename== "")
     {
         return "";
     }
@@ -368,7 +368,7 @@ function FNNAV_Navigate($results,$groups)
                     $fs=$Table->formvals[$group]['fk_show_field'];
                 }
                 //echo "$group ";
-                if ($group != "" && isset($data[$group]))
+                if ($group!= "" && isset($data[$group]))
                     $gresults[$group][$data[$group]]=isset($gresults[$group][$data[$group]]) ? $gresults[$group][$data[$group]] + 1 : 1;
                 $i++;
             }
@@ -394,7 +394,7 @@ function FNNAV_Navigate($results,$groups)
             $pklink=$Table->formvals[$groupname]['fk_link_field'];
         else
             $pklink="";
-        if ($fk != "" && file_exists("{$_FN['datadir']}/{$_FN['database']}/$fk.php"))
+        if ($fk!= "" && file_exists("{$_FN['datadir']}/{$_FN['database']}/$fk.php"))
         {
 
             $tablegroup=xmldb_table($_FN['database'],$fk,$_FN['datadir']);
@@ -422,11 +422,11 @@ function FNNAV_Navigate($results,$groups)
         {
             $groupcontentsnums=$group['total'];
             $groupcontentsname=$group['name'];
-            if ($groupcontentsname == "")
+            if ($groupcontentsname== "")
                 $groupcontentstitle=FN_Translate("---");
             else
             {
-                if ($pklink != "")
+                if ($pklink!= "")
                 {
                     $restr=array($pklink=>$group['name']);
                     $t=$tablegroup->GetRecord($restr);
@@ -440,13 +440,13 @@ function FNNAV_Navigate($results,$groups)
                     $sep="";
                     foreach($ttitles as $tt)
                     {
-                        if (isset($t[$tt]) && $t[$tt] != "")
+                        if (isset($t[$tt]) && $t[$tt]!= "")
                         {
-                            $groupcontentstitle .= $sep.$t[$tt];
+                            $groupcontentstitle.=$sep.$t[$tt];
                             $sep=" &bull; ";
                         }
                     }
-                    if ($groupcontentstitle == "")
+                    if ($groupcontentstitle== "")
                         $groupcontentstitle=$group['name'];
                 }
                 else
@@ -457,7 +457,7 @@ function FNNAV_Navigate($results,$groups)
             $tplvars['urlfilteritem']=$link;
             $tplvars['titleitem']=$groupcontentstitle;
             $tplvars['counteritem']=$groupcontentsnums;
-            $htmlFilterItems .= FN_TPL_ApplyTplString($tplfilteritem,$tplvars,$tplbasepath);
+            $htmlFilterItems.=FN_TPL_ApplyTplString($tplfilteritem,$tplvars,$tplbasepath);
         }
         $tplfiltercategoryTmp=FN_TPL_ReplaceHtmlPart("filteritems",$htmlFilterItems,$tplfiltercategoryTmp);
         $tplfiltercategoryTmp=FN_TPL_ApplyTplString($tplfiltercategoryTmp,$tplvars,$tplbasepath);
@@ -491,10 +491,10 @@ function FNNAV_SearchForm($orders,$tables,$search_options,$search_min,$search_fi
     $config['search_partfields']=explode(",",$config['search_partfields']);
     $config['search_options']=explode(",",$config['search_options']);
     //--config--<
-    if ($order == "")
+    if ($order== "")
     {
         $order=$config['defaultorder'];
-        if ($desc == "")
+        if ($desc== "")
             $desc=1;
     }
     foreach($tables as $tablename)
@@ -502,10 +502,10 @@ function FNNAV_SearchForm($orders,$tables,$search_options,$search_min,$search_fi
         $_tables[$tablename]=FN_XmlForm($tablename);
     }
     $htmlform="";
-    $htmlform.= "<form name=\"filter\" method=\"get\">";
-    $htmlform.= "<input type=\"hidden\"name=\"mod\" value=\"{$_FN['mod']}\" /> ";
+    $htmlform.="<form name=\"filter\" method=\"get\">";
+    $htmlform.="<input type=\"hidden\"name=\"mod\" value=\"{$_FN['mod']}\" /> ";
     if (isset($_GET['nav']))
-        $htmlform.= "<input type=\"hidden\"name=\"nav\" value=\"1\" /> ";
+        $htmlform.="<input type=\"hidden\"name=\"nav\" value=\"1\" /> ";
     //------------------------------table rules-------------------------------->
     if ($config['table_rules'])
     {
@@ -543,21 +543,21 @@ function FNNAV_SearchForm($orders,$tables,$search_options,$search_min,$search_fi
         }
 
         $tablerules=FN_XmlForm($config['table_rules']);
-        $htmlform.= "<div class=\"navigatorformtitle\" ><span>".FN_Translate("shows only")." :</span></div>";
-        $htmlform.= "<select name = \"rule\" >";
-        $htmlform.= "<option value=\"\">---</option>";
+        $htmlform.="<div class=\"navigatorformtitle\" ><span>".FN_Translate("shows only")." :</span></div>";
+        $htmlform.="<select name = \"rule\" >";
+        $htmlform.="<option value=\"\">---</option>";
         $rules=$tablerules->xmltable->GetRecords();
         foreach($rules as $rule)
         {
             //$rule = $tablerules->GetRecordTranslated($rule);
-            $s=(!empty($_GET['rule']) && $_GET['rule'] == $rule['rule']) ? "selected=\"selected\"" : "";
-            $htmlform.= "<option $s value=\"{$rule['rule']}\" >{$rule['title']}</option>";
+            $s=(!empty($_GET['rule']) && $_GET['rule']== $rule['rule']) ? "selected=\"selected\"" : "";
+            $htmlform.="<option $s value=\"{$rule['rule']}\" >{$rule['title']}</option>";
         }
-        $htmlform.= "</select>";
+        $htmlform.="</select>";
     }
     //------------------------------table rules--------------------------------<
     //--------------------------------text------------------------------------->
-    $htmlform.= "<div class=\"navigatorformtitle\" ><span>".FN_Translate("text").":</span><input size=\"15\" name=\"q\" value=\"$q\"/></div>";
+    $htmlform.="<div class=\"navigatorformtitle\" ><span>".FN_Translate("text").":</span><input size=\"15\" name=\"q\" value=\"$q\"/></div>";
     //--------------------------------text-------------------------------------<
     //----------------------search exact phrase-------------------------------->
     foreach($search_fields as $min)
@@ -565,10 +565,10 @@ function FNNAV_SearchForm($orders,$tables,$search_options,$search_min,$search_fi
         if (isset($_tables[$tablename]->formvals[$min]))
         {
             $minval=FN_GetParam("sfield_$min",$_GET);
-            $htmlform.= "<div class=\"navigatorformtitle\" ><span>{$_tables[$tablename]->formvals[$min]['title']} =:</span><input size=\"15\" name=\"sfield_$min\" value=\"$minval\"/>";
+            $htmlform.="<div class=\"navigatorformtitle\" ><span>{$_tables[$tablename]->formvals[$min]['title']} =:</span><input size=\"15\" name=\"sfield_$min\" value=\"$minval\"/>";
             if (isset($_tables[$tablename]->formvals[$min]['frm_suffix']))
-                $htmlform.= $_tables[$tablename]->formvals[$min]['frm_suffix'];
-            $htmlform.= "</div>";
+                $htmlform.=$_tables[$tablename]->formvals[$min]['frm_suffix'];
+            $htmlform.="</div>";
         }
     }
     //----------------------search exact phrase--------------------------------<
@@ -579,11 +579,11 @@ function FNNAV_SearchForm($orders,$tables,$search_options,$search_min,$search_fi
         {
             //dprint_r($_tables[$tablename]->formvals[$partf]);
             $pfval=FN_GetParam("spfield_$partf",$_GET);
-            $htmlform.= "<div class=\"navigatorformtitle\" ><span>{$_tables[$tablename]->formvals[$partf]['title']} :</span><input size=\"15\" name=\"spfield_$partf\" value=\"$pfval\"/>";
+            $htmlform.="<div class=\"navigatorformtitle\" ><span>{$_tables[$tablename]->formvals[$partf]['title']} :</span><input size=\"15\" name=\"spfield_$partf\" value=\"$pfval\"/>";
             if (isset($_tables[$tablename]->formvals[$partf]['frm_suffix']))
-                $htmlform.= $_tables[$tablename]->formvals[$partf]['frm_suffix'];
+                $htmlform.=$_tables[$tablename]->formvals[$partf]['frm_suffix'];
 
-            $htmlform.= "</div>";
+            $htmlform.="</div>";
         }
     }
     //------------------ looking for a part of the text -----------------------<
@@ -594,10 +594,10 @@ function FNNAV_SearchForm($orders,$tables,$search_options,$search_min,$search_fi
         if (isset($_tables[$tablename]->formvals[$min]))
         {
             $minval=FN_GetParam("min_$min",$_GET);
-            $htmlform.= "<div class=\"navigatorformtitle\" ><span>{$_tables[$tablename]->formvals[$min]['title']} &gt;:</span><input size=\"15\" name=\"min_$min\" value=\"$minval\"/>";
+            $htmlform.="<div class=\"navigatorformtitle\" ><span>{$_tables[$tablename]->formvals[$min]['title']} &gt;:</span><input size=\"15\" name=\"min_$min\" value=\"$minval\"/>";
             if (isset($_tables[$tablename]->formvals[$min]['frm_suffix']))
-                $htmlform.= $_tables[$tablename]->formvals[$min]['frm_suffix'];
-            $htmlform.= "</div>";
+                $htmlform.=$_tables[$tablename]->formvals[$min]['frm_suffix'];
+            $htmlform.="</div>";
         }
     }
     //-------------------------- minimun value --------------------------------<
@@ -609,7 +609,7 @@ function FNNAV_SearchForm($orders,$tables,$search_options,$search_min,$search_fi
             if (isset($_tables[$tablename]->formvals[$option]['options']))
             {
                 $optiontitle=$_tables[$tablename]->formvals[$option]['title'];
-                $htmlform.= "<div class=\"navigatorformtitleCK\" ><span>$optiontitle:</span></div>";
+                $htmlform.="<div class=\"navigatorformtitleCK\" ><span>$optiontitle:</span></div>";
                 if (is_array($_tables[$tablename]->formvals[$option]['options']))
                     foreach($_tables[$tablename]->formvals[$option]['options'] as $c)
                     {
@@ -619,7 +619,7 @@ function FNNAV_SearchForm($orders,$tables,$search_options,$search_min,$search_fi
                         $ck="";
                         if (isset($_GET[$getid]))
                             $ck="checked=\"checked\"";
-                        $htmlform.= "<input name = \"$getid\" id=\"i_$getid\" type=\"checkbox\" $ck />&nbsp;<label for=\"i_$getid\">".$title."</label>";
+                        $htmlform.="<input name = \"$getid\" id=\"i_$getid\" type=\"checkbox\" $ck />&nbsp;<label for=\"i_$getid\">".$title."</label>";
                     }
             }
         }
@@ -628,7 +628,7 @@ function FNNAV_SearchForm($orders,$tables,$search_options,$search_min,$search_fi
     //----------------------------- order by ---------------------------------->
     if (count($orders) > 0)
     {
-        $htmlform.= "<div class=\"navigatorformtitleOrderBy\"><span>".FN_Translate("order by").": </span><select name=\"order\">";
+        $htmlform.="<div class=\"navigatorformtitleOrderBy\"><span>".FN_Translate("order by").": </span><select name=\"order\">";
         foreach($orders as $o)
         {
             if (!isset($_tables[$tablename]->xmltable->fields[$o]))
@@ -642,23 +642,23 @@ function FNNAV_SearchForm($orders,$tables,$search_options,$search_min,$search_fi
             }
             else
                 $no=$_tables[$tablename]->xmltable->fields[$o]->title;
-            if ($order == $o)
+            if ($order== $o)
                 $s="selected=\"selected\"";
             else
                 $s="";
-            $htmlform.= "\n<option $s value=\"$o\">$no</option>";
+            $htmlform.="\n<option $s value=\"$o\">$no</option>";
         }
-        $htmlform.= "</select>";
-        $htmlform.= "</div>";
-        $ck=($desc == "") ? "" : "checked=\"checked\"";
-        $htmlform.= "<br />".FN_Translate("reverse order (from largest to smallest)")." <input onclick=\"filter.submit()\" name=\"desc\" value=\"1\" type = \"checkbox\" $ck />";
+        $htmlform.="</select>";
+        $htmlform.="</div>";
+        $ck=($desc== "") ? "" : "checked=\"checked\"";
+        $htmlform.="<br />".FN_Translate("reverse order (from largest to smallest)")." <input onclick=\"filter.submit()\" name=\"desc\" value=\"1\" type = \"checkbox\" $ck />";
     }
     //----------------------------- order by ----------------------------------<
-    $htmlform.= "<button class=\"searchbutton\" type=\"submit\" >".FN_Translate("search")."</button>";
+    $htmlform.="<button class=\"searchbutton\" type=\"submit\" >".FN_Translate("search")."</button>";
     // if (!empty($_GET['q']))
-    $htmlform.= " <button class=\"searchbutton\" onclick=\"window.location='".FN_RewriteLink("index.php?mod={$_FN['mod']}","&")."';return false;\" >".FN_Translate("new search")."</button>";
+    $htmlform.=" <button class=\"searchbutton\" onclick=\"window.location='".FN_RewriteLink("index.php?mod={$_FN['mod']}","&")."';return false;\" >".FN_Translate("new search")."</button>";
 
-    $htmlform.= "</form>";
+    $htmlform.="</form>";
     return $htmlform;
 }
 
@@ -681,9 +681,9 @@ function FNNAV_HtmlItem($tablename,$pk,$templateStringAll)
     $templateStrRow=FN_TPL_GetHtmlPart("field",$templateString);
 
     $viewmode=FN_GetParam("viewmode",$_GET);
-    if ($viewmode == "")
+    if ($viewmode== "")
         $viewmode=$config['default_view_mode'];
-    if ($viewmode != "list")
+    if ($viewmode!= "list")
     {
         $tplfile=file_exists("sections/{$_FN['mod']}/viewicons.tp.html") ? "sections/{$_FN['mod']}/viewicons.tp.html" : FN_FromTheme("modules/navigator/viewicons.tp.html",false);
     }
@@ -700,7 +700,7 @@ function FNNAV_HtmlItem($tablename,$pk,$templateStringAll)
     //-----image----------------------->
     $photo=isset($data[$config['image_titlefield']]) ? $Table->xmltable->getThumbPath($data,$config['image_titlefield']) : "";
 
-    if ($photo != "")
+    if ($photo!= "")
     {
 //        $photo="{$_FN['datadir']}/fndatabase/{$tablename}/{$data[$Table->xmltable->primarykey]}/{$config['image_titlefield']}/{$data[$config['image_titlefield']]}";
     }
@@ -731,11 +731,11 @@ function FNNAV_HtmlItem($tablename,$pk,$templateStringAll)
         {
             if (!empty($Table->formvals[$titleitem]['fk_link_field']))
             {
-                $titlename .= "{$data[$titleitem]}&nbsp;";
+                $titlename.="{$data[$titleitem]}&nbsp;";
             }
             else
             {
-                $titlename .= "{$data[$titleitem]}&nbsp;";
+                $titlename.="{$data[$titleitem]}&nbsp;";
             }
         }
         else
@@ -749,12 +749,12 @@ function FNNAV_HtmlItem($tablename,$pk,$templateStringAll)
     $html_icons="";
     foreach($Table->formvals as $field)
     {
-        if (isset($field['gridicononexists']) && $field['gridicononexists'] != "" && isset($data[$field['name']]) && $data[$field['name']] != "")
+        if (isset($field['gridicononexists']) && $field['gridicononexists']!= "" && isset($data[$field['name']]) && $data[$field['name']]!= "")
         {
 
             $html_icons="\n<img border=\"0\" alt=\"".$field['name']."\" src=\"{$_FN['siteurl']}".$field['gridicononexists']."\" /> ";
         }
-        if ($field['type'] == "image" || $field['type'] == "file")
+        if ($field['type']== "image" || $field['type']== "file")
         {
             $tplvars['url_'.$field['name']]=$_FN['siteurl'].$Table->xmltable->getFilePath($data,$field['name']);
         }
@@ -794,8 +794,8 @@ function FNNAV_HtmlItem($tablename,$pk,$templateStringAll)
     foreach($Table->formvals as $fieldform_valuesk=> $field) // $fieldform_valuesk=> $fieldform_values
     {
 
-        if (isset($field['frm_showinlist']) && $field['frm_showinlist'] != 0)
-            if (isset($row[$field['name']]) && $row[$field['name']] != "")
+        if (isset($field['frm_showinlist']) && $field['frm_showinlist']!= 0)
+            if (isset($row[$field['name']]) && $row[$field['name']]!= "")
             {
                 $counteritems++;
                 $fieldform_values=$field;
@@ -804,7 +804,7 @@ function FNNAV_HtmlItem($tablename,$pk,$templateStringAll)
 
                 //--------------get value from frm----------------------------->
                 $languagesfield="";
-                if (isset($fieldform_values['frm_multilanguages']) && $fieldform_values['frm_multilanguages'] != "")
+                if (isset($fieldform_values['frm_multilanguages']) && $fieldform_values['frm_multilanguages']!= "")
                 {
                     $multilanguage=true;
                     $languagesfield=explode(",",$fieldform_values['frm_multilanguages']);
@@ -823,7 +823,7 @@ function FNNAV_HtmlItem($tablename,$pk,$templateStringAll)
                 $fieldform_values['frm_help']=isset($fieldform_values['frm_help']) ? $fieldform_values['frm_help'] : "";
                 $row[$field['name']]=html_entity_decode($row[$field['name']]);
 
-                if (isset($fieldform_values['frm_functionview']) && $field['frm_functionview'] != "" && function_exists($field['frm_functionview']))
+                if (isset($fieldform_values['frm_functionview']) && $field['frm_functionview']!= "" && function_exists($field['frm_functionview']))
                 {
                     eval("\$view_value = ".$field['frm_functionview'].'($data,$fieldform_valuesk);');
                     $showfield=false;
@@ -845,7 +845,7 @@ function FNNAV_HtmlItem($tablename,$pk,$templateStringAll)
                     }
                 }
                 //--------------get value from frm-----------------------------<
-                $html .= FN_TPL_ApplyTplString($templateStrRow,array("title"=>$field['title'],"value"=>$view_value,"fieldtype"=>$field['frm_type'],"fieldname"=>$fieldform_valuesk));
+                $html.=FN_TPL_ApplyTplString($templateStrRow,array("title"=>$field['title'],"value"=>$view_value,"fieldtype"=>$field['frm_type'],"fieldname"=>$fieldform_valuesk));
                 $tplvars['viewvalue_'.$field['name']]=$view_value;
                 $tplvars['title_'.$field['name']]=$field['title'];
             }
@@ -903,17 +903,17 @@ function FNNAV_PrintList($results,$tplvars)
     $tablename=$tables[0];
     //--config--<
     $viewmode=FN_GetParam("viewmode",$_GET);
-    if ($viewmode == "")
+    if ($viewmode== "")
         $viewmode=$config['default_view_mode'];
     $page=FN_GetParam("page",$_GET);
     $recordsperpage=FN_GetParam("rpp",$_GET);
-    if ($recordsperpage == "")
+    if ($recordsperpage== "")
         $recordsperpage=$config['recordsperpage'];
     //---template------>
     $viewmode=FN_GetParam("viewmode",$_GET);
-    if ($viewmode == "")
+    if ($viewmode== "")
         $viewmode=$config['default_view_mode'];
-    if ($viewmode != "list")
+    if ($viewmode!= "list")
     {
         $tplfile=file_exists("sections/{$_FN['mod']}/viewicons.tp.html") ? "sections/{$_FN['mod']}/viewicons.tp.html" : FN_FromTheme("modules/navigator/viewicons.tp.html",false);
     }
@@ -936,7 +936,7 @@ function FNNAV_PrintList($results,$tplvars)
             {
                 //---------------------calcolo paginazione -------------------->
                 $htmlpages="";
-                if ($page == "")
+                if ($page== "")
                     $page=1;
                 $num_records=count($res);
                 //echo "num_records=$num_records ";
@@ -948,88 +948,176 @@ function FNNAV_PrintList($results,$tplvars)
                     $end=$num_records;
                 //---------------------calcolo paginazione --------------------<
                 //---------------------tabella paginazione -------------------->
-                $htmlpages .= "<div class=\"FNNAV_pages\">";
+                $tpl_vars=array();
+                
+                $tp_str_navpages="
+<div class=\"FNNAV_pages\"><span>{i18n:results per page} </span>
+<!-- pagination -->
+<!-- recordpage -->
+<a onclick=\"call_ajax('{linkpage_rpp}','pageresults');return false\" href=\"{linkpage_rpp}\">{txt_rpp}</a>&nbsp;
+<!-- end recordpage -->
+<!-- recordpageactive -->
+<a class=\"nv_selected\" onclick=\"call_ajax('{linkpage_rpp}','pageresults');return false\" href=\"{linkpage_rpp}\">{txt_rpp}</a>&nbsp;
+<!-- end recordpageactive -->
+<!-- end pagination -->
 
-                //risultati per pagina ---->
-                $htmlpages .= "<span>".FN_Translate("results per page").":</span>";
-                for($rpp=$config['recordsperpage']; $rpp <= $config['recordsperpage'] * 3; $rpp += $config['recordsperpage'])
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a class=\"disabled\" href=\"{linkpreviouspage}\">{i18n:Previous}</a>&nbsp;
+<!-- pages -->
+<!-- page -->
+<a onclick=\"call_ajax('{link}','pageresults');return false\" href=\"{link}\">{txt_page}</a>&nbsp;
+<!-- endpage -->
+<!-- pageactive -->
+<a class=\"nv_selected\" onclick=\"call_ajax('{link}','pageresults');return false\" href=\"{link}\">{txt_page}</a>
+<!-- endpageactive -->
+<!-- endpages -->
+<a class=\"disabled\" href=\"{linknextpage}\">{i18n:Next}</a>
+
+&nbsp;<a title=\"{txtview}\" onclick=\"call_ajax('{linkviewmode}','pageresults');return false\" href=\"{linkviewmode}\">
+<img style=\"vertical-align:middle;border:0px\" src=\"{imageviewmode}\"></a> - {txt_rsults}</div>
+";
+                $tp_str_navpages_theme =FN_TPL_GetHtmlPart("nav pagination",$templateString);
+                if ($tp_str_navpages_theme!="")
                 {
+                    $tp_str_navpages=$tp_str_navpages_theme;
+                    $templateString=str_replace($tp_str_navpages_theme,"{html_pages}",$templateString);
+                }
+               /* dprint_xml($tp_str_navpages);
+                dprint_xml($templateString);
+                die();*/
+                //----------------------------pagination----------------------->
+                $tp_str_pagination=FN_TPL_GetHtmlPart("pagination",$tp_str_navpages);
+                $tp_str_recordpage=FN_TPL_GetHtmlPart("recordpage",$tp_str_pagination);
+                $tp_str_recordpageactive=FN_TPL_GetHtmlPart("recordpageactive",$tp_str_pagination);
+                $html_rpp="";
+
+                //$htmlpages.="<div class=\"FNNAV_pages\">";
+                //risultati per pagina ---->
+                //$htmlpages.="<span>".FN_Translate("results per page").":</span>";
+                $ii=1;
+                for($rpp=$config['recordsperpage']; $rpp<= $config['recordsperpage'] * 3; $rpp+=$config['recordsperpage'])
+                {
+
                     $linkpage=FNNAV_MakeLink(array("rpp"=>$rpp),"&amp;");
                     $cl="";
-                    if ($rpp == $recordsperpage)
+                    if ($rpp== $recordsperpage)
                         $cl="class=\"nv_selected\"";
-                    $htmlpages .= "<a $cl onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\">$rpp</a>&nbsp;";
+                    // $htmlpages.="<a $cl onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\">$rpp</a>&nbsp;";
+
+                    $tplvars['linkpage_rpp']=$linkpage;
+                    $tplvars['txt_rpp']=$rpp;
+                    $ii++;
+
+                    if ($rpp== $recordsperpage)
+                        $html_rpp.=FN_TPL_ApplyTplString($tp_str_recordpageactive,$tplvars);
+                    else
+                        $html_rpp.=FN_TPL_ApplyTplString($tp_str_recordpage,$tplvars);
                 }
-                $htmlpages .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                $tp_str_navpages=FN_TPL_ReplaceHtmlPart("pagination",$html_rpp,$tp_str_navpages);
+                $tp_str_navpages=FN_TPL_ApplyTplString($tp_str_navpages,$tplvars);
+
+                //----------------------------pagination-----------------------<
+                //----------------------------pages---------------------------->
+                $tp_str_pages=FN_TPL_GetHtmlPart("pages",$tp_str_navpages);
+                $tp_str_page=FN_TPL_GetHtmlPart("page",$tp_str_pages);
+                $tp_str_pageactive=FN_TPL_GetHtmlPart("pageactive",$tp_str_pages);
+                $html_pages="";
+                //$htmlpages.="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
                 //risultati per pagina ----<
                 if ($page > 1)
                 {
                     $linkpage=FNNAV_MakeLink(array("page"=>$page - 1,"addtocart"=>null),"&amp;");
-                    $htmlpages .= "<a href=\"$linkpage\">".FN_Translate("previous")."</a>&nbsp;";
+                    $tplvars['linkpreviouspage']=$linkpage;
                 }
                 else
-                    $htmlpages .= "<a class=\"disabled\" href=\"#\">".FN_Translate("previous")."</a>&nbsp;";
+                {
+                    $tplvars['linkpreviouspage']="#";
+              
+                   // $htmlpages.="<a class=\"disabled\" href=\"#\">".FN_Translate("previous")."</a>&nbsp;";
+                }
                 $max_pages=8;
                 $startpage=$page;
                 $scarto=$startpage / $max_pages;
-                if ($scarto != 0)
+                if ($scarto!= 0)
                 {
                     $scarto=$startpage % $max_pages;
-                    $startpage -=($scarto);
+                    $startpage-=($scarto);
                     if ($page < $startpage)
                         $startpage=$page;
                     if ($startpage < 1)
                         $startpage=1;
                 }
                 $ii=$startpage;
-                for($i=$startpage; $i <= $numPages; $i++)
+                for($i=$startpage; $i<= $numPages; $i++)
                 {
-                    if ($ii >= $startpage + $max_pages)
+                    if ($ii>= $startpage + $max_pages)
                         break;
                     $linkpage=FNNAV_MakeLink(array("page"=>$i,"addtocart"=>null),"&");
                     $hclass="";
-                    if ($page == $i)
+                    if ($page== $i)
                         $hclass="class=\"nv_selected\"";
-                    $htmlpages .= "<a $hclass onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\">$i</a>&nbsp;";
+                   // $htmlpages.="<a $hclass onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\">$i</a>&nbsp;";
+                    $tplvars['link']=$linkpage;
+                    $tplvars['txt_page']=$i;
+                    if ($page== $i)
+                        $html_pages.=FN_TPL_ApplyTplString($tp_str_pageactive,$tplvars);
+                    else
+                        $html_pages.=FN_TPL_ApplyTplString($tp_str_page,$tplvars);
                     $ii++;
                 }
+
                 if ($page < $numPages)
                 {
                     $linkpage=FNNAV_MakeLink(array("page"=>$page + 1,"addtocart"=>null),"&amp;");
-                    $htmlpages .= "<a onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\">".FN_Translate("next")."</a>&nbsp;";
+                    $tplvars['linknextpage']=$linkpage;
                 }
                 else
-                    $htmlpages .= "<a class=\"disabled\" href=\"#\">".FN_Translate("next")."</a>&nbsp;";
-                if ($viewmode == "icon")
+                {
+                    $tplvars['linknextpage']="#";
+                }
+                if ($viewmode== "icon")
                 {
                     $linkpage=FNNAV_MakeLink(array("viewmode"=>"list"),"&");
-                    $htmlpages .= "<a title=\"".FN_Translate("icon view")."\" onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\" ><img style=\"vertical-align:middle;border:0px\" src=\"{$_FN['siteurl']}modules/{$_FN['sectionvalues']['type']}/icons.png\" /></a>";
+                    $tplvars['linkviewmode']=$linkpage;
+                    $tplvars['imageviewmode']="{$_FN['siteurl']}modules/{$_FN['sectionvalues']['type']}/icons.png";
+                    
+                    //$htmlpages.="<a title=\"".FN_Translate("icon view")."\" onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\" ><img style=\"vertical-align:middle;border:0px\" src=\"{$_FN['siteurl']}modules/{$_FN['sectionvalues']['type']}/icons.png\" /></a>";
                 }
                 else
                 {
                     $linkpage=FNNAV_MakeLink(array("viewmode"=>"icon"),"&");
-                    $htmlpages .= "<a title=\"".FN_Translate("list view")."\" onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\" ><img style=\"vertical-align:middle;border:0px\" src=\"{$_FN['siteurl']}modules/{$_FN['sectionvalues']['type']}/list.png\" /></a>";
+                    $tplvars['linkviewmode']=$linkpage;
+                    $tplvars['imageviewmode']="{$_FN['siteurl']}modules/{$_FN['sectionvalues']['type']}/list.png";
+                    //$htmlpages.="<a title=\"".FN_Translate("list view")."\" onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\" ><img style=\"vertical-align:middle;border:0px\" src=\"{$_FN['siteurl']}modules/{$_FN['sectionvalues']['type']}/list.png\" /></a>";
                 }
-                $htmlpages .= " - ".FN_Translate("search results","Aa")."  $start - $end  ".FN_i18n("of")." $num_records"."";
-                $htmlpages .= "</div>";
+                $tplvars['txt_rsults']=FN_Translate("search results","Aa")."  $start - $end  ".FN_i18n("of")." $num_records"."";
+//                $htmlpages.=" - ".FN_Translate("search results","Aa")."  $start - $end  ".FN_i18n("of")." $num_records"."";
+//                $htmlpages.="</div>";
                 //---------------------tabella paginazione --------------------<
 
-                for($c=$start - 1; $c <= $end - 1 && isset($res[$c]); $c++)
+                for($c=$start - 1; $c<= $end - 1 && isset($res[$c]); $c++)
                 {
                     $htmlItems.=FNNAV_HtmlItem($tablename,$res[$c][$t->xmltable->primarykey],$templateString);
                 }
-
-
-                $tplvars['html_pages']=$htmlpages;
                 $tplvars['html_rss']="";
+
                 if ($config['enable_rss'] && !empty($_FN['rss_link']))
                     $tplvars['html_rss']="<div><a href=\"{$_FN['rss_link']}\"><img src=\"{$_FN['siteurl']}modules/navigator/rss.png\"  alt=\"rss\"/></a></div>";
+                $tp_str_navpages=FN_TPL_ReplaceHtmlPart("pages",$html_pages,$tp_str_navpages);
+                $tp_str_navpages=FN_TPL_ApplyTplString($tp_str_navpages,$tplvars);
+                
+                
+                $tplvars['html_pages']=$tp_str_navpages;
             }
             else
             {
                 $htmlItems="{$_FN['sectionvalues']['title']} : ".FN_i18n("no result");
             }
+            break;
         }
+
+
+
         $templateString=FN_TPL_ReplaceHtmlPart("items",$htmlItems,$templateString,$tplbasepath);
         $html=FN_TPL_ApplyTplString($templateString,$tplvars,$tplbasepath);
         //  dprint_r(__FILE__." ".__LINE__." : ".FN_GetExecuteTimer());

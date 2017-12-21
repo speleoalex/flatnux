@@ -27,7 +27,7 @@ function FNNAV_Init()
         $sfields[1]['name']="username";
         $sfields[2]['name']="tablename";
         $sfields[3]['name']="table_unirecid";
-        $htmlLog.= createxmltable("fndatabase","fieldusers",$sfields,$_FN['datadir']);
+        $htmlLog.=createxmltable("fndatabase","fieldusers",$sfields,$_FN['datadir']);
     }
     $config=FN_LoadConfig();
     $tablename=$config['tables'];
@@ -63,7 +63,7 @@ function FNNAV_Init()
         FN_Write($str_table,$_FN['datadir']."/".$_FN['database']."/{$tablename}_versions.php");
     }
 //------------------- tabella delle statistiche -------------------------
-    if ($config['enable_statistics'] == 1)
+    if ($config['enable_statistics']== 1)
     {
         if (!file_exists("{$_FN['datadir']}/{$_FN['database']}/{$tablename}"."_stat") || !file_exists("{$_FN['datadir']}/{$_FN['database']}/{$tablename}"."_stat.php"))
         {
@@ -72,7 +72,7 @@ function FNNAV_Init()
             $sfields[0]['name']="unirecid";
             $sfields[0]['primarykey']="1";
             $sfields[1]['name']="view";
-            $htmlLog.= createxmltable($_FN['database'],$tablename."_stat",$sfields,$_FN['datadir']);
+            $htmlLog.=createxmltable($_FN['database'],$tablename."_stat",$sfields,$_FN['datadir']);
         }
     }
 //------------------- tabella delle ranks -------------------------
@@ -120,10 +120,10 @@ function FNNAV_Init()
         $sfields[1]['name']="username";
         $sfields[2]['name']="tablename";
         $sfields[3]['name']="table_unirecid";
-        $htmlLog.= createxmltable($_FN['database'],"fieldusers",$sfields,$_FN['datadir']);
+        $htmlLog.=createxmltable($_FN['database'],"fieldusers",$sfields,$_FN['datadir']);
     }
 //------------------- tabella permessi tabelle -------------------------
-    if ($config['enable_permissions_each_records'] && $config['permissions_records_groups'] != "")
+    if ($config['enable_permissions_each_records'] && $config['permissions_records_groups']!= "")
     {
         $tmp=explode(",",$config['permissions_records_groups']);
         foreach($tmp as $group)
@@ -161,7 +161,7 @@ function FNNAV_Init()
         $sfields[5]['frm_cols']="80";
         $sfields[6]['name']="unirecidrecord";
         $sfields[6]['frm_show']="0";
-        $htmlLog.= createxmltable($_FN['database'],"{$tablename}"."_comments",$sfields,$_FN['datadir']);
+        $htmlLog.=createxmltable($_FN['database'],"{$tablename}"."_comments",$sfields,$_FN['datadir']);
         return $htmlLog;
     }
 //--------------- creazione tabelle -------------------------------<
@@ -173,7 +173,7 @@ function FNNAV_NavigationMode()
     $navigate=FN_GetParam("nav",$_GET);
     if (!isset($_GET['nav']))
     {
-        if ($config['default_show_groups'] == 1)
+        if ($config['default_show_groups']== 1)
         {
             $navigate=1;
         }
@@ -198,19 +198,19 @@ function FNNAV_GetResults($config=false,$params=false)
     global $_FN;
     static $listok=false;
     //------------------------------load config-------------------------------->
-    if ($config == false)
+    if ($config== false)
     {
         $config=FN_LoadConfig();
     }
 
-    $search_options=$config['search_options'] != "" ? explode(",",$config['search_options']) : array();
-    $search_min=$config['search_min'] != "" ? explode(",",$config['search_min']) : array();
-    $search_partfields=$config['search_partfields'] != "" ? explode(",",$config['search_partfields']) : array();
-    $search_fields=$config['search_fields'] != "" ? explode(",",$config['search_fields']) : array();
+    $search_options=$config['search_options']!= "" ? explode(",",$config['search_options']) : array();
+    $search_min=$config['search_min']!= "" ? explode(",",$config['search_min']) : array();
+    $search_partfields=$config['search_partfields']!= "" ? explode(",",$config['search_partfields']) : array();
+    $search_fields=$config['search_fields']!= "" ? explode(",",$config['search_fields']) : array();
     $tables=explode(",",$config['tables']);
-    $groups=($config['navigate_groups'] != "") ? explode(",",$config['navigate_groups']) : array();
+    $groups=($config['navigate_groups']!= "") ? explode(",",$config['navigate_groups']) : array();
     //------------------------------load config--------------------------------<
-    if ($params === false)
+    if ($params=== false)
         $params=$_GET;
     $q=FN_GetParam("q",$params);
     $navigate=FNNAV_NavigationMode();
@@ -219,7 +219,7 @@ function FNNAV_GetResults($config=false,$params=false)
     $desc=FN_GetParam("desc",$params);
     $rule=FN_GetParam("rule",$params);
     $rulequery="";
-    if ($rule != "" && !empty($config['table_rules']))
+    if ($rule!= "" && !empty($config['table_rules']))
     {
         $tablerules=FN_XmlTable($config['table_rules']);
         $rulevalues=$tablerules->GetRecordByPrimaryKey($rule);
@@ -232,10 +232,10 @@ function FNNAV_GetResults($config=false,$params=false)
             $rulequery="{$rulevalues['query']}";
         }
     }
-    if ($order == "")
+    if ($order== "")
     {
         $order=$config['defaultorder'];
-        if ($desc == "")
+        if ($desc== "")
             $desc=1;
     }
     $viewmode=FN_GetParam("viewmode",$params);
@@ -258,40 +258,40 @@ function FNNAV_GetResults($config=false,$params=false)
         if ($config['enable_permissions_each_records'] && isset($t->formvals['groupview']) && !FN_IsAdmin())
         {
             $exists_group=false;
-            $wherequery .= "(";
+            $wherequery.="(";
             $usergroups=FN_GetUser($_FN['user']);
             $usergroups=isset($usergroups['group']) ? explode(",",$usergroups['group']) : array("");
 
-            $wherequery.= "username LIKE '{$_FN['user']}' OR groupview LIKE ''";
+            $wherequery.="username LIKE '{$_FN['user']}' OR groupview LIKE ''";
             $or=" OR";
             foreach($usergroups as $usergroup)
             {
-                if ($usergroup != "")
+                if ($usergroup!= "")
                 {
-                    $wherequery .= "$or groupview LIKE '$usergroup' OR groupview LIKE '%$usergroup' OR groupview LIKE '$usergroup%' ";
+                    $wherequery.="$or groupview LIKE '$usergroup' OR groupview LIKE '%$usergroup' OR groupview LIKE '$usergroup%' ";
                     $or="OR";
                     $exists_group=true;
                 }
             }
-            $wherequery .= ") ";
+            $wherequery.=") ";
             $and=" AND ";
         }
 
-        if ($order == "")
+        if ($order== "")
         {
             $order=$t->xmltable->primarykey;
-            if ($desc == "")
+            if ($desc== "")
                 $desc=1;
         }
 
         if (isset($t->xmltable->fields['recorddeleted']))
         {
-            $wherequery .= "$and recorddeleted <> '1'";
+            $wherequery.="$and recorddeleted <> '1'";
             $and="AND";
         }
-        if ($config['appendquery'] != "")
+        if ($config['appendquery']!= "")
         {
-            $wherequery .= "$and {$config['appendquery']} ";
+            $wherequery.="$and {$config['appendquery']} ";
             $and="AND";
         }
         $method=" OR ";
@@ -301,25 +301,25 @@ function FNNAV_GetResults($config=false,$params=false)
         $tmpmethod="";
         foreach($t->xmltable->fields as $fieldstoread=> $fieldvalues)
         {
-            if ($fieldstoread != "insert" && $fieldstoread != "update" && $fieldstoread != "unirecid" && $fieldstoread != "unirecid" && $fieldvalues->type != "check")
+            if ($fieldstoread!= "insert" && $fieldstoread!= "update" && $fieldstoread!= "unirecid" && $fieldstoread!= "unirecid" && $fieldvalues->type!= "check")
             {
                 foreach($listfind as $f)
                 {
-                    if ($f != "")
+                    if ($f!= "")
                     {
                         if (isset($fieldvalues->foreignkey) && isset($fieldvalues->fk_link_field))
                         {
                             $fk=FN_XmlTable($fieldvalues->foreignkey);
                             $fkshow=explode(",",$fieldvalues->fk_show_field);
                             $fkfields="";
-                            if ($fieldvalues->fk_show_field != "")
+                            if ($fieldvalues->fk_show_field!= "")
                                 $fkfields=",".$fieldvalues->fk_show_field;
                             //prendo il primo
                             $fk_query="SELECT {$fieldvalues->fk_link_field}$fkfields FROM {$fieldvalues->foreignkey} WHERE ";
                             $or="";
                             foreach($fkshow as $fkitem)
                             {
-                                $fk_query .= "$or {$fkitem} LIKE '%".addslashes($f)."%'";
+                                $fk_query.="$or {$fkitem} LIKE '%".addslashes($f)."%'";
                                 $or="OR";
                             }
                             if (!isset($listok[$f][$fieldvalues->foreignkey]))
@@ -340,11 +340,11 @@ function FNNAV_GetResults($config=false,$params=false)
                                     {
                                         $exists_tmp=true;
                                         $vv=str_replace("'","\\'",$fk_item[$fieldvalues->fk_link_field]);
-                                        $findtextquery_tmp .= "$m $fieldstoread = '$vv'";
+                                        $findtextquery_tmp.="$m $fieldstoread = '$vv'";
                                         $m=" OR ";
                                     }
                                 }
-                                $findtextquery_tmp .= ")";
+                                $findtextquery_tmp.=")";
                                 if (!$exists_tmp)
                                     $findtextquery_tmp="";
                                 $tmpmethod=$method;
@@ -353,11 +353,11 @@ function FNNAV_GetResults($config=false,$params=false)
                             {
                                 $findtextquery_tmp=" $tmpmethod (".$fieldstoread." LIKE '%".addslashes($f)."%') ";
                             }
-                            $findtextquery .= $findtextquery_tmp;
+                            $findtextquery.=$findtextquery_tmp;
                         }
                         else
                         {
-                            $findtextquery .= " $tmpmethod ".$fieldstoread." LIKE '%".addslashes($f)."%' ";
+                            $findtextquery.=" $tmpmethod ".$fieldstoread." LIKE '%".addslashes($f)."%' ";
                         }
                         $tmpmethod=$method;
                     }
@@ -365,9 +365,9 @@ function FNNAV_GetResults($config=false,$params=false)
                 $tmpmethod=" OR ";
             }
         }
-        if ($findtextquery != "")
+        if ($findtextquery!= "")
         {
-            $wherequery .= "$and ($findtextquery) ";
+            $wherequery.="$and ($findtextquery) ";
             $and="AND";
         }
         //-----------------------ricerca del testo ----------------------------<
@@ -386,16 +386,16 @@ function FNNAV_GetResults($config=false,$params=false)
                     $ovalue=$c['value'];
                     $ogetid="s_opt_{$option}_{$tablename}_{$c['value']}";
                     $sopt=FN_GetParam($ogetid,$params,"html");
-                    if ($sopt != "")
+                    if ($sopt!= "")
                     {
-                        $checkquery .= " $tmet $option LIKE '$ovalue' ";
+                        $checkquery.=" $tmet $option LIKE '$ovalue' ";
                         $tmet="OR";
                     }
                 }
             }
-            if ($checkquery != "")
+            if ($checkquery!= "")
             {
-                $wherequery .= "$and ($checkquery) ";
+                $wherequery.="$and ($checkquery) ";
                 $and="AND";
             }
         }
@@ -408,17 +408,17 @@ function FNNAV_GetResults($config=false,$params=false)
             if (isset($_tables[$tablename]->formvals[$min]))
             {
                 $getmin=FN_GetParam("min_$min",$params,"html");
-                if ($getmin != "")
+                if ($getmin!= "")
                 {
                     $getmin=intval($getmin);
-                    $minquery .= " $tmet $min > $getmin ";
+                    $minquery.=" $tmet $min > $getmin ";
                     $tmet="AND";
                 }
             }
         }
-        if ($minquery != "")
+        if ($minquery!= "")
         {
-            $wherequery .= "$and ($minquery) ";
+            $wherequery.="$and ($minquery) ";
             $and="AND";
         }
         //min----<
@@ -430,16 +430,16 @@ function FNNAV_GetResults($config=false,$params=false)
             if (isset($_tables[$tablename]->formvals[$sfield]))
             {
                 $get_sfield=FN_GetParam("sfield_$sfield",$params,"html");
-                if ($get_sfield != "")
+                if ($get_sfield!= "")
                 {
-                    $sfquery .= " $tmet ($sfield LIKE '$get_sfield' OR $sfield LIKE '$get_sfield.%') ";
+                    $sfquery.=" $tmet ($sfield LIKE '$get_sfield' OR $sfield LIKE '$get_sfield.%') ";
                     $tmet="AND";
                 }
             }
         }
-        if ($sfquery != "")
+        if ($sfquery!= "")
         {
-            $wherequery .= "$and ($sfquery) ";
+            $wherequery.="$and ($sfquery) ";
             $and="AND";
         }
         //searchfields----<
@@ -451,28 +451,28 @@ function FNNAV_GetResults($config=false,$params=false)
             if (isset($_tables[$tablename]->formvals[$sfield]))
             {
                 $get_sfield=FN_GetParam("spfield_$sfield",$params,"html");
-                if ($get_sfield != "")
+                if ($get_sfield!= "")
                 {
-                    $sfquery .= " $tmet $sfield LIKE '%$get_sfield%' ";
+                    $sfquery.=" $tmet $sfield LIKE '%$get_sfield%' ";
                     $tmet="AND";
                 }
             }
         }
-        if ($sfquery != "")
+        if ($sfquery!= "")
         {
-            $wherequery .= "$and ($sfquery) ";
+            $wherequery.="$and ($sfquery) ";
             $and="AND";
         }
         //searchpartfields----<
         //-----------------------record is visible only creator---------------->
-        if ($config['viewonlycreator'] == 1)
+        if ($config['viewonlycreator']== 1)
         {
             if (!FN_IsAdmin())
             {
 
-                if ($_FN['user'] != "")
+                if ($_FN['user']!= "")
                 {
-                    $wherequery .= "$and (username LIKE '{$_FN['user']}' OR username LIKE '%,{$_FN['user']}' OR username LIKE '%,{$_FN['user']},%' OR username LIKE '%,{$_FN['user']}') ";
+                    $wherequery.="$and (username LIKE '{$_FN['user']}' OR username LIKE '%,{$_FN['user']}' OR username LIKE '%,{$_FN['user']},%' OR username LIKE '%,{$_FN['user']}') ";
 
 
                     $listusers=FN_XmlTable("fieldusers");
@@ -481,7 +481,7 @@ function FNNAV_GetResults($config=false,$params=false)
                     {
                         foreach($MyRecords as $MyRecord)
                         {
-                            $wherequery .= "OR {$_tables[$tablename]->xmltable->primarykey} = '{$MyRecord['table_unirecid']}'";
+                            $wherequery.="OR {$_tables[$tablename]->xmltable->primarykey} = '{$MyRecord['table_unirecid']}'";
                         }
                     }
                 }
@@ -489,7 +489,7 @@ function FNNAV_GetResults($config=false,$params=false)
             $and="AND";
         }
         //-----------------------record is visible only creator----------------<
-        if ($navigate == 1)
+        if ($navigate== 1)
         {
             $groupquery="";
             $tmet="";
@@ -498,31 +498,31 @@ function FNNAV_GetResults($config=false,$params=false)
                 if (isset($_GET["nv_{$group}"]))
                 {
                     $navigate=FN_GetParam("nv_{$group}",$params);
-                    $groupquery .= "$tmet $group LIKE '".addslashes($navigate)."' ";
+                    $groupquery.="$tmet $group LIKE '".addslashes($navigate)."' ";
                     $tmet="AND";
                 }
             }
-            if ($groupquery != "")
+            if ($groupquery!= "")
             {
-                $wherequery .= "$and ($groupquery) ";
+                $wherequery.="$and ($groupquery) ";
                 $and="AND";
             }
         }
 
-        if ($wherequery == "")
+        if ($wherequery== "")
             $wherequery="1";
         $orderquery="";
-        if ($order != "")
+        if ($order!= "")
         {
-            $orderquery .= " ORDER BY $order";
-            if ($desc != "")
-                $orderquery .= " DESC";
+            $orderquery.=" ORDER BY $order";
+            if ($desc!= "")
+                $orderquery.=" DESC";
         }
         $query="$query $wherequery $orderquery";
         $usenative=true;
         if (isset($_GET['debug']))
         {
-            dprint_r(__FILE__." ".__LINE__. " : ".FN_GetExecuteTimer());
+            dprint_r(__FILE__." ".__LINE__." : ".FN_GetExecuteTimer());
         }
         if (!empty($config['search_query_native_mysql']))
         {
@@ -539,7 +539,7 @@ function FNNAV_GetResults($config=false,$params=false)
         if (isset($_GET['debug']))
         {
             echo ("<div>".$query."</div>");
-            dprint_r(__FILE__." ".__LINE__. " : ".FN_GetExecuteTimer());
+            dprint_r(__FILE__." ".__LINE__." : ".FN_GetExecuteTimer());
         }
 //----------------export------------------------------------------------------->
         if (!empty($res[$tablename]) && !empty($config['enable_export']) && isset($_GET['export']))
@@ -568,7 +568,7 @@ function FNNAV_GetResults($config=false,$params=false)
         }
 //----------------export------------------------------------------------------->		
     }
-          //  dprint_r(__LINE__." : ".FN_GetExecuteTimer());
+    //  dprint_r(__LINE__." : ".FN_GetExecuteTimer());
 
     return $res;
 }
@@ -641,9 +641,9 @@ function FNNAV_MakeLink($params=false,$sep="&amp;",$norewrite=false)
         foreach($params as $key=> $value)
         {
             $link[$key]="$key=".urlencode($params[$key]);
-            if ($params[$key] === null)
+            if ($params[$key]=== null)
                 unset($link[$key]);
-            elseif ($params[$key] === "")
+            elseif ($params[$key]=== "")
                 $link[$key]="$key=$blank";
         }
     }
@@ -664,7 +664,7 @@ function FNNAV_SecureHtml($text,$blacklist="script,iframe,frame,object,embed")
 {
     $blacklist=explode(",",$blacklist);
     $ok=false;
-    while($ok == false)
+    while($ok== false)
     {
         $ok=true;
         foreach($blacklist as $itemtag)
@@ -698,7 +698,7 @@ function FNNAV_GoDownload($file)
         die(FN_Translate("you may not do that"));
     // se il file non esiste lo crea
 
-    if ($config['enablestats'] == 1)
+    if ($config['enablestats']== 1)
     {
         if (!file_exists("{$_FN['datadir']}/{$_FN['database']}/$tablename"."_download_stat") || !file_exists("{$_FN['datadir']}/{$_FN['database']}/$tablename"."_stat.php"))
         {
@@ -713,7 +713,7 @@ function FNNAV_GoDownload($file)
         $stat=FN_XmlTable($tablename."_download_stat");
         $oldval=$stat->GetRecordByPrimaryKey($file);
         $r['filename']=$file;
-        if ($oldval == null)
+        if ($oldval== null)
         {
             $r['numdownload']=1;
             $stat->InsertRecord($r);
@@ -781,7 +781,7 @@ function FNNAV_WriteComment($unirecid)
         $newvalues['username']=$_FN['user'];
         $newvalues['insert']=time();
         $err=$tablelinks->Verify($newvalues);
-        if (count($err) == 0)
+        if (count($err)== 0)
         {
             $tablelinks->xmltable->InsertRecord($newvalues);
 //---------- send mail -------------------------------------------------------->
@@ -797,7 +797,7 @@ function FNNAV_WriteComment($unirecid)
                 {
                     foreach($Table->xmltable->fields as $gk=> $g)
                     {
-                        if (!isset($g->frm_show) || $g->frm_show != 0)
+                        if (!isset($g->frm_show) || $g->frm_show!= 0)
                         {
                             $rname=$row[$gk];
                             break;
@@ -819,7 +819,7 @@ function FNNAV_WriteComment($unirecid)
                         $userlang=$usercomment['lang'];
                     //dprint_r($uservalues);
                     //dprint_r($usercomment);
-                    if ($uservalues['email'] == $usercomment['email']) //onwer
+                    if ($uservalues['email']== $usercomment['email']) //onwer
                     {
                         $body=$_FN['user']." ".FN_Translate("added a comment to your content","aa");
                     }
@@ -827,9 +827,9 @@ function FNNAV_WriteComment($unirecid)
                     {
                         $body=$_FN['user']." ".FN_Translate("added a comment","aa");
                     }
-                    $body .= "<br /><br />$rname<br /><br />".FN_Translate("to see the comments go to this address","aa",$userlang);
+                    $body.="<br /><br />$rname<br /><br />".FN_Translate("to see the comments go to this address","aa",$userlang);
                     $link=FN_RewriteLink("index.php?mod={$_FN['mod']}&op=view&id=$unirecid","&",true);
-                    $body .= "<br /><a href=\"$link\">$link</a><br /><br />";
+                    $body.="<br /><a href=\"$link\">$link</a><br /><br />";
                     if (!isset($usersended[$usercomment['email']]))
                     {
                         FN_SendMail($usercomment['email'],$_FN['sitename']."-".$_FN['sectionvalues']['title'],$body,true);
@@ -849,34 +849,34 @@ function FNNAV_WriteComment($unirecid)
             }
 //---------- send mail --------------------------------------------------------<
         }
-        $html .= FN_Translate("the message has been sent")."<br />";
-        $html .= "<button type=\"button\" class=\"button\" onclick=\"window.location='$exitlink'\" >".FN_Translate("next")."</button>";
+        $html.=FN_Translate("the message has been sent")."<br />";
+        $html.="<button type=\"button\" class=\"button\" onclick=\"window.location='$exitlink'\" >".FN_Translate("next")."</button>";
         return $html;
     }
 
-    if ($_FN['user'] != "" && $unirecid != "")
+    if ($_FN['user']!= "" && $unirecid!= "")
     {
-        $html .= "<br />";
-        $html .= "\n<form method=\"post\" enctype=\"multipart/form-data\" action=\"$formlink\" >";
-        $html .= "\n<table>";
-        $html .= "\n<tr><td colspan=\"2\"><b>".FN_Translate("add comment")."</b></tr></td>";
-        $html .= "\n<tr><td colspan=\"2\">".FN_Translate("required fields")."</tr></td>";
-        $html .= "\n<tr><td colspan=\"2\">";
-        $html .= FN_htmlBbcodesPanel("comment","formatting");
-        $html .= FN_htmlBbcodesPanel("comment","emoticons");
-        $html .= FN_htmlBbcodesJs();
-        $html .= "<br />";
+        $html.="<br />";
+        $html.="\n<form method=\"post\" enctype=\"multipart/form-data\" action=\"$formlink\" >";
+        $html.="\n<table>";
+        $html.="\n<tr><td colspan=\"2\"><b>".FN_Translate("add comment")."</b></tr></td>";
+        $html.="\n<tr><td colspan=\"2\">".FN_Translate("required fields")."</tr></td>";
+        $html.="\n<tr><td colspan=\"2\">";
+        $html.=FN_htmlBbcodesPanel("comment","formatting");
+        $html.=FN_htmlBbcodesPanel("comment","emoticons");
+        $html.=FN_htmlBbcodesJs();
+        $html.="<br />";
         $html.=$tablelinks->HtmlShowInsertForm(false,$newvalues,$err);
-        $html .= "\n</td></tr>";
-        $html .= "\n<tr><td colspan=\"2\"><input class=\"submit\" type=\"submit\" value=\"".FN_Translate("save")."\"/>";
+        $html.="\n</td></tr>";
+        $html.="\n<tr><td colspan=\"2\"><input class=\"submit\" type=\"submit\" value=\"".FN_Translate("save")."\"/>";
 
-        $html .= "<input type='button' class='button' onclick='window.location=(\"$exitlink\")'  value='".FN_Translate("cancel")."' />";
-        $html .= "</tr></td>";
-        $html .= "\n";
-        $html .= "\n</table>";
-        $html .= "\n</form>";
+        $html.="<input type='button' class='button' onclick='window.location=(\"$exitlink\")'  value='".FN_Translate("cancel")."' />";
+        $html.="</tr></td>";
+        $html.="\n";
+        $html.="\n</table>";
+        $html.="\n</form>";
     }
-    $html .=FNNAV_ViewComments($unirecid);
+    $html.=FNNAV_ViewComments($unirecid);
     return $html;
 }
 
@@ -900,38 +900,38 @@ function FNNAV_ViewComments($unirecid)
     $html="";
     if ($config['enablecomments'])
     {
-        $html .= "<a name=\"___comments\" id=\"___comments\"></a>";
-        $html .= FN_HtmlOpenTableTitle(FN_Translate("comments")." :");
+        $html.="<a name=\"___comments\" id=\"___comments\"></a>";
+        $html.=FN_HtmlOpenTableTitle(FN_Translate("comments")." :");
         if (is_array($commenti))
             foreach($commenti as $commento)
             {
-                $html .= "<div class=\"fnfilescomment\">";
-                $html .= "<b>".FN_Translate("from")."</b> ".$commento['username']." ";
-                $html .= "<b>".FN_Translate("date").":</b> ".(fn_GetDateTime($commento['insert']))."<br /><br />";
-                $html .= "<b>".htmlspecialchars($commento['title'])."</b><br />";
-                $html .= FN_Tag2Html($commento['comment'])."<br /><br /><br />";
+                $html.="<div class=\"fnfilescomment\">";
+                $html.="<b>".FN_Translate("from")."</b> ".$commento['username']." ";
+                $html.="<b>".FN_Translate("date").":</b> ".(fn_GetDateTime($commento['insert']))."<br /><br />";
+                $html.="<b>".htmlspecialchars($commento['title'])."</b><br />";
+                $html.=FN_Tag2Html($commento['comment'])."<br /><br /><br />";
                 if (FN_IsAdmin())
                 {
                     $unirecidrecord=$commento['unirecid'];
-                    $html .= "<a href=\"javascript:check('?mod={$_FN['mod']}&op=delcomment&id=$unirecid&unirecidrecord=$unirecidrecord')\" >".FN_Translate("delete")."</a>";
+                    $html.="<a href=\"javascript:check('?mod={$_FN['mod']}&op=delcomment&id=$unirecid&unirecidrecord=$unirecidrecord')\" >".FN_Translate("delete")."</a>";
                 }
-                $html .= "</div>";
-                $html .= "<hr />";
+                $html.="</div>";
+                $html.="<hr />";
             }
-        if ($_GET['op'] != "writecomment")
+        if ($_GET['op']!= "writecomment")
         {
-            if ($_FN['user'] != "" && $config['enablecomments'] != 0)
+            if ($_FN['user']!= "" && $config['enablecomments']!= 0)
             {
-                $html .= "<br />[<img style=\"vertical-align:middle\" src=\"".FN_FromTheme("images/add.png")."\" alt=\"\" title=\"\" />&nbsp;";
-                $html .= "<a href=\"index.php?mod={$_FN['mod']}&amp;op=writecomment&amp;id=$unirecid\" >".FN_Translate("add comment")."</a>]<br />";
+                $html.="<br />[<img style=\"vertical-align:middle\" src=\"".FN_FromTheme("images/add.png")."\" alt=\"\" title=\"\" />&nbsp;";
+                $html.="<a href=\"index.php?mod={$_FN['mod']}&amp;op=writecomment&amp;id=$unirecid\" >".FN_Translate("add comment")."</a>]<br />";
             }
             else
             {
-                $html .= FN_Translate("you must be registered to")." ".$_FN['sitename']." ".FN_i18n("to post a comment");
-                $html .= FN_HtmlLoginForm();
+                $html.=FN_Translate("you must be registered to")." ".$_FN['sitename']." ".FN_i18n("to post a comment");
+                $html.=FN_HtmlLoginForm();
             }
         }
-        $html .= FN_HtmlCloseTableTitle();
+        $html.=FN_HtmlCloseTableTitle();
     }
     return $html;
 }
@@ -953,18 +953,18 @@ function FNNAV_DelComment($unirecid)
 //--config--<
     $html="";
     $tablelinks=FN_XmlForm("$tablename"."_comments");
-    if (FN_IsAdmin() && isset($_GET['unirecidrecord']) && $_GET['unirecidrecord'] != "")
+    if (FN_IsAdmin() && isset($_GET['unirecidrecord']) && $_GET['unirecidrecord']!= "")
     {
         $r['unirecid']=$_GET['unirecidrecord'];
         $tablelinks->xmltable->DelRecord($r['unirecid']);
-        $html .= FN_Translate("the comment was deleted")."<br />";
+        $html.=FN_Translate("the comment was deleted")."<br />";
         FN_Log("{$_FN['mod']}",$_SERVER['REMOTE_ADDR']."||".$_FN['user']."||Table $tablename delete comments in record $unirecid");
         $Table=FN_XmlForm($_FN['database']);
         $newvalues=$Table->xmltable->GetRecordByPrimaryKey($unirecid);
         $newvalues['update']=time();
         $Table->xmltable->UpdateRecord($newvalues);
     }
-    $html .=FNNAV_ViewComments($unirecid);
+    $html.=FNNAV_ViewComments($unirecid);
     return $html;
 }
 
@@ -984,7 +984,7 @@ function FNNAV_DelRecordForm($unirecid)
     $html="";
     $Table=FN_XmlTable($tablename);
     $row=$Table->GetRecordByPrimaryKey($unirecid);
-    if (empty($config['enable_delete']) || $row == null)
+    if (empty($config['enable_delete']) || $row== null)
         die(FN_Translate("you may not do that"));
 
     if (!FNNAV_IsAdminRecord($row))
@@ -1007,7 +1007,7 @@ function FNNAV_DelRecordForm($unirecid)
     //delete record
     else
     {
-        if ($row != null)
+        if ($row!= null)
             $Table->DelRecord($unirecid);
         // elimino i permessi sul record
         $restr=array();
@@ -1033,10 +1033,10 @@ function FNNAV_DelRecordForm($unirecid)
         }
     }
     FNNAV_WriteSitemap();
-    $html .= "<br />".FN_Translate("record was deleted");
-    $html .= "";
+    $html.="<br />".FN_Translate("record was deleted");
+    $html.="";
     $link=FNNAV_MakeLink(array("op"=>null)); //list link
-    $html .= "<br /><br /><button onclick=\"window.location='$link'\"><img border=\"0\" style=\"vertical-align:middle\" src=\"".FN_FromTheme("images/left.png")."\" alt=\"\">&nbsp;".FN_Translate("go to the contents list")."</button>";
+    $html.="<br /><br /><button onclick=\"window.location='$link'\"><img border=\"0\" style=\"vertical-align:middle\" src=\"".FN_FromTheme("images/left.png")."\" alt=\"\">&nbsp;".FN_Translate("go to the contents list")."</button>";
     return $html;
 }
 
@@ -1063,15 +1063,15 @@ function FNNAV_EditRecordForm($unirecid,$Table,$errors=array(),$reloadDataFromDb
     if (!FNNAV_IsAdminRecord($row))
     {
 //----------visualizza modifica se l' utente e' abilitato ------------>>
-        $html .= "<div class=\"fnfilesuserbar\" >";
-        $html .= FNNAV_HtmlToolbar($config,$row);
-        $html .= "</div>";
+        $html.="<div class=\"fnfilesuserbar\" >";
+        $html.=FNNAV_HtmlToolbar($config,$row);
+        $html.="</div>";
 //----------visualizza modifica se l' utente e' abilitato ------------<<		
-        $html .= FNNAV_Request($unirecid);
+        $html.=FNNAV_Request($unirecid);
 
         return $html;
     }
-    $html .= "
+    $html.="
 <script type=\"text/javascript\">
 //<!--
 function set_changed()
@@ -1117,7 +1117,7 @@ function confirm_exitnosave()
 ";
     if (isset($_POST['__NOSAVE']))
     {
-        $html .= "
+        $html.="
 <script type=\"text/javascript\">
 //<!--
 set_changed();
@@ -1125,9 +1125,9 @@ set_changed();
 </script>";
     }
 //----------visualizza modifica se l' utente e' abilitato ------------>>
-    $html .= "<div class=\"fnfilesuserbar\" >";
-    $html .= FNNAV_HtmlToolbar($config,$row);
-    $html .= "</div>";
+    $html.="<div class=\"fnfilesuserbar\" >";
+    $html.=FNNAV_HtmlToolbar($config,$row);
+    $html.="</div>";
 
 //----------visualizza modifica se l' utente e' abilitato ------------<<
     //----template--------->
@@ -1146,7 +1146,7 @@ set_changed();
             $nv=$row;
         else
             $nv=$Table->getbypost();
-        $html .= $Table->HtmlShowUpdateForm($unirecid,FN_IsAdmin(),$nv,$errors);
+        $html.=$Table->HtmlShowUpdateForm($unirecid,FN_IsAdmin(),$nv,$errors);
         $pk=$Table->xmltable->primarykey;
     }
 
@@ -1164,12 +1164,12 @@ set_changed();
 
             if (isset($v["frm_{$_FN['lang']}"]))
                 $title=$v["frm_{$_FN['lang']}"];
-            $html .= "<div class=\"FNNAV_innerform\">";
-            $html .= "<h3>{$title}:</h3>";
+            $html.="<div class=\"FNNAV_innerform\">";
+            $html.="<h3>{$title}:</h3>";
             $params['path']=$Table->path;
             $params['enableedit']=true;
-            $params['maxrows']=$innertablemaxrows;            
-            $params['enablenew']=(!isset($v["enablenew"]) || $v["enablenew"] == 1);
+            $params['maxrows']=$innertablemaxrows;
+            $params['enablenew']=(!isset($v["enablenew"]) || $v["enablenew"]== 1);
             $params['enabledelete']=(!empty($v["enabledelete"]));
             $tplfile=file_exists("sections/{$_FN['mod']}/forminner.tp.html") ? "sections/{$_FN['mod']}/forminner.tp.html" : FN_FromTheme("modules/navigator/forminner.tp.html",false);
             $templateInner=file_get_contents($tplfile);
@@ -1181,14 +1181,14 @@ set_changed();
             $link=FNNAV_MakeLink(array("op"=>"edit","id"=>$unirecid,"inner"=>null),"&",true);
             $params['link_listmode']=$link;
             $params['textviewlist']="";
-            if (isset($v['innertablefields']) && $v['innertablefields'] != "")
+            if (isset($v['innertablefields']) && $v['innertablefields']!= "")
             {
                 $params['fields']=str_replace(",","|",$v['innertablefields']);  //innertablefields	
             }
 
             //op___xdb_
             $t=explode(",",$v["linkfield"]);
-            if (isset($t[1]) && $t[1] != "" && isset($row[$t[0]]))
+            if (isset($t[1]) && $t[1]!= "" && isset($row[$t[0]]))
                 $params['restr']=array($t[1]=>$row[$t[0]]);
             $params['forcenewvalues']=$params['forceupdatevalues']=$params['restr'];
             //dprint_r($params);
@@ -1196,9 +1196,9 @@ set_changed();
             {
                 ob_start();
                 FN_xmltableeditor($v["tablename"],$params);
-                $html .= ob_get_clean();
+                $html.=ob_get_clean();
             }
-            $html .= "</div>";
+            $html.="</div>";
         }
     }
 
@@ -1206,20 +1206,20 @@ set_changed();
     if (empty($_GET['embed']) && empty($_GET['inner']))
     {
         $listlink=FNNAV_MakeLink(array("op"=>null,"id"=>null),"&");
-        $html .= "<br /><br />";
+        $html.="<br /><br />";
         $linkCopyAndNew=FN_RewriteLink("index.php?op=new&id=$unirecid","&",true);
-        $html .= "<button type=\"button\" onclick=\"document.getElementById('frmedit').action='$linkCopyAndNew';document.getElementById('frmedit').submit();\" ><img style=\"vertical-align:middle\" src=\"".FN_FromTheme("images/modify.png")."\" alt=\"\">&nbsp;".FN_Translate("copy data and add new")."</button>";
+        $html.="<button type=\"button\" onclick=\"document.getElementById('frmedit').action='$linkCopyAndNew';document.getElementById('frmedit').submit();\" ><img style=\"vertical-align:middle\" src=\"".FN_FromTheme("images/modify.png")."\" alt=\"\">&nbsp;".FN_Translate("copy data and add new")."</button>";
 
-        $html .= "<button type=\"button\" onclick=\"window.location='$listlink'\"><img style=\"vertical-align:middle\" src=\"".FN_FromTheme("images/up.png")."\" alt=\"\">&nbsp;".FN_Translate("view list")."</button>";
+        $html.="<button type=\"button\" onclick=\"window.location='$listlink'\"><img style=\"vertical-align:middle\" src=\"".FN_FromTheme("images/up.png")."\" alt=\"\">&nbsp;".FN_Translate("view list")."</button>";
         $link=FNNAV_MakeLink(array("op"=>"view","id"=>$unirecid,"inner"=>null));
 
-        $html .= " <button type=\"button\" id=\"exitform2\"  onclick=\"window.location='$link'\"><img style=\"vertical-align:middle\" src=\"".FN_FromTheme("images/left.png")."\" alt=\"\">&nbsp;".FN_Translate("exit and view")."</button>";
+        $html.=" <button type=\"button\" id=\"exitform2\"  onclick=\"window.location='$link'\"><img style=\"vertical-align:middle\" src=\"".FN_FromTheme("images/left.png")."\" alt=\"\">&nbsp;".FN_Translate("exit and view")."</button>";
     }
     else
     {
 
         $editlink=FNNAV_MakeLink(array("op"=>"edit","id"=>$unirecid,"inner"=>null),"&");
-        $html .= "<br />
+        $html.="<br />
 		<br />
 		<button onclick=\"window.location='$editlink'\" >
 		<img border=\"0\" style=\"vertical-align:middle\" src=\"".FN_FromTheme("images/left.png")."\" alt=\"\" />&nbsp;".FN_Translate("back")."</button>";
@@ -1250,7 +1250,7 @@ function FNNAV_NewRecordForm($Table,$errors=array())
     $html="";
     //----template---------<
 //----gestione esci senza salvare ------->
-    $html .= "
+    $html.="
 <script type=\"text/javascript\">
 function set_changed()
 {
@@ -1269,7 +1269,7 @@ function confirm_exitnosave()
 
     if (isset($_POST['__NOSAVE']))
     {
-        $html .= "
+        $html.="
 <script type=\"text/javascript\">
 set_changed();
 </script>";
@@ -1294,7 +1294,7 @@ function FNNAV_UpdateRecord($Table)
 //--config--<
     $Table=FN_XmlForm($tablename);
     $username=$_FN['user'];
-    if ($username == "")
+    if ($username== "")
         die(FN_Translate("you may not do that"));
     $newvalues=$Table->getbypost();
     if (isset($_POST["_xmldbform_pk_".$Table->xmltable->primarykey]))
@@ -1309,15 +1309,15 @@ function FNNAV_UpdateRecord($Table)
     if (is_array($oldvalues))
         foreach($oldvalues as $k=> $v)
         {
-            if (isset($newvalues[$k]) && $oldvalues[$k] !== $newvalues[$k])
+            if (isset($newvalues[$k]) && $oldvalues[$k]!== $newvalues[$k])
             {
                 $toupdate=true;
                 break;
             }
-            if (isset($newvalues[$k]) && $newvalues[$k] != "" && $oldvalues[$k] == $newvalues[$k] && ($Table->xmltable->fields[$k]->type == "file" || $Table->xmltable->fields[$k]->type == "image"))
+            if (isset($newvalues[$k]) && $newvalues[$k]!= "" && $oldvalues[$k]== $newvalues[$k] && ($Table->xmltable->fields[$k]->type== "file" || $Table->xmltable->fields[$k]->type== "image"))
             {
                 $filename=$Table->xmltable->getFilePath($oldvalues,$k);
-                if (filesize($filename) != filesize($_FILES[$k]['tmp_name']))
+                if (filesize($filename)!= filesize($_FILES[$k]['tmp_name']))
                 {
                     // die ("$filename toupdate");
                     $toupdate=true;
@@ -1330,16 +1330,16 @@ function FNNAV_UpdateRecord($Table)
     {
         if (isset($newvalues[$f['name']]) && isset($Table->formvals[$f['name']]['frm_uppercase']))
         {
-            if ($Table->formvals[$f['name']]['frm_uppercase'] == "uppercase")
+            if ($Table->formvals[$f['name']]['frm_uppercase']== "uppercase")
             {
                 $_POST[$f['name']]=$newvalues[$f['name']]=strtoupper($newvalues[$f['name']]);
             }
-            elseif ($Table->formvals[$f['name']]['frm_uppercase'] == "lowercase")
+            elseif ($Table->formvals[$f['name']]['frm_uppercase']== "lowercase")
             {
                 $_POST[$f['name']]=$newvalues[$f['name']]=strtolower($newvalues[$f['name']]);
             }
         }
-        if (isset($Table->formvals[$f['name']]['frm_onrowupdate']) && $Table->formvals[$f['name']]['frm_onrowupdate'] != "")
+        if (isset($Table->formvals[$f['name']]['frm_onrowupdate']) && $Table->formvals[$f['name']]['frm_onrowupdate']!= "")
         {
             $dv=$Table->formvals[$f['name']]['frm_onrowupdate'];
             $fname=$f['name'];
@@ -1350,7 +1350,7 @@ function FNNAV_UpdateRecord($Table)
     }
 
     $errors=$Table->VerifyUpdate($newvalues,$pkold);
-    if ($pkold != $pk)
+    if ($pkold!= $pk)
     {
         $newExists=$Table->xmltable->GetRecordByPrimaryKey($pk);
         if (isset($newExists[$Table->xmltable->primarykey]))
@@ -1359,11 +1359,11 @@ function FNNAV_UpdateRecord($Table)
             $errors[$Table->xmltable->primarykey]=array("title"=>$Table->formvals[$Table->xmltable->primarykey]['title'],"field"=>$Table->xmltable->primarykey,"error"=>FN_Translate("there is already an item with this value"));
         }
     }
-    if (count($errors) == 0)
+    if (count($errors)== 0)
     {
         if (FN_IsAdmin())
         {
-            if (!isset($_POST['userupdate']) || $_POST['userupdate'] == "")
+            if (!isset($_POST['userupdate']) || $_POST['userupdate']== "")
             {
                 $_POST['userupdate']=$newvalues['userupdate']=$_FN['user'];
             }
@@ -1382,7 +1382,7 @@ function FNNAV_UpdateRecord($Table)
                 $tv=FN_XmlTable($tablename."_versions");
                 foreach($Table->xmltable->fields as $k=> $v)
                 {
-                    if (($v->type == "file" || $v->type == "image") && $oldvalues[$k] != "")
+                    if (($v->type== "file" || $v->type== "image") && $oldvalues[$k]!= "")
                     {
                         $oldfile=$Table->xmltable->getFilePath($oldvalues,$k);
                         $_FILES[$k]['name']=$oldvalues[$k];
@@ -1436,16 +1436,16 @@ function FNNAV_InsertRecord($Table)
     {
         if (isset($newvalues[$f['name']]) && isset($Table->formvals[$f['name']]['frm_uppercase']))
         {
-            if ($Table->formvals[$f['name']]['frm_uppercase'] == "uppercase")
+            if ($Table->formvals[$f['name']]['frm_uppercase']== "uppercase")
             {
                 $_POST[$f['name']]=$newvalues[$f['name']]=strtoupper($newvalues[$f['name']]);
             }
-            elseif ($Table->formvals[$f['name']]['frm_uppercase'] == "lowercase")
+            elseif ($Table->formvals[$f['name']]['frm_uppercase']== "lowercase")
             {
                 $_POST[$f['name']]=$newvalues[$f['name']]=strtolower($newvalues[$f['name']]);
             }
         }
-        if ((isset($Table->formvals[$f['name']]['frm_onrowupdate']) && $Table->formvals[$f['name']]['frm_onrowupdate'] != ""))
+        if ((isset($Table->formvals[$f['name']]['frm_onrowupdate']) && $Table->formvals[$f['name']]['frm_onrowupdate']!= ""))
         {
             $dv=$Table->formvals[$f['name']]['frm_onrowupdate'];
             $fname=$f['name'];
@@ -1458,22 +1458,22 @@ function FNNAV_InsertRecord($Table)
     //die();
     $errors=$Table->VerifyInsert($newvalues);
 
-    if (count($errors) == 0)
+    if (count($errors)== 0)
     {
         $newvalues['recordupdate']=xmldb_now();
         $newvalues['recordinsert']=xmldb_now();
         $newvalues['userupdate']=$_FN['user'];
         $newvalues['username']=$_FN['user'];
 
-        if (!empty($config['enable_permissions_edit_each_records']) && $config['enable_permissions_edit_each_records'] == 1)
+        if (!empty($config['enable_permissions_edit_each_records']) && $config['enable_permissions_edit_each_records']== 1)
         {
-            if ($config['permissions_records_edit_groups'] != "")
+            if ($config['permissions_records_edit_groups']!= "")
             {
                 $allAllowedGroups=explode(",",$config['permissions_records_edit_groups']);
                 $groupinsert=array();
                 foreach($allAllowedGroups as $allAllowedGroup)
                 {
-                    if ($allAllowedGroup != "" && FN_UserInGroup($_FN['user'],$allAllowedGroup))
+                    if ($allAllowedGroup!= "" && FN_UserInGroup($_FN['user'],$allAllowedGroup))
                     {
                         $groupinsert[]=$allAllowedGroup;
                     }
@@ -1512,25 +1512,25 @@ function FNNAV_InsertRecord($Table)
         }
 
         FN_Log("{$_FN['mod']}",$_SERVER['REMOTE_ADDR']."||".$username."||Table $tablename record added.");
-        $html .= FN_HtmlAlert(FN_Translate("the data were successfully inserted"));
+        $html.=FN_HtmlAlert(FN_Translate("the data were successfully inserted"));
         //----mail inserimento nuovo record -------->
         if (!empty($config['mailalert']))
         {
             $subject=FN_Translate("created new record in")." {$_FN['sectionvalues']['title']}";
             if (!empty($record['name']))
-                $subject .=": ".$record['name'];
+                $subject.=": ".$record['name'];
             $body="\n".FN_Translate("posted by")." ".$r['username'];
-            $body .= "\n\n".FN_Translate("to view go to the address").": ";
-            $body .= "\n".$_FN['siteurl']."/index.php?mod={$_FN['mod']}&op=view&id=".$record[$Table->xmltable->primarykey];
-            $body .= "\n\n".$_FN['sitename']."";
+            $body.="\n\n".FN_Translate("to view go to the address").": ";
+            $body.="\n".$_FN['siteurl']."/index.php?mod={$_FN['mod']}&op=view&id=".$record[$Table->xmltable->primarykey];
+            $body.="\n\n".$_FN['sitename']."";
             FN_SendMail($config['mailalert'],$subject,$body,false);
         }
         //----mail inserimento nuovo record --------<
-        $html .=FNNAV_EditRecordForm($record[$Table->xmltable->primarykey],$Table,$errors,true);
+        $html.=FNNAV_EditRecordForm($record[$Table->xmltable->primarykey],$Table,$errors,true);
     }
     else
     {
-        $html .=FNNAV_NewRecordForm($Table,$errors);
+        $html.=FNNAV_NewRecordForm($Table,$errors);
     }
     return $html;
 }
@@ -1580,19 +1580,19 @@ function FNNAV_GetFieldUser($row,$tablename,$databasename,$pathdatabase)
  */
 function FNNAV_GetFieldUserList($row,$tablename)
 {
-    static $userPerm = false;
+    static $userPerm=false;
     $t=FN_XmlTable($tablename);
     if (!$userPerm)
     {
         $listusers=FN_XmlTable("fieldusers");
-        $userPerm = $listusers->GetRecords();
+        $userPerm=$listusers->GetRecords();
     }
-    $ret = array();
-    foreach ($userPerm as $row_perm)
+    $ret=array();
+    foreach($userPerm as $row_perm)
     {
-        if ($row[$t->primarykey]==$row_perm['table_unirecid'] && $tablename==$row_perm['tablename'])
+        if ($row[$t->primarykey]== $row_perm['table_unirecid'] && $tablename== $row_perm['tablename'])
         {
-            $ret[] = $row_perm;
+            $ret[]=$row_perm;
         }
     }
     return $ret;
@@ -1615,20 +1615,20 @@ function FNNAV_IsAdminRecord($row)
     if (FN_IsAdmin())
         return true;
     $user=$_FN['user'];
-    if ($_FN['user'] == "")
+    if ($_FN['user']== "")
         return false;
-    if (isset($row['username']) && $row['username'] == $_FN['user'])
+    if (isset($row['username']) && $row['username']== $_FN['user'])
         return true;
-    if (isset($row['user']) && $row['user'] == $user)
+    if (isset($row['user']) && $row['user']== $user)
         return true;
-    if ($_FN['user'] != "" && $config['groupadmin'] != "" && FN_UserInGroup($_FN['user'],$config['groupadmin']))
-    {   
+    if ($_FN['user']!= "" && $config['groupadmin']!= "" && FN_UserInGroup($_FN['user'],$config['groupadmin']))
+    {
         return true;
     }
     //permessi per ogni record------------------------------------------------->
     if (empty($config['viewonlycreator']))
     {
-        if (!empty($config['enable_permissions_edit_each_records']) && $config['enable_permissions_edit_each_records'] == 1)
+        if (!empty($config['enable_permissions_edit_each_records']) && $config['enable_permissions_edit_each_records']== 1)
         {
             $record=$row;
             if (empty($record['groupinsert']))
@@ -1640,7 +1640,7 @@ function FNNAV_IsAdminRecord($row)
                 $groups_can_insert=explode(",",$record['groupinsert'].",".$config['groupadmin']);
                 foreach($groups_can_insert as $gr_can_insert)
                 {
-                    if ($gr_can_insert != "" && FN_UserInGroup($_FN['user'],$gr_can_insert))
+                    if ($gr_can_insert!= "" && FN_UserInGroup($_FN['user'],$gr_can_insert))
                     {
                         return true;
                     }
@@ -1651,17 +1651,17 @@ function FNNAV_IsAdminRecord($row)
         else
         {
             /*
-            if (empty($record['groupinsert']) )
-            {
+              if (empty($record['groupinsert']) )
+              {
 
-                return true;
-            }
+              return true;
+              }
              * 
              */
         }
     }
     //permessi per ogni record-------------------------------------------------<	
-    
+
     if (FNNAV_UserCanEditField($user,$row))
     {
         return true;
@@ -1683,11 +1683,11 @@ function FNNAV_CanAddRecord()
     $config=FN_LoadConfig();
     //dprint_r($config);
 //include ("sections/" . $_FN['mod'] . "/config.php");
-    if ($_FN['user'] != "" && $config['groupadmin'] != "" && FN_UserInGroup($_FN['user'],$config['groupadmin']))
+    if ($_FN['user']!= "" && $config['groupadmin']!= "" && FN_UserInGroup($_FN['user'],$config['groupadmin']))
         return true;
-    if ($_FN['user'] != "" && $config['groupinsert'] != "" && FN_UserInGroup($_FN['user'],$config['groupinsert']))
+    if ($_FN['user']!= "" && $config['groupinsert']!= "" && FN_UserInGroup($_FN['user'],$config['groupinsert']))
         return true;
-    if ($_FN['user'] != "" && $config['groupinsert'] == "")
+    if ($_FN['user']!= "" && $config['groupinsert']== "")
         return true;
     return false;
 }
@@ -1703,13 +1703,13 @@ function FNNAV_CanViewRecords()
     if (FN_IsAdmin())
         return true;
     $config=FN_LoadConfig();
-    if ($_FN['user'] != "" && $config['groupadmin'] != "" && FN_UserInGroup($_FN['user'],$config['groupadmin']))
+    if ($_FN['user']!= "" && $config['groupadmin']!= "" && FN_UserInGroup($_FN['user'],$config['groupadmin']))
         return true;
-    if ($_FN['user'] != "" && $config['groupview'] != "" && FN_UserInGroup($_FN['user'],$config['groupview']))
+    if ($_FN['user']!= "" && $config['groupview']!= "" && FN_UserInGroup($_FN['user'],$config['groupview']))
         return true;
-    if ($_FN['user'] != "" && $config['groupinsert'] != "" && FN_UserInGroup($_FN['user'],$config['groupinsert']))
+    if ($_FN['user']!= "" && $config['groupinsert']!= "" && FN_UserInGroup($_FN['user'],$config['groupinsert']))
         return true;
-    if ($config['groupview'] == "")
+    if ($config['groupview']== "")
         return true;
     return false;
 }
@@ -1744,9 +1744,9 @@ function FNNAV_UsersForm($unirecid)
     $row=$Table->GetRecordByPrimaryKey($unirecid);
     $pk=$Table->primarykey;
     $html="";
-    $html .= "<div class=\"fnfilesuserbar\" >";
-    $html .= FNNAV_HtmlToolbar($config,$row);
-    $html .= "</div>";
+    $html.="<div class=\"fnfilesuserbar\" >";
+    $html.=FNNAV_HtmlToolbar($config,$row);
+    $html.="</div>";
     $titles=explode(",",$config['titlefield']);
     $t=array();
     foreach($titles as $tt)
@@ -1754,10 +1754,10 @@ function FNNAV_UsersForm($unirecid)
         $t[]=$row[$tt];
     }
     $title=implode(" ",$t);
-    $html .= "<h2>$title</h2>";
+    $html.="<h2>$title</h2>";
     $usertoadd=FN_GetParam("usertoadd",$_POST);
     $usertodel=FN_GetParam("usertodel",$_GET);
-    if ($usertodel != "")
+    if ($usertodel!= "")
     {
         $fieldusers=FN_XmlTable("fieldusers");
         $r=array();
@@ -1766,20 +1766,20 @@ function FNNAV_UsersForm($unirecid)
         $r['table_unirecid']=$unirecid;
         $old=$fieldusers->GetRecords($r);
         if (!isset($old[0]))
-            $html .= "error delete:".FN_Translate("this user not exists");
+            $html.="error delete:".FN_Translate("this user not exists");
         $old=$old[0];
         $fieldusers->DelRecord($old[$fieldusers->primarykey]);
     }
-    if ($usertoadd != "")
+    if ($usertoadd!= "")
     {
-        if (FN_GetUser($usertoadd) == null)
+        if (FN_GetUser($usertoadd)== null)
         {
-            $html .= FN_Translate("this user not exists");
+            $html.=FN_Translate("this user not exists");
         }
         else
         if (FNNAV_UserCanEditField($usertoadd,$row))
         {
-            $html .= FN_Translate("this user is already enabled");
+            $html.=FN_Translate("this user is already enabled");
         }
         else
         {
@@ -1795,7 +1795,7 @@ function FNNAV_UsersForm($unirecid)
             else
                 foreach($Table->fields as $gk=> $g)
                 {
-                    if (!isset($g->frm_show) || $g->frm_show != 0)
+                    if (!isset($g->frm_show) || $g->frm_show!= 0)
                     {
                         $rname=$row[$gk];
                         break;
@@ -1803,9 +1803,9 @@ function FNNAV_UsersForm($unirecid)
                 }
             //dprint_r($Table->fields);
             $message=FN_Translate("you were added to the users allowed to edit this content")." \"".$rname."\" \n\n";
-            $message .= FN_Translate("If you want to edit the content you have to login :")."\n".$_FN['siteurl']."index.php?mod=login\n";
-            $message .= FN_Translate("and login as user").":\"$usertoadd\"\n";
-            $message .= FN_Translate("then click on -user allowed to edit- and manage the permissions")."\n".$_FN['siteurl']."index.php?mod={$_FN['mod']}&op=edit&id=$unirecid\n";
+            $message.=FN_Translate("If you want to edit the content you have to login :")."\n".$_FN['siteurl']."index.php?mod=login\n";
+            $message.=FN_Translate("and login as user").":\"$usertoadd\"\n";
+            $message.=FN_Translate("then click on -user allowed to edit- and manage the permissions")."\n".$_FN['siteurl']."index.php?mod={$_FN['mod']}&op=edit&id=$unirecid\n";
             $user_record=FN_GetUser($usertoadd);
             $subject="[{$_FN['sitename']}] ".$rname;
             $to=FN_GetUser($usertoadd);
@@ -1819,15 +1819,15 @@ function FNNAV_UsersForm($unirecid)
         return;
     }
     $link=FNNAV_MakeLink(array("op"=>"users","id"=>$row[$pk]));
-    $html .= "
+    $html.="
 	<form
 		action=\"$link\"
 		method=\"post\">
 		<table>
 			<tr>
 				<td>";
-    $html .= FN_Translate("add user");
-    $html .= ": </td>
+    $html.=FN_Translate("add user");
+    $html.=": </td>
 			<td></td>
 			<td><input type=\"text\" name=\"usertoadd\" /></td>
 		</tr>
@@ -1844,11 +1844,11 @@ function FNNAV_UsersForm($unirecid)
         foreach($users as $user)
         {
             $link=FNNAV_MakeLink(array("op"=>"users","id"=>$row[$pk],"usertodel"=>$user['username']));
-            $html .= "<br />".$user['username']."<input type=\"button\" value=\"".FN_Translate("delete")."\" onclick=\"check('$link')\" />";
+            $html.="<br />".$user['username']."<input type=\"button\" value=\"".FN_Translate("delete")."\" onclick=\"check('$link')\" />";
         }
-    $html .= "<hr />";
+    $html.="<hr />";
     $link=FNNAV_MakeLink(array("op"=>"view","id"=>$row[$pk]));
-    $html .= "<br /><a href=\"$link\">".FN_Translate("next")."</a>"." <img style=\"vertical-align:middle\" src='".FN_FromTheme("images/right.png")."' alt='' border='0' />";
+    $html.="<br /><a href=\"$link\">".FN_Translate("next")."</a>"." <img style=\"vertical-align:middle\" src='".FN_FromTheme("images/right.png")."' alt='' border='0' />";
     return $html;
 }
 
@@ -1867,7 +1867,7 @@ function FNNAV_UserCanEditField($user,$row)
     $tables=explode(",",$config['tables']);
     $tablename=$tables[0];
 //--config--<
-    if ($user == "")
+    if ($user== "")
         return false;
     $t=FN_XmlTable($tablename);
     $restr=array();
@@ -1880,7 +1880,7 @@ function FNNAV_UserCanEditField($user,$row)
         foreach($list_field as $field)
         {
 
-            if ($field['username'] == $user && $field['table_unirecid'] == $row[$t->primarykey] && $field['tablename'] == $tablename)
+            if ($field['username']== $user && $field['table_unirecid']== $row[$t->primarykey] && $field['tablename']== $tablename)
                 return true;
         }
     return false;
@@ -1934,7 +1934,7 @@ function FNNAV_Request($unirecid)
     $tablename=$tables[0];
 //--config--<
     $html="";
-    if ($_FN['user'] == "")
+    if ($_FN['user']== "")
     {
         FN_JsRedirect(FN_RewriteLink("index.php?mod={$_FN['mod']}&op=view&id=$unirecid"));
         return "";
@@ -1959,7 +1959,7 @@ function FNNAV_Request($unirecid)
         else
             foreach($Table->fields as $gk=> $g)
             {
-                if (!isset($g->frm_show) || $g->frm_show != 0)
+                if (!isset($g->frm_show) || $g->frm_show!= 0)
                 {
                     $rname=$row[$gk];
                     break;
@@ -1969,35 +1969,35 @@ function FNNAV_Request($unirecid)
 
         $subject="[{$_FN['sitename']}] ".$rname;
         $message=$_FN['user']." ".FN_Translate("has requested to modify this content","aa")." \"".$rname."\"\n\n\n";
-        $message .= FN_Translate("to allow editing do login","aa")." ".$_FN['siteurl']."index.php?mod=login\n";
-        $message .= FN_Translate("and login as user","aa").": \"".$user_record['username']."\"\n\n\n";
-        $message .= FN_Translate("go to edit this content or log in","aa")." :\n".$_FN['siteurl']."index.php?mod={$_FN['mod']}&op=edit&id=$unirecid\n";
-        $message .= FN_Translate("then click on -user allowed to edit- and manage the permissions","aa")." "."\"{$_FN['user']}\"";
-        $message .= "\n\n----------------------\n";
-        $message .= "\n".FN_StripPostSlashes($_POST['message']);
+        $message.=FN_Translate("to allow editing do login","aa")." ".$_FN['siteurl']."index.php?mod=login\n";
+        $message.=FN_Translate("and login as user","aa").": \"".$user_record['username']."\"\n\n\n";
+        $message.=FN_Translate("go to edit this content or log in","aa")." :\n".$_FN['siteurl']."index.php?mod={$_FN['mod']}&op=edit&id=$unirecid\n";
+        $message.=FN_Translate("then click on -user allowed to edit- and manage the permissions","aa")." "."\"{$_FN['user']}\"";
+        $message.="\n\n----------------------\n";
+        $message.="\n".FN_StripPostSlashes($_POST['message']);
         if (!empty($user['email']) && FN_SendMail($user['email'],$subject,$message))
         {
-            $html.= "<br />".FN_Translate("request sent")."<br />";
+            $html.="<br />".FN_Translate("request sent")."<br />";
         }
         else
         {
-            $html.= "<br />".FN_Translate("you can not send your request, please contact the administrator of the website")."<br />";
+            $html.="<br />".FN_Translate("you can not send your request, please contact the administrator of the website")."<br />";
         }
         FN_Log("{$_FN['mod']}",$_SERVER['REMOTE_ADDR']."||".$_FN['user']."||request ".$rname." in table $tablename.");
     }
     else
     {
-        $html.= FN_Translate("the creator of the object will be contacted to request you to be allowed. You can add comments in the box below.")."<br />";
-        $html.= "<form method=\"post\" action=\"index.php?mod={$_FN['mod']}&amp;op=request&amp;id=$unirecid\">";
-        $html.= "<textarea name=\"message\" cols=\"60\" rows=\"5\"></textarea><br />";
-        $html.= "<input type=\"submit\"  name=\"send\" value=\"".FN_Translate("demand modification")."\" class=\"submit\" />";
+        $html.=FN_Translate("the creator of the object will be contacted to request you to be allowed. You can add comments in the box below.")."<br />";
+        $html.="<form method=\"post\" action=\"index.php?mod={$_FN['mod']}&amp;op=request&amp;id=$unirecid\">";
+        $html.="<textarea name=\"message\" cols=\"60\" rows=\"5\"></textarea><br />";
+        $html.="<input type=\"submit\"  name=\"send\" value=\"".FN_Translate("demand modification")."\" class=\"submit\" />";
         $link=FNNAV_MakeLink(array("op"=>null),"&");
-        $html.= "\n<input type=\"button\" onclick=\"window.location='$link'\" class=\"button\" value=\"".FN_Translate("cancel")."\" />";
-        $html.= "</form>";
+        $html.="\n<input type=\"button\" onclick=\"window.location='$link'\" class=\"button\" value=\"".FN_Translate("cancel")."\" />";
+        $html.="</form>";
     }
     $link=FNNAV_MakeLink(array("op"=>null),"&");
     $tit=FN_Translate("back");
-    $html.= "<br /><br /><button onclick=\"window.location='$link'\"><img border=\"0\" style=\"vertical-align:middle\" src=\"".FN_FromTheme("images/left.png")."\" alt=\"\">&nbsp;".FN_Translate("go to the contents list")."</button>";
+    $html.="<br /><br /><button onclick=\"window.location='$link'\"><img border=\"0\" style=\"vertical-align:middle\" src=\"".FN_FromTheme("images/left.png")."\" alt=\"\">&nbsp;".FN_Translate("go to the contents list")."</button>";
     return $html;
 }
 
@@ -2013,7 +2013,7 @@ function FNNAV_HtmlRank($id,$small=true,$tablename="")
     global $_FN;
 //--config-->
     $config=FN_LoadConfig();
-    if ($tablename == "")
+    if ($tablename== "")
     {
         $tables=explode(",",$config['tables']);
         $tablename=$tables[0];
@@ -2026,22 +2026,22 @@ function FNNAV_HtmlRank($id,$small=true,$tablename="")
     $s="";
     if ($small)
         $s="_small";
-    $html .= "<div style=\"display:inline;line-height:10px;\">";
-    if ($rank >= 0)
+    $html.="<div style=\"display:inline;line-height:10px;\">";
+    if ($rank>= 0)
         for($i=0; $i < 5; $i++)
         {
             if ($i < $rank)
             {
-                $html .= "<img style=\"\" alt=\"\" src=\"{$_FN['siteurl']}modules/navigator/star$s.png\" />";
+                $html.="<img style=\"\" alt=\"\" src=\"{$_FN['siteurl']}modules/navigator/star$s.png\" />";
             }
             else
             {
-                $html .= "<img style=\"\" alt=\"\" src=\"{$_FN['siteurl']}modules/navigator/star_gray$s.png\" />";
+                $html.="<img style=\"\" alt=\"\" src=\"{$_FN['siteurl']}modules/navigator/star_gray$s.png\" />";
             }
         }
     else
-        $html .= "-";
-    $html .= "</div>";
+        $html.="-";
+    $html.="</div>";
     return $html;
 }
 
@@ -2056,7 +2056,7 @@ function FNNAV_GetRank($id,&$n,$tablename)
     global $_FN;
 //--config-->
     $config=FN_LoadConfig();
-    if ($tablename == "")
+    if ($tablename== "")
     {
         $tables=explode(",",$config['tables']);
         $tablename=$tables[0];
@@ -2068,11 +2068,11 @@ function FNNAV_GetRank($id,&$n,$tablename)
     if (!is_array($res))
         $res=array();
     $n=count($res);
-    if ($n == 0)
+    if ($n== 0)
         return -1;
     foreach($res as $r)
     {
-        $total += $r['rank'];
+        $total+=$r['rank'];
     }
     $m=round(($total / $n),0);
     return $m;
@@ -2094,14 +2094,14 @@ function FNNAV_HtmlRankEditable($id,$small,$tablename)
     if ($small)
         $s="_small";
     $cookie=FN_GetParam("fnfiles_rank_{$tablename}_{$id}",$_COOKIE);
-    if ($cookie == "true")
+    if ($cookie== "true")
         return FN_Translate("rank")." : ".FNNAV_HtmlRank($id,$small,$tablename);
 //$rank = pdit_get_rank ( $id, $n ,$tablename);
     $html="";
     $smalltxt="small=0";
     if ($small)
         $smalltxt="small=1";
-    $html .= "
+    $html.="
 <script  type=\"text/javascript\">
 function set_rank(v)
 {
@@ -2122,16 +2122,16 @@ function select_star(c)
 
 ";
 //$view = pdit_get_view ( $id, $tablename );
-    $html .= "<div style=\"height:20px;\">".FN_Translate("vote")." : ";
-    $html .= "<div style=\"display:inline\" id=\"pdit_rank\">";
+    $html.="<div style=\"height:20px;\">".FN_Translate("vote")." : ";
+    $html.="<div style=\"display:inline\" id=\"pdit_rank\">";
     $votes=array(1=>FN_Translate("poor"),2=>FN_Translate("inadeguate"),3=>FN_Translate("adeguate"),4=>FN_Translate("good"),5=>FN_Translate("very good"));
     foreach($votes as $i=> $votes)
     {
-        $html .= "<img onmouseout=\"select_star(-1);document.getElementById('pdit_rank_desc').innerHTML='&nbsp;'\" onmouseover=\"select_star($i);document.getElementById('pdit_rank_desc').innerHTML='{$votes}'\" onclick=\"set_rank($i)\" style=\"vertical-align:middle;cursor:pointer;\" alt=\"\" src=\"{$_FN['siteurl']}modules/navigator/star_gray$s.png\" />";
+        $html.="<img onmouseout=\"select_star(-1);document.getElementById('pdit_rank_desc').innerHTML='&nbsp;'\" onmouseover=\"select_star($i);document.getElementById('pdit_rank_desc').innerHTML='{$votes}'\" onclick=\"set_rank($i)\" style=\"vertical-align:middle;cursor:pointer;\" alt=\"\" src=\"{$_FN['siteurl']}modules/navigator/star_gray$s.png\" />";
     }
-    $html .= "<div style=\"margin-left:10px;display:inline\" id=\"pdit_rank_desc\" >&nbsp;</div>";
-    $html .= "</div>";
-    $html .= "</div>";
+    $html.="<div style=\"margin-left:10px;display:inline\" id=\"pdit_rank_desc\" >&nbsp;</div>";
+    $html.="</div>";
+    $html.="</div>";
     return $html;
 }
 
@@ -2163,12 +2163,19 @@ function FNNAV_SetRank($id,$rank,$tablename)
  */
 function FNNAV_HtmlToolbar($config,$row)
 {
+    global $_FN;
+    $tplfile=file_exists("sections/{$_FN['mod']}/viewitem.tp.html") ? "sections/{$_FN['mod']}/viewitem.tp.html" : FN_FromTheme("modules/navigator/viewitem.tp.html",false);
+    $tplbasepath=dirname($tplfile)."/";
+    $template=file_get_contents($tplfile);
+    $tp_str=FN_TPL_GetHtmlPart("navigation bar",$template);
+    $tp_str_options=FN_TPL_GetHtmlPart("options",$template);
+
+
     $tables=explode(",",$config['tables']);
     $tablename=$tables[0];
     $t=FN_XmlForm($tablename);
     $op=FN_GetParam("op",$_GET,"html");
     $unirecid=$row[$t->xmltable->primarykey];
-//next and prev button ----->
     $results=FNNAV_GetResults($config);
     $results=$results[$tablename];
     $next=$prev="";
@@ -2177,44 +2184,113 @@ function FNNAV_HtmlToolbar($config,$row)
         foreach($results as $k=> $item)
         {
             $id=$item[$t->xmltable->primarykey];
-            if ($id == $unirecid)
+            if ($id== $unirecid)
             {
                 $prev=isset($results[$k - 1]) ? $results[$k - 1][$t->xmltable->primarykey] : $results[count($results) - 1][$t->xmltable->primarykey];
                 $next=isset($results[$k + 1]) ? $results[$k + 1][$t->xmltable->primarykey] : $results[0][$t->xmltable->primarykey];
                 break;
             }
         }
+        
+        
+    
     $linkusermodify=FNNAV_MakeLink(array("op"=>"users","id"=>$unirecid),"&");
     $linkmodify=FNNAV_MakeLink(array("op"=>"edit","id"=>$unirecid),"&");
     $linkprev=FNNAV_MakeLink(array("id"=>$prev),"&");
-    $navigatebar="";
+    $linkhistory =FNNAV_MakeLink(array("op"=>"history","id"=>$unirecid),"&");
     $linknext=FNNAV_MakeLink(array("id"=>$next),"&");
     $linklist=FNNAV_MakeLink(array("op"=>null),"&");
     $linkview=FNNAV_MakeLink(array("op"=>"view","id"=>$unirecid),"&");
-    $navigatebar.= "<div class=\"fnfilesnavigateButtons\"><a href=\"$linklist\"><img border=\"0\" style=\"vertical-align:middle\" src=\"".FN_FromTheme("images/up.png")."\" alt=\"\">&nbsp;".FN_Translate("go to the contents list")."</a>";
-    $navigatebar.= "<a href=\"$linkprev\"><img border=\"0\" style=\"vertical-align:middle\" src=\"".FN_FromTheme("images/left.png")."\" alt=\"\">&nbsp;".FN_Translate("previous record")."</a>";
-    $navigatebar.= "<a href=\"$linknext\">".FN_Translate("next record")."&nbsp;<img border=\"0\" style=\"vertical-align:middle\" src=\"".FN_FromTheme("images/right.png")."\" alt=\"\"></a>";
-    $navigatebar.= "<span>".( $k + 1)."/".count($results)."</span></div>";
-//next and prev button -----<
+    
+    $vars['txt_rsults']=( $k + 1)."/".count($results);
+    $vars['linkusermodify']=$linkusermodify;
+    $vars['linkmodify']=$linkmodify;
+    $vars['linklist']=$linklist;
+    $vars['linkpreviouspage']=$linkprev;
+    $vars['linknextpage']=$linknext;
+    $vars['linkhistory']=$linkhistory;
+    
+    $tp_str=FN_TPL_ApplyTplString($tp_str,$vars);
 
-    $s=$op == "view" ? "class=\"nv_selected\"" : "";
-    $navigatebar.= "<div class=\"fnfilesviewButtons\"><a $s href=\"$linkview\"><img border=\"0\" style=\"vertical-align:middle\" src=\"".FN_FromTheme("images/mime/doc.png")."\" alt=\"\">&nbsp;".FN_Translate("view")."</a>";
+
+    //-----next / prev / list buttons ----------------------------------------->
+    $navigatebar_pages="";
+    $htmlRecordpage=FN_TPL_GetHtmlPart("page",$tp_str);
+    $vars['title']=FN_Translate("go to the contents list");
+    $vars['link']=$linklist;
+    $vars['image']=FN_FromTheme("images/up.png");
+    $navigatebar_pages.=FN_TPL_ApplyTplString($htmlRecordpage,$vars);
+
+    $vars['title']=FN_Translate("previous record");
+    $vars['link']=$linkprev;
+    $vars['image']=FN_FromTheme("images/left.png");
+    $navigatebar_pages.=FN_TPL_ApplyTplString($htmlRecordpage,$vars);
+
+    $vars['title']=FN_Translate("next record");
+    $vars['image']=FN_FromTheme("images/right.png");
+    $vars['link']=$linknext;
+    $navigatebar_pages.=FN_TPL_ApplyTplString($htmlRecordpage,$vars);
+    //-----next / prev / list buttons -----------------------------------------<
+
+
+
+
+
+
+
+    //-----view/modify/history/users buttons ---------------------------------->
+    $s=$op== "view" ? "class=\"nv_selected\"" : "";
+    $navigatebar_options="";
+    $htmlOption=FN_TPL_GetHtmlPart("option",$tp_str_options);
+    $htmlOptionActive=FN_TPL_GetHtmlPart("optionactive",$tp_str_options);
+
+
+    //view button
+    $vars['title']=FN_Translate("view");
+    $vars['image']=FN_FromTheme("images/mime/doc.png");
+    $vars['link']=$linkview;
+    if ($op== "view")
+        $navigatebar_options.=FN_TPL_ApplyTplString($htmlOptionActive,$vars);
+    else
+        $navigatebar_options.=FN_TPL_ApplyTplString($htmlOption,$vars);
+    //history button
     if ($config['enable_history'])
     {
-        $linkhistory=FNNAV_MakeLink(array("op"=>"history","id"=>$unirecid),"&");
-        $s=$op == "history" ? "class=\"nv_selected\"" : "";
-        $navigatebar.= "<a $s href=\"$linkhistory\"><img border=\"0\" style=\"vertical-align:middle\" src=\"".FN_FromTheme("images/read.png")."\" alt=\"\">&nbsp;".FN_Translate("version history")."</a>";
+        $vars['title']=FN_Translate("version history");
+        $vars['image']=FN_FromTheme("images/read.png");
+        $vars['link']=$linkhistory;
+        if ($op== "history")
+            $navigatebar_options.=FN_TPL_ApplyTplString($htmlOptionActive,$vars);
+        else
+            $navigatebar_options.=FN_TPL_ApplyTplString($htmlOption,$vars);
     }
-
     if (FNNAV_IsAdminRecord($row))
     {
-        $s=$op == "edit" ? "class=\"nv_selected\"" : "";
-        $navigatebar.= "<a $s href=\"$linkmodify\"><img border=\"0\" style=\"vertical-align:middle\" src=\"".FN_FromTheme("images/modify.png")."\" alt=\"\">&nbsp;".FN_Translate("modify")."</a>";
-        $s=$op == "users" ? "class=\"nv_selected\"" : "";
-        $navigatebar.= "<a $s href=\"$linkusermodify\"><img border=\"0\" style=\"vertical-align:middle\" src=\"".FN_FromTheme("images/users.png")."\" alt=\"\">&nbsp;".FN_Translate("edit qualified users to modify")."</a> ";
+        //edit button
+        $vars['title']=FN_Translate("modify");
+        $vars['image']=FN_FromTheme("images/modify.png");
+        $vars['link']=$linkmodify;
+        if ($op== "edit")
+            $navigatebar_options.=FN_TPL_ApplyTplString($htmlOptionActive,$vars);
+        else
+            $navigatebar_options.=FN_TPL_ApplyTplString($htmlOption,$vars);
+
+        //users button
+        $vars['title']=FN_Translate("edit qualified users to modify");
+        $vars['image']=FN_FromTheme("images/users.png");
+        $vars['link']=$linkusermodify;
+        if ($op== "users")
+            $navigatebar_options.=FN_TPL_ApplyTplString($htmlOptionActive,$vars);
+        else
+            $navigatebar_options.=FN_TPL_ApplyTplString($htmlOption,$vars);
     }
-    $navigatebar.="</div>";
-    return $navigatebar;
+    //-----view/modify/history/users buttons ----------------------------------<
+
+
+
+    $tp_str=FN_TPL_ReplaceHtmlPart("pages",$navigatebar_pages,$tp_str);
+    $tp_str=FN_TPL_ReplaceHtmlPart("options",$navigatebar_options,$tp_str);
+    return $tp_str;
 }
 
 /**
@@ -2232,7 +2308,7 @@ function FNNAV_ViewRecordHistory($unirecid,$_tablename="")
     $html="";
 //--config--<
     $tables=explode(",",$config['tables']);
-    if ($_tablename == "")
+    if ($_tablename== "")
     {
         $tablename=$tables[0];
     }
@@ -2245,7 +2321,7 @@ function FNNAV_ViewRecordHistory($unirecid,$_tablename="")
     $Table_history=FN_XmlForm($tablename."_versions");
     //del history------->
     $action=FN_GetParam("action",$_GET,"flat");
-    if ($action == "delete")
+    if ($action== "delete")
     {
 
         if (FNNAV_IsAdminRecord($unirecid))
@@ -2256,10 +2332,10 @@ function FNNAV_ViewRecordHistory($unirecid,$_tablename="")
     }
     //del history-------<
 
-    $html.= "<div class=\"fnfilesuserbar\" >";
-    $html.= FNNAV_HtmlToolbar($config,$t->xmltable->GetRecordByPrimarykey($unirecid));
-    $html.= "</div><br />";
-    $html.= "<h2>".FN_Translate("previous versions").":</h2>";
+    $html.="<div class=\"fnfilesuserbar\" >";
+    $html.=FNNAV_HtmlToolbar($config,$t->xmltable->GetRecordByPrimarykey($unirecid));
+    $html.="</div><br />";
+    $html.="<h2>".FN_Translate("previous versions").":</h2>";
     $res=FN_XMLQuery("SELECT * FROM {$tablename}_versions WHERE {$t->xmltable->primarykey} LIKE $unirecid ORDER BY recordupdate DESC");
     if (is_array($res))
     {
@@ -2267,24 +2343,24 @@ function FNNAV_ViewRecordHistory($unirecid,$_tablename="")
         {
             $link_deleteversion=FNNAV_MakeLink(array("action"=>"delete","op"=>"history","id"=>$unirecid,"version"=>$item['idversions']),"&");
             $link_version=FNNAV_MakeLink(array("op"=>"history","id"=>$unirecid,"version"=>$item['idversions']),"&");
-            if ($version == $item['idversions'])
+            if ($version== $item['idversions'])
             {
-                $html.= "<h3>".FN_GetDateTime($item['recordupdate'])." by {$item['userupdate']}</h3>";
+                $html.="<h3>".FN_GetDateTime($item['recordupdate'])." by {$item['userupdate']}</h3>";
                 $html.=FNNAV_ViewRecordPage($item['idversions'],"{$tablename}_versions",false); // visualizza la pagina col record
                 if (FNNAV_IsAdminRecord($unirecid))
-                    $html.= "<div><a href=\"javascript:check('$link_deleteversion')\">".FN_Translate("delete this version")."</a></div>";
-                $html.= "<hr />";
+                    $html.="<div><a href=\"javascript:check('$link_deleteversion')\">".FN_Translate("delete this version")."</a></div>";
+                $html.="<hr />";
             }
             else
             {
-                $html.= "<div>".FN_GetDateTime($item['recordupdate'])." by {$item['userupdate']} <a href=\"$link_version\">".FN_i18n("view")."</a>";
+                $html.="<div>".FN_GetDateTime($item['recordupdate'])." by {$item['userupdate']} <a href=\"$link_version\">".FN_i18n("view")."</a>";
                 if (FNNAV_IsAdminRecord($unirecid))
-                    $html.= "&nbsp;<a href=\"javascript:check('$link_deleteversion')\">".FN_i18n("delete")."</a></div>";
+                    $html.="&nbsp;<a href=\"javascript:check('$link_deleteversion')\">".FN_i18n("delete")."</a></div>";
             }
         }
     }
     else
-        $html.= FN_Translate("no previous version is available");
+        $html.=FN_Translate("no previous version is available");
     return $html;
 }
 
@@ -2303,7 +2379,7 @@ function FNNAV_ViewRecordPage($unirecid,$_tablename="",$shownavigatebar=true)
     $config=FN_LoadConfig();
 //--config--<
     $tables=explode(",",$config['tables']);
-    if ($_tablename == "")
+    if ($_tablename== "")
     {
         $tablename=$tables[0];
     }
@@ -2324,7 +2400,7 @@ function FNNAV_ViewRecordPage($unirecid,$_tablename="",$shownavigatebar=true)
     $forcelang=isset($_GET['forcelang']) ? $_GET['forcelang'] : $_FN['lang'];
     $rank=FN_GetParam("setrank",$_GET);
     $cookie=FN_GetParam("fnfiles_rank_{$tablename}_{$unirecid}",$_COOKIE);
-    if ($config['enableranks'] == 1 && $cookie != "true" && isset($_GET['setrank']) && $rank >= 0 && $rank <= 5)
+    if ($config['enableranks']== 1 && $cookie!= "true" && isset($_GET['setrank']) && $rank>= 0 && $rank<= 5)
     {
         //die ($rank);
         FN_Alert(FN_Translate("thank you for voting"));
@@ -2337,9 +2413,9 @@ function FNNAV_ViewRecordPage($unirecid,$_tablename="",$shownavigatebar=true)
     $row=$Table->xmltable->GetRecordByPrimaryKey($unirecid);
 
 //-------statistiche---------------------->>
-    if ($config['enable_statistics'] == 1)
+    if ($config['enable_statistics']== 1)
     {
-        if (isset($row['view']) && $row['view'] != $row[$Table->xmltable->primarykey])
+        if (isset($row['view']) && $row['view']!= $row[$Table->xmltable->primarykey])
         {
             $Table2=FN_XmlTable($tablename);
             $ff=array();
@@ -2360,7 +2436,7 @@ function FNNAV_ViewRecordPage($unirecid,$_tablename="",$shownavigatebar=true)
         $tbtmp=FN_XmlTable($tablename."_stat");
 
         $tmprow['unirecid']=$row[$t->xmltable->primarykey];
-        if (($oldview=$tbtmp->GetRecordByPrimaryKey($row[$t->xmltable->primarykey])) == false)
+        if (($oldview=$tbtmp->GetRecordByPrimaryKey($row[$t->xmltable->primarykey]))== false)
         {
             $tmprow['view']=1;
             $rowtmp=$tbtmp->InsertRecord($tmprow);
@@ -2387,12 +2463,13 @@ function FNNAV_ViewRecordPage($unirecid,$_tablename="",$shownavigatebar=true)
     //--- template item -----<
 //---------NAVIGATE BAR-------------------------------------------->
     $htmlNavigationbar="";
-    if ($shownavigatebar == true)
+    if ($shownavigatebar== true)
     {
-        $htmlNavigationbar.= "<div class=\"fnfilesuserbar\" >";
-        $htmlNavigationbar.= FNNAV_HtmlToolbar($config,$row);
-        $htmlNavigationbar.= "</div>";
+        $htmlNavigationbar.="<div class=\"fnfilesuserbar\" >";
+        $htmlNavigationbar.=FNNAV_HtmlToolbar($config,$row);
+        $htmlNavigationbar.="</div>";
         $tpvars['navigationbar']=$htmlNavigationbar;
+        $template=FN_TPL_ReplaceHtmlPart("navigation bar",$htmlNavigationbar,$template);
     }
     else
     {
@@ -2439,7 +2516,7 @@ function FNNAV_ViewRecordPage($unirecid,$_tablename="",$shownavigatebar=true)
             $params['enabledelete']=false;
             $params['enableview']=true;
             $tinner=explode(",",$v["linkfield"]);
-            if (isset($tinner[1]) && $tinner[1] != "" && isset($oldvalues[$tinner[0]]))
+            if (isset($tinner[1]) && $tinner[1]!= "" && isset($oldvalues[$tinner[0]]))
                 $params['restr']=array($tinner[1]=>$oldvalues[$tinner[0]]);
             else
                 $params['restr']=array($v["linkfield"]=>$oldvalues[$Table->xmltable->primarykey]);
@@ -2449,10 +2526,14 @@ function FNNAV_ViewRecordPage($unirecid,$_tablename="",$shownavigatebar=true)
                 $allview=$tmptable->xmltable->getRecords($params['restr']);
                 if (is_array($allview) && count($allview) > 0)
                 {
-                    echo "<h3>{$title}:</h3>";
+                    $ft =  "<h3>{$title}:</h3>";
                     foreach($allview as $view)
                     {
-                        echo FNNAV_ViewRecordPage($view[$tmptable->xmltable->primarykey],$v["tablename"],false);
+                        if (FNNAV_CanViewRecord($view[$tmptable->xmltable->primarykey],$v["tablename"]))
+                        {
+                            echo $ft.FNNAV_ViewRecordPage($view[$tmptable->xmltable->primarykey],$v["tablename"],false);
+                            $ft = "";
+                        }
                     }
                 }
             }
@@ -2462,7 +2543,7 @@ function FNNAV_ViewRecordPage($unirecid,$_tablename="",$shownavigatebar=true)
     $tpvars['innertables']=$innerTables;
 //------------------------------ INNER TABLES----------------------------------<
     $tpvars['htmlranks']="";
-    if ($shownavigatebar && $config['enableranks'] == 1)
+    if ($shownavigatebar && $config['enableranks']== 1)
         $tpvars['htmlranks']="<div class=\"fnfilesranks\" name=\"\"><a name=\"___ranks\" id=\"___ranks\"></a>".FNNAV_HtmlRankEditable($unirecid,false,$tablename)."<hr /><br /></div>";
 
     $template=FN_TPL_ApplyTplString($template,$tpvars);
@@ -2486,16 +2567,37 @@ function FNNAV_CanViewRecord($id,$tablename)
     if (FN_IsAdmin())
         return true;
     $config=FN_LoadConfig();
+    //----if inner table is in other section----------------------------------->
+    if ($config['tables']!=$tablename)
+    {
+        foreach ($_FN['sections'] as $section)
+        {
+            if ($section['type']=="navigator")
+            {
+                $configTmp=FN_LoadConfig("",$section['id']);
+                if ($configTmp['tables']==$tablename)
+                {
+                    $config=$configTmp;
+                    if (!FN_UserCanViewSection($section['id']))
+                    {
+                        return false;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    //----if inner table is in other section-----------------------------------<
     $table=FN_XmlTable($tablename);
     $record=$table->GetRecordByPrimaryKey($id);
     //--------visualizzazione solo per il creatore----------------------------->
     if (!empty($config['viewonlycreator']))
     {
-        if ($_FN['user'] == "" && $record['username'] != "")
+        if ($_FN['user']== "" && $record['username']!= "")
         {
             return false;
         }
-        elseif ($_FN['user'] == $record['username'])
+        elseif ($_FN['user']== $record['username'])
         {
             return true;
         }
@@ -2508,7 +2610,7 @@ function FNNAV_CanViewRecord($id,$tablename)
         if (is_array($list_field))
             foreach($list_field as $field)
             {
-                if ($field['username'] == $_FN['user'] && $field['table_unirecid'] == $record[$table->primarykey] && $field['tablename'] == $tablename)
+                if ($field['username']== $_FN['user'] && $field['table_unirecid']== $record[$table->primarykey] && $field['tablename']== $tablename)
                     return true;
             }
     }
@@ -2517,7 +2619,7 @@ function FNNAV_CanViewRecord($id,$tablename)
     //permessi per ogni record------------------------------------------------->
     else
     {
-        if (!empty($config['enable_permissions_each_records']) && $config['enable_permissions_each_records'] == 1)
+        if (!empty($config['enable_permissions_each_records']) && $config['enable_permissions_each_records']== 1)
         {
             if (empty($record['groupview']))
             {
@@ -2525,7 +2627,7 @@ function FNNAV_CanViewRecord($id,$tablename)
             }
             else
             {
-                if ($_FN['user'] == "")
+                if ($_FN['user']== "")
                     return false;
                 $uservalues=FN_GetUser($_FN['user']);
                 $usergroups=explode(",",$uservalues['group']);
@@ -2551,7 +2653,6 @@ function FNNAV_CanViewRecord($id,$tablename)
             }
         }
     }
-    //     die ("ciccia");
     //permessi per ogni record-------------------------------------------------<
     return true;
 }
@@ -2585,7 +2686,7 @@ function FNNAV_GenerateRSS()
     foreach($_FN['listlanguages'] as $llang)
     {
         $idlang="";
-        if ($llang != $_FN['lang_default'])
+        if ($llang!= $_FN['lang_default'])
         {
             $idlang="_{$llang}";
         }
@@ -2606,7 +2707,7 @@ function FNNAV_GenerateRSS()
                 {
                     if (isset($item[$titleitem]))
                     {
-                        $titlename .= "$s{$item[$titleitem]}";
+                        $titlename.="$s{$item[$titleitem]}";
                         $s=" ";
                     }
                     else
@@ -2698,7 +2799,7 @@ function FNNAV_AdminPerm()
     }
     //dprint_r($_POST);
 
-    $html.= "<script>
+    $html.="<script>
 		
 select_allck = function(el){
 	var name = el.name.replace('s_','');
@@ -2737,47 +2838,47 @@ select_allcke = function(el){
 </script>";
     //dprint_r($_POST);
     $pagelink=FN_RewriteLink("index.php?mod={$_FN['mod']}&amp;op=$op");
-    $html.= "<h3>".FN_Translate("manage permissions")."</h3>";
-    $html.= "<form method=\"post\" action=\"\">";
-    $html.= "<table style=\"border:1px solid\">";
+    $html.="<h3>".FN_Translate("manage permissions")."</h3>";
+    $html.="<form method=\"post\" action=\"\">";
+    $html.="<table style=\"border:1px solid\">";
     $cst=count($titlefield);
     $csg=count($permissions_records_groups);
     $csgw=count($permissions_records_edit_groups);
 
-    $html.= "<tr><td   style=\"border:1px solid\" colspan=\"$cst\"></td><td  style=\"border:1px solid\" colspan=\"$csg\">".FN_Translate("read")."</td><td  style=\"border:1px solid;background-color:#dadada;color:#000000\" colspan=\"$csgw\" >".FN_Translate("write")."</td>";
+    $html.="<tr><td   style=\"border:1px solid\" colspan=\"$cst\"></td><td  style=\"border:1px solid\" colspan=\"$csg\">".FN_Translate("read")."</td><td  style=\"border:1px solid;background-color:#dadada;color:#000000\" colspan=\"$csgw\" >".FN_Translate("write")."</td>";
     $htmltitles="<tr>";
     foreach($titlefield as $t)
     {
-        $htmltitles.= "<td style=\"border:1px solid\" >";
-        $htmltitles.= $t;
-        $htmltitles.= "</td>";
+        $htmltitles.="<td style=\"border:1px solid\" >";
+        $htmltitles.=$t;
+        $htmltitles.="</td>";
     }
     foreach($permissions_records_groups as $t)
     {
-        $htmltitles.= "<td style=\"border:1px  solid;text-align:center\">";
-        $htmltitles.= $t;
+        $htmltitles.="<td style=\"border:1px  solid;text-align:center\">";
+        $htmltitles.=$t;
 
-        $htmltitles.= "<br /><input type=\"checkbox\" name=\"s_$t\" onchange=\"select_allck(this);\" />";
-        $htmltitles.= "</td>";
+        $htmltitles.="<br /><input type=\"checkbox\" name=\"s_$t\" onchange=\"select_allck(this);\" />";
+        $htmltitles.="</td>";
     }
     foreach($permissions_records_edit_groups as $t)
     {
-        $htmltitles.= "<td style=\"border:1px  solid;text-align:center;background-color:#dadada;color:#000000\">";
-        $htmltitles.= $t;
+        $htmltitles.="<td style=\"border:1px  solid;text-align:center;background-color:#dadada;color:#000000\">";
+        $htmltitles.=$t;
 
-        $htmltitles.= "<br /><input type=\"checkbox\" name=\"se_$t\" onchange=\"select_allcke(this);\" />";
-        $htmltitles.= "</td>";
+        $htmltitles.="<br /><input type=\"checkbox\" name=\"se_$t\" onchange=\"select_allcke(this);\" />";
+        $htmltitles.="</td>";
     }
 
 
 
 
-    $htmltitles.= "</tr>";
+    $htmltitles.="</tr>";
 
     $i=0;
     $toupdate=false;
     $saveok=true;
-    $html.= $htmltitles;
+    $html.=$htmltitles;
     //dprint_r($_POST);
     foreach($results as $values)
     {
@@ -2793,7 +2894,7 @@ select_allcke = function(el){
             {
                 $newgroups[$values[$xmlform->xmltable->primarykey]]="";
             }
-            if (isset($values['groupview']) && $values['groupview'] != $newgroups[$values[$xmlform->xmltable->primarykey]])
+            if (isset($values['groupview']) && $values['groupview']!= $newgroups[$values[$xmlform->xmltable->primarykey]])
             {
                 $toupdateitem=true;
                 $values['groupview']=$newgroups[$values[$xmlform->xmltable->primarykey]];
@@ -2803,7 +2904,7 @@ select_allcke = function(el){
             {
                 $neweditgroups[$values[$xmlform->xmltable->primarykey]]="";
             }
-            if (isset($values['groupinsert']) && $values['groupinsert'] != $neweditgroups[$values[$xmlform->xmltable->primarykey]])
+            if (isset($values['groupinsert']) && $values['groupinsert']!= $neweditgroups[$values[$xmlform->xmltable->primarykey]])
             {
                 $toupdateitem=true;
                 $values['groupinsert']=$neweditgroups[$values[$xmlform->xmltable->primarykey]];
@@ -2815,45 +2916,45 @@ select_allcke = function(el){
             if (!is_array($res))
                 $saveok=false;
         }
-        $html.= "<tr>";
+        $html.="<tr>";
         foreach($titlefield as $t)
         {
-            $html.= "<td style=\"border:1px  solid;\">";
-            $html.= $values[$t];
-            $html.= "</td>";
+            $html.="<td style=\"border:1px  solid;\">";
+            $html.=$values[$t];
+            $html.="</td>";
         }
         $usergroups=explode(",",$values['groupview']);
         $usereditgroups=explode(",",$values['groupinsert']);
         //read
         foreach($permissions_records_groups as $t)
         {
-            $html.= "<td title=\"$t\" style=\"border:1px  solid;text-align:center\">";
-            $html.= "<input name=\"groups[{$values[$xmlform->xmltable->primarykey]}][$t]\" value=\"$t\" type=\"checkbox\" ";
+            $html.="<td title=\"$t\" style=\"border:1px  solid;text-align:center\">";
+            $html.="<input name=\"groups[{$values[$xmlform->xmltable->primarykey]}][$t]\" value=\"$t\" type=\"checkbox\" ";
 
             if (in_array($t,$usergroups))
             {
-                $html.= "checked=\"checked\"";
+                $html.="checked=\"checked\"";
             }
-            $html.= " />";
-            $html.= "</td>";
+            $html.=" />";
+            $html.="</td>";
         }
         //modify
         foreach($permissions_records_edit_groups as $t)
         {
-            $html.= "<td title=\"$t\" style=\"border:1px  solid;text-align:center;background-color:#dadada;color:#000000\">";
-            $html.= "<input name=\"editgroups[{$values[$xmlform->xmltable->primarykey]}][$t]\" value=\"$t\" type=\"checkbox\" ";
+            $html.="<td title=\"$t\" style=\"border:1px  solid;text-align:center;background-color:#dadada;color:#000000\">";
+            $html.="<input name=\"editgroups[{$values[$xmlform->xmltable->primarykey]}][$t]\" value=\"$t\" type=\"checkbox\" ";
 
             if (in_array($t,$usereditgroups))
             {
-                $html.= "checked=\"checked\"";
+                $html.="checked=\"checked\"";
             }
-            $html.= " />";
-            $html.= "</td>";
+            $html.=" />";
+            $html.="</td>";
         }
-        $html.= "</tr>";
+        $html.="</tr>";
         $i++;
     }
-    $html.= "</table>";
+    $html.="</table>";
     if ($toupdate)
     {
         if ($saveok)
@@ -2861,12 +2962,12 @@ select_allcke = function(el){
         else
             $html.=FN_HtmlAlert(FN_Translate("error"));
     }
-    $html.= "<input name=\"oldgroups\" value=\"1\" type=\"hidden\" />";
+    $html.="<input name=\"oldgroups\" value=\"1\" type=\"hidden\" />";
     $l=FN_RewriteLink("index.php?mod={$_FN['mod']}","&");
-    $html.= "<button type=\"submit\">".FN_Translate("save")."</button>";
-    $html.= "<button type=\"reset\">".FN_Translate("reset")."</button>";
-    $html.= "<button onclick=\"window.location='$l'\" type=\"button\">".FN_Translate("go to the contents list")."</button>";
-    $html.= "</form>";
+    $html.="<button type=\"submit\">".FN_Translate("save")."</button>";
+    $html.="<button type=\"reset\">".FN_Translate("reset")."</button>";
+    $html.="<button onclick=\"window.location='$l'\" type=\"button\">".FN_Translate("go to the contents list")."</button>";
+    $html.="</form>";
     return $html;
 }
 

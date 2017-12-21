@@ -137,7 +137,6 @@ index.php
 controlcenter.php
 sections
 sections/home
-sections/home/section.it.html
 sections/home/title.it.fn
 sections/home/title.en.fn
 sections/home/default.xml
@@ -152,8 +151,6 @@ themes/base
 themes/base/logo.png
 themes/base/template.tp.html
 themes/base/css
-themes/base/css/reset.css
-themes/base/css/style.css
 images
 images/transparent.png
 images/emoticon
@@ -302,7 +299,7 @@ include/modrewrite.php
 include/htmleditors
 include/functions_php.inc.php
 include/xmldb_sqlserver.php
-include/config.vars.local.php.sample
+include/config.vars.local.php.example
 include/autoexec.php
 include/xmldb_frm.php
 include/texteditors
