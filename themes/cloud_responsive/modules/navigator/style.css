@@ -1,0 +1,22 @@
+.navigatorresults .art-block{
+    width:250px;
+    float:left;
+}
+
+.responsive .navigatorresults .art-block{
+    width:100%;
+    float:none;
+    clear:both
+}
+
+.responsive .art-pager{
+    clear:both
+    
+}
+
+
+.responsive #pageresults .art-block{
+    width:100%;
+    float:none;
+    clear:both
+}
