@@ -131,6 +131,8 @@ if ($_FN['siteurl']=="")
         $protocol="http://";
         if (isset($_SERVER ['HTTPS'])&&$_SERVER ['HTTPS']=="on")
             $protocol="https://";
+        if (isset($_SERVER ['HTTP_X_FORWARDED_PROTO'])&&$_SERVER ['HTTP_X_FORWARDED_PROTO']=="https")
+            $protocol="https://";
         if (isset($_SERVER ['HTTP_HOST']))
         {
             $siteurl="$protocol".$_SERVER ['HTTP_HOST'].$dirname;

@@ -15,7 +15,7 @@ if (strstr($sess_filemanager_editor,"..") || strstr($sess_filemanager_editor,'/'
     $sess_filemanager_editor=basename($sess_filemanager_editor);
 ?><!DOCTYPE html>
 <html><head>
-    <link rel='StyleSheet' type='text/css' href="modules/filemanager/style.css" />
+    <link rel='StyleSheet' type='text/css' href="modules/filemanager/style.css?v2" />
     <meta name="viewport" content="initial-scale = 1.0, maximum-scale = 1.0, user-scalable = no, width = device-width">    
     <style>
         html, body {            height:                 100% } 
@@ -70,7 +70,7 @@ else
     $opener=FN_GetParam("opener",$_GET);
     echo "
 <script type=\"text/javascript\" >
-// funzione chiamata dal filemanager una volta selezionato il file
+// function called by the filemanager when the file is selected
 function insertElement(URL) {
 ";
     if ($opener!= "")
@@ -80,7 +80,7 @@ function insertElement(URL) {
     window.opener.document.getElementById('$opener').value = URL;
     }catch (e){alert(e)}";
     }
-    echo "	window.close();
+    echo "window.close();
 }
 </script>
 ";

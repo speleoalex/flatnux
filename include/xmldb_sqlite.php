@@ -302,7 +302,7 @@ class XMLTable_sqlite
         $fields='['.str_replace("|","],[",$fields).']';
         $query="SELECT $fields FROM {$this->sqltable}";
         //dprint_r($query);
-        if (is_array($restr) && count($restr > 0))
+        if (is_array($restr) && count($restr)> 0)
         {
             $query .= " WHERE ";
             $and="";

@@ -10,6 +10,9 @@
  */
 defined('_FNEXEC') or die('Restricted access');
 
+global $_FN;
+require_once $_FN['filesystempath']."/include/xmldb_editor.php";
+
 /**
  * htmleditor
  *
@@ -28,7 +31,7 @@ function xmldb_frm_field_html_overwrite($name,$value,$rows,$cols,$tooltip)
     {
         $editor=$_FN['force_htmleditor'];
     }
-    $params = false;
+    $params=false;
     if (isset($_FN['force_htmleditorparams']) && $_FN['force_htmleditorparams']!= "")
     {
         $params=$_FN['force_htmleditorparams'];
@@ -74,6 +77,7 @@ function xmldb_get_lang_img($lang)
  */
 function xmldb_frm_view_file($params)
 {
+
     global $_FN;
     $databasename=$params['fieldform']->databasename;
     $tablename=$params['fieldform']->tablename;
@@ -173,9 +177,9 @@ function FN_XmltableEditor($tablename,$params=false,$params2=false)
     {
         $params['html_template_view']=file_get_contents("themes/{$_FN['theme']}/view.tp.html");
     }
-    
-    
-    
+
+
+
     XMLDB_editor($tablename,$xmldatabase,$params);
 }
 

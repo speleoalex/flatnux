@@ -397,7 +397,7 @@ class XMLDatabase
         }
         //ordinamento --------<
         $i = 0;
-        $ret = null;
+        $ret = array();
         //filtro search condition -------------------->
         if (!is_array($allrecords))
             return null;

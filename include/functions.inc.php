@@ -1046,55 +1046,55 @@ function FN_InitTables($force=false)
         FN_MkDir("{$_FN['datadir']}/_cache/html");
     }
 
-    if (!file_exists("{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}"))
+    if (!file_exists("{$_FN['datadir']}/{$_FN['database']}"))
     {
-        $ret=mkdir("{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}");
+        $ret=mkdir("{$_FN['datadir']}/{$_FN['database']}");
         if (!$ret)
-            dprint_r("error create folder: {$_FN['datadir']}{$_FN['slash']}{$_FN['database']}");
+            dprint_r("error create folder: {$_FN['datadir']}/{$_FN['database']}");
     }
-    if ($force || !file_exists("{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}/fn_i18n.php"))
+    if ($force || !file_exists("{$_FN['datadir']}/{$_FN['database']}/fn_i18n.php"))
     {
-        FN_Copy("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_i18n.php","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_i18n.php");
+        FN_Copy("include/install/fndatabase/fn_i18n.php","{$_FN['datadir']}/{$_FN['database']}/fn_i18n.php");
     }
-    if ($force || !file_exists("{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_sections.php"))
+    if ($force || !file_exists("{$_FN['datadir']}/{$_FN['database']}/fn_sections.php"))
     {
-        FN_Copy("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_sections.php","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_sections.php");
+        FN_Copy("include/install/fndatabase/fn_sections.php","{$_FN['datadir']}/{$_FN['database']}/fn_sections.php");
     }
-    if ($force || !file_exists("{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_sectionstypes.php"))
+    if ($force || !file_exists("{$_FN['datadir']}/{$_FN['database']}/fn_sectionstypes.php"))
     {
-        FN_Copy("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_sectionstypes.php","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_sectionstypes.php");
+        FN_Copy("include/install/fndatabase/fn_sectionstypes.php","{$_FN['datadir']}/{$_FN['database']}/fn_sectionstypes.php");
     }
-    if ($force || !file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_blocks.php"))
+    if ($force || !file_exists("{$_FN['datadir']}/fndatabase/fn_blocks.php"))
     {
-        FN_Copy("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_blocks.php","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_blocks.php");
+        FN_Copy("include/install/fndatabase/fn_blocks.php","{$_FN['datadir']}/{$_FN['database']}/fn_blocks.php");
     }
-    if ($force || !file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_settings.php"))
+    if ($force || !file_exists("{$_FN['datadir']}/fndatabase/fn_settings.php"))
     {
-        FN_Copy("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_settings.php","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_settings.php");
+        FN_Copy("include/install/fndatabase/fn_settings.php","{$_FN['datadir']}/{$_FN['database']}/fn_settings.php");
     }
-    if ($force || !file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_users.php"))
+    if ($force || !file_exists("{$_FN['datadir']}/fndatabase/fn_users.php"))
     {
-        if (file_exists("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_users.custom.php"))
-            FN_Copy("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_users.custom.php","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_users.php");
+        if (file_exists("include/install/fndatabase/fn_users.custom.php"))
+            FN_Copy("include/install/fndatabase/fn_users.custom.php","{$_FN['datadir']}/{$_FN['database']}/fn_users.php");
         else
-            FN_Copy("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_users.php","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_users.php");
+            FN_Copy("include/install/fndatabase/fn_users.php","{$_FN['datadir']}/{$_FN['database']}/fn_users.php");
     }
-    if ($force || !file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_groups.php"))
+    if ($force || !file_exists("{$_FN['datadir']}/fndatabase/fn_groups.php"))
     {
-        FN_Copy("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_groups.php","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_groups.php");
+        FN_Copy("include/install/fndatabase/fn_groups.php","{$_FN['datadir']}/{$_FN['database']}/fn_groups.php");
         $table=FN_XmlTable("fn_groups");
         $r['groupname']='users';
         $table->InsertRecord($r);
     }
-    if ($force || !file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_avatars") && file_exists("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_avatars"))
+    if ($force || !file_exists("{$_FN['datadir']}/fndatabase/fn_avatars") && file_exists("include/install/fndatabase/fn_avatars"))
     {
-        FN_CopyDir("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_avatars","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}");
+        FN_CopyDir("include/install/fndatabase/fn_avatars","{$_FN['datadir']}/{$_FN['database']}/");
     }
-    if ($force || !file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_avatars.php") && file_exists("include{$_FN['slash']}install{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_avatars.php"))
-        FN_Copy("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_avatars.php","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_avatars.php");
-    if ($force || !file_exists("{$_FN['datadir']}{$_FN['slash']}fndatabase{$_FN['slash']}fn_conditions.php"))
+    if ($force || !file_exists("{$_FN['datadir']}/fndatabase/fn_avatars.php") && file_exists("include/install/{$_FN['database']}/fn_avatars.php"))
+        FN_Copy("include/install/fndatabase/fn_avatars.php","{$_FN['datadir']}/{$_FN['database']}/fn_avatars.php");
+    if ($force || !file_exists("{$_FN['datadir']}/fndatabase/fn_conditions.php"))
     {
-        FN_Copy("include{$_FN['slash']}install{$_FN['slash']}fndatabase{$_FN['slash']}fn_conditions.php","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}{$_FN['slash']}fn_conditions.php");
+        FN_Copy("include/install/fndatabase/fn_conditions.php","{$_FN['datadir']}/{$_FN['database']}/fn_conditions.php");
         $tcond=FN_XmlForm("fn_conditions");
         $conditions=$tcond->xmltable->GetRecords();
         if (!is_array($conditions) || count($conditions)== 0)
@@ -2643,7 +2643,7 @@ function FN_SetUserSessionValue($varname,$value)
     global $_FN;
     if ($_FN['user']== "")
         return;
-    if (!file_exists("{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}/fn_userssessions.php"))
+    if (!file_exists("{$_FN['datadir']}/{$_FN['database']}/fn_userssessions.php"))
     {
         FN_Write("<?php exit(0);?>
 <tables>
@@ -2667,7 +2667,7 @@ function FN_SetUserSessionValue($varname,$value)
 	</field>
         <indexfield>username</indexfield>
 </tables>
-","{$_FN['datadir']}{$_FN['slash']}{$_FN['database']}/fn_userssessions.php");
+","{$_FN['datadir']}/{$_FN['database']}/fn_userssessions.php");
     }
     $t=FN_XmlTable("fn_userssessions");
     $values=$t->GetRecord(array("username"=>$_FN['user'],"varname"=>$varname));

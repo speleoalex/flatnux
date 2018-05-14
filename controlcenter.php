@@ -65,6 +65,8 @@ $fileconfig_to_edit="";
 $_FN['mod']="";
 
 
+$opt=FN_GetParam("opt",$_GET,"html");
+
 $_FN['configsection']=$configsection;
 $params=array();
 $params['urlcontrolcenter']=$_FN['siteurl']."/".$_FN['controlcenter'];

@@ -63,8 +63,11 @@
     <field>
         <name>level</name>
         <frm_type>select</frm_type>
-        <frm_i18n>minimum level for viewing</frm_i18n>
-        <frm_options>0,1,2,3,4,5,6,7,8,9,10</frm_options>
+        <frm_i18n>user level for viewing</frm_i18n>
+        <frm_group>permissions</frm_group>
+        <frm_group_i18n>permissions</frm_group_i18n>
+        <frm_options>,0,1,2,3,4,5,6,7,8,9,10</frm_options>
+        <frm_options_i18n>visible to everyone,only registered users,users with at least level 1,users with at least level 2,users with at least level 3,users with at least level 4,users with at least level 5,users with at least level 6,users with at least level 7,users with at least level 8,users with at least level 9,visible only by administrators</frm_options_i18n>                
     </field>
     <field>
         <name>group_view</name>
@@ -72,7 +75,8 @@
         <fk_link_field>groupname</fk_link_field>
         <fk_show_field>groupname</fk_show_field>
         <frm_type>multicheck</frm_type>
-        <frm_i18n>groups for viewing</frm_i18n>
+        <frm_i18n>allow viewing only to these user groups</frm_i18n>
+        <frm_help_i18n>if no group is selected, the content will be visible to everyone</frm_help_i18n>
     </field>
     <field>
         <name>group_edit</name>
@@ -80,7 +84,9 @@
         <fk_link_field>groupname</fk_link_field>
         <fk_show_field>groupname</fk_show_field>
         <frm_type>multicheck</frm_type>
-        <frm_i18n>groups for editing</frm_i18n>
+        <frm_i18n>allow modify to the following user groups</frm_i18n>
+        <frm_help_i18n>if no group is selected, then only administrators can edit content</frm_help_i18n>
+        <frm_endgroup>permissions</frm_endgroup>
     </field>
     <field>
         <name>blocksmode</name>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Alessandro Vernassa <speleoalex@gmail.com>
  * @copyright Copyright (c) 2003-2009
@@ -325,7 +326,7 @@ class XMLTable_mysql
             $fields=implode("|",$fields);
         $fields='`'.str_replace("|","`,`",$fields).'`';
         $query="SELECT $fields FROM {$this->sqltable}";
-        if (is_array($restr) && count($restr > 0))
+        if (is_array($restr) && count($restr) > 0)
         {
             $query.=" WHERE ";
             $and="";
@@ -337,7 +338,7 @@ class XMLTable_mysql
         }
         elseif (is_string($restr))
         {
-            if (trim(ltrim($restr))!=="")
+            if (trim(ltrim($restr))!== "")
             {
                 $query.=" WHERE $restr";
             }
@@ -357,9 +358,9 @@ class XMLTable_mysql
                 $query.=",$length";
             }
         }
-        $ret= $this->dbQuery($query);
-//        dprint_r(">>>>>".$query);
-//        dprint_r($ret);
+        $ret=$this->dbQuery($query);
+        //dprint_r(">>>>>".$query);
+        //var_dump($ret);
         return $ret;
     }
 
@@ -556,7 +557,7 @@ class XMLTable_mysql
         if (!empty($this->conn))
         {
 
-           // if ($this->conn)
+            // if ($this->conn)
             {
                 $seldb=true;
                 $query="INSERT INTO `".$this->sqltable."` (";
@@ -877,7 +878,7 @@ class XMLTable_mysql
                 $and="AND";
             }
         }
-        elseif (is_string($restr) && trim(ltrim($restr))!=="")
+        elseif (is_string($restr) && trim(ltrim($restr))!== "")
         {
             $query.=" WHERE $restr";
         }

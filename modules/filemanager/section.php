@@ -1,4 +1,85 @@
+<script>
+    
+/**
+ * 
+ */
+function fnm_getScrollY() {
+    var scrOfX = 0, scrOfY = 0;
+    if( typeof( window.pageYOffset ) == 'number' ) {
+        //Netscape compliant
+        scrOfY = window.pageYOffset;
+        scrOfX = window.pageXOffset;
+    } else if( document.body && ( document.body.scrollLeft || document.body.scrollTop ) ) {
+        //DOM compliant
+        scrOfY = document.body.scrollTop;
+        scrOfX = document.body.scrollLeft;
+    } else if( document.documentElement && ( document.documentElement.scrollLeft || document.documentElement.scrollTop ) ) {
+        //IE6 standards compliant mode
+        scrOfY = document.documentElement.scrollTop;
+        scrOfX = document.documentElement.scrollLeft;
+    }
+    return scrOfY;
+//return [ scrOfX, scrOfY ];
+}
+/**
+ * 
+ */
+function fnm_getScrollX() {
+    var scrOfX = 0, scrOfY = 0;
+    if( typeof( window.pageYOffset ) == 'number' ) {
+        //Netscape compliant
+        scrOfY = window.pageYOffset;
+        scrOfX = window.pageXOffset;
+    } else if( document.body && ( document.body.scrollLeft || document.body.scrollTop ) ) {
+        //DOM compliant
+        scrOfY = document.body.scrollTop;
+        scrOfX = document.body.scrollLeft;
+    } else if( document.documentElement && ( document.documentElement.scrollLeft || document.documentElement.scrollTop ) ) {
+        //IE6 standards compliant mode
+        scrOfY = document.documentElement.scrollTop;
+        scrOfX = document.documentElement.scrollLeft;
+    }
+    return scrOfX;
+}
+function fnm_loading()
+{
+    var div;
+    div = document.createElement('div');
+    div.innerHTML='loading...';
+    oHeight = document.getElementsByTagName('body')[0].clientHeight + fnm_getScrollY();
+    oWidth = document.getElementsByTagName('body')[0].clientWidth + fnm_getScrollX();
+    oHeight=oHeight+"px";
+    oWidth=oWidth+"px";
+    try{
+        div.style.backgroundColor='#000000';
+        div.style.color='#ffffff';
+        div.style.display='block';
+        div.style.position='absolute';
+        div.style.width=oWidth;
+        div.style.height = "auto";
+        div.style.top='0px';
+        div.style.left='0px';
+        div.style.textAlign='center';
+        div.style.opacity='0.5';
+        div.style.filter='alpha(opacity=50)';
+        div.style.overflow='hidden';
+    }
+    catch(e)
+    {
+		
+    }
+    div.innerHTML = "<div id=\"fnajloading\" style=\"color:#ffffff;margin-top:"+fnm_getScrollY()+"px\" ><br /><?php echo FN_Translate("loading in progress, please wait"); ?><br /><br /><button type=\"button\" onclick=\"window.location.reload()\"><?php echo FN_Translate("cancel"); ?></button><br /><br /></div>";
+    try{
+        if (!document.getElementById("fnajloading"))
+        {
+            document.getElementsByTagName('body')[0].appendChild(div);
+        }
+	
+    }catch(e){}
+}</script>
+
 <?php
+
 
 /**
  * @package Flatnux_module_filemanager
@@ -126,6 +207,12 @@ function fm_UploadFile($dir)
 {
     global $_FN;
     $file_clean=FN_StripPostSlashes($_FILES['filename']['name']);
+    if ($file_clean=="")
+    {
+        fm_Alert(FN_Translate("an error occurred"),"error");
+        return;
+        
+    }
     if (file_exists($dir."/".$file_clean))
     {
         fm_Alert(FN_Translate("the file already exists"),"error");
@@ -760,8 +847,8 @@ fmtrh = function (over,elem){
             echo "</td>";
             echo "<td>";
             //echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"?mod={$_FN['mod']}&amp;opt=$op&amp;opmod=upload&amp;filemanager_editor=$sess_filemanager_editor&amp;mime=$mime\" >";
-            echo "<form onsubmit=\"this.InnerHTML='".FN_Translate("loading in progress, please wait")."';\" enctype=\"multipart/form-data\" method=\"post\" action=\"$ac\" >";
-            echo "<input onchange=\"document.getElementById('filenamelabel').innerHTML= (this.value.split('/').reverse()[0]).split('\\\\').reverse()[0];document.getElementById('filenamelabelButton').click()\" title=\"".FN_Translate("upload files from your device to the server")."\" type=\"file\" name=\"filename\" id=\"filename\" value=\"upload\" /><label id=\"filenamelabel\" style=\"width:198px;overflow:hidden;\" for=\"filename\">".FN_Translate("choose a file from your device")."</label>";
+            echo "<form id=\"fnmformupload\" __onsubmit=\"this.innerHTML+='".FN_Translate("loading in progress, please wait")."';\" enctype=\"multipart/form-data\" method=\"post\" action=\"$ac\" >";
+            echo "<input onchange=\"document.getElementById('filenamelabel').innerHTML= (this.value.split('/').reverse()[0]).split('\\\\').reverse()[0];document.getElementById('filenamelabelButton').click();fnm_loading();\" title=\"".FN_Translate("upload files from your device to the server")."\" type=\"file\" name=\"filename\" id=\"filename\" value=\"upload\" /><label id=\"filenamelabel\" style=\"width:198px;overflow:hidden;\" for=\"filename\">".FN_Translate("choose a file from your device")."</label>";
             echo "<input type=\"hidden\" name=\"MAX_FILE_SIZE\" value=\"90000000\" />";
             echo "<input type=\"hidden\" value=\"$dir\" name=\"dir\" />";
             echo "<input id=\"filenamelabelButton\"  style=\"display:none\" type=\"submit\" class=\"submit\" value=\"".FN_Translate("send")."\" name=\"send\" />";

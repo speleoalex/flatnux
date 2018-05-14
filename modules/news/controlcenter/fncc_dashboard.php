@@ -16,13 +16,13 @@ $DB = new XMLDatabase("fndatabase", $_FN['datadir']);
 //published
 echo "<b>".FN_i18n("news statistics").":</b><br />";
 $allnews = $DB->query("SELECT unirecid,status FROM {$config['tablename']} WHERE status LIKE '1' ");
-$published = count($allnews);
+$published = is_array($allnews)?count($allnews):0;
 //unpublished
 $allnews = $DB->query("SELECT unirecid,status FROM {$config['tablename']} WHERE status LIKE '0' AND guestnews LIKE '' ");
-$unpublished = count($allnews);
+$unpublished = is_array($allnews)?count($allnews):0;
 //signed
 $allnews = $DB->query("SELECT unirecid,status FROM {$config['tablename']} WHERE status LIKE '0' AND guestnews <> '' ");
-$signed = count($allnews);
+$signed = is_array($allnews)?count($allnews):0;
 echo "<a href=\"controlcenter.php?mod={$_FN['mod']}&op=edit&opt=fnc_ccnf_section_{$_FN['mod']}\">" . FN_i18n("published news") . "</a> : $published <br />";
 if ( $unpublished > 0 )
 	echo "<a href=\"controlcenter.php?mod={$_FN['mod']}&op=edit&opt=fnc_ccnf_section_{$_FN['mod']}\">" . FN_i18n("unpublished news") . "</a> : $unpublished<br />";

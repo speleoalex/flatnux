@@ -39,6 +39,13 @@ elseif (file_exists("themes/{$_FN['theme']}/template.tp.html"))
 {
     $str=FN_TPL_html_MakeThemeFromTemplate("themes/{$_FN['theme']}/template.tp.html");
 }
+if (file_exists("sections/{$_FN['mod']}/footer.php"))
+{
+    ob_start();
+    include ("sections/{$_FN['mod']}/footer.php");
+    $strfooter=ob_get_clean();
+    $str=str_replace("</body>",$strfooter."</body>",$str);
+}
 $str.="<!-- Page generated in ".FN_GetExecuteTimer()." seconds. -->";
 //FN_Debug_timer(__FILE__.":".__LINE__);
 //die("");

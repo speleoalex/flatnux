@@ -935,7 +935,7 @@ $frm_endgroupfooter
                     }
                 }
                 if (!empty($fieldform_values['htmlattributes']))
-                $fieldform_values['htmlattributes']=$this->ApplyTplString($fieldform_values['htmlattributes'],$fieldform_values);
+                    $fieldform_values['htmlattributes']=$this->ApplyTplString($fieldform_values['htmlattributes'],$fieldform_values);
 
                 $skeepsimbol=uniqid("s");
                 if ($multilanguage)
@@ -1011,6 +1011,7 @@ $frm_endgroupfooter
                 $tplvars['input']=$html;
                 $tplvars['fieldname']=$fieldform_values['name'];
                 $tplvars['fieldtype']=$fieldform_values['frm_type'];
+                $tplvars['help']="";
                 $htmlitem=$this->ApplyTplString($htmlitem,$tplvars);
                 $htmlitems.=$htmlitem;
             }
@@ -1898,18 +1899,24 @@ class xmldbfrm_field_select
             $scriptfirst="onfocus=\"document.getElementById('$divid').innerHTML = ''\"";
         }
         $html.="<select $attributes $toltips $script name=\"".$fieldform_values['name']."\" >";
-        $html.="\n<option $scriptfirst";
-        $html.=" label=\"\" value=\"\">----</option>";
+        
+        $htmlfirst="\n<option $scriptfirst";
+        $htmlfirst.=" label=\"\" value=\"\">----</option>";
+        
         $options=array();
         $optionselected=null;
         $oldvalimage="";
-
+        $htmloptions="";
         if (is_array($fieldform_values['options']))
         {
             foreach($fieldform_values['options'] as $option)
             {
                 $options[$option['value']]['name']=ucfirst($option['title']);
                 $options[$option['value']]['value']=$option['value'];
+                if ($option['value']==="")
+                {
+                    $htmlfirst="";
+                }
                 if ($option['value']=== $fieldform_values['value'])
                 {
                     $optionselected=$option['value'];
@@ -1945,9 +1952,11 @@ class xmldbfrm_field_select
             }
             if ($divid!= "")
                 $jj="onfocus=\"document.getElementById('$divid').innerHTML = '".addslashes($optionname)."';\"";
-            $html.="\n\t<option $selected $jj value=\"".$option['value']."\" >".$option['name']."</option>";
+            $htmloptions.="\n\t<option $selected $jj value=\"".$option['value']."\" >".$option['name']."</option>";
         }
-        $html.="\n</select>\n";
+        
+
+        $html.="\n$htmlfirst$htmloptions</select>\n";
         $himg+=5;
         if (isset($fieldform_values['frm_show_image']) && $fieldform_values['frm_show_image']!= "")
         {
@@ -2506,20 +2515,29 @@ function XMLDB_IsIso8859($str)
  */
 function XMLDB_ConvertEncoding($str,$charsetFrom,$charsetTo)
 {
-    if ($charsetFrom== $charsetTo)
+    if ($charsetFrom== $charsetTo || $charsetTo=="")
         return $str;
+    if (function_exists("mb_convert_encoding"))
+    {
+        $str=mb_convert_encoding($str,$charsetFrom,$charsetTo);
+        return $str;
+    }
     if (function_exists("iconv"))
     {
         $ret=@iconv($charsetFrom,$charsetTo,$str);
-        if ($ret== "")
-            return $str;
-        return $ret;
+        if ($ret!= "")
+        {
+            return $ret;
+        }
     }
 
     $ret=htmlentities($str,ENT_QUOTES,$charsetFrom);
     $ret=html_entity_decode($ret,ENT_QUOTES,$charsetTo);
     if ($ret== "")
+    {
+        trigger_error("error convert string in xmldb",E_USER_WARNING);
         return $str;
+    }
     return $ret;
 }
 

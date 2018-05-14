@@ -85,14 +85,14 @@ function XMLDB_editor($tablename,$dbname,$params=false)
         ,"html_template_grid"=>"
 <script type=\"text/javascript\">
 trh = function (over,elem){
-	var old;
-	if (over){
-		this.old = elem.style.backgroundColor ;
-		elem.style.backgroundColor='$bgcolorover';
-	}
-	else{
-		elem.style.backgroundColor=this.old;
-	}
+    var old;
+    if (over){
+        this.old = elem.style.backgroundColor ;
+        elem.style.backgroundColor='$bgcolorover';
+    }
+    else{
+        elem.style.backgroundColor=this.old;
+    }
 }
 </script>          
 
@@ -100,19 +100,19 @@ trh = function (over,elem){
 Pages : <!-- start pages --><!-- start page --><a href=\"{pagelink}\">{pagetitle}</a> <!-- end page --> <!-- start currentpage --><b><a href=\"{pagelink}\">{pagetitle}</a></b> <!-- end currentpage --> <!-- end pages -->
 <!-- start table -->
 <table style=\"border-color:{bordercolor}\">
-            <!-- start gridheader -->
-            <!-- start gridrow --><tr style=\"background-color:{bkheader}\">
-            <!-- start gridfields --><!-- start gridfield --><td><a href=\"{link}\">{fieldvalue}</a>{arrow}</td><!-- end gridfield -->
-            <!-- end gridfields -->
-            <td colspan=\"{numactions}\">---</td></tr><!-- end gridrow -->
-            <!-- end gridheader -->
-            
-            <!-- start gridbody -->
-            <!-- start gridrow -->
-            <tr style=\"background-color:{bkrow}\" onmouseover=\"trh(1,this)\" onmouseout=\"trh(0,this)\"   >
-            <!-- start gridfields --><!-- start gridfield --><td>{fieldvalue}</td><!-- end gridfield --><!-- end gridfields --></tr>
-            <!-- end gridrow -->
-            <!-- end gridbody -->
+    <!-- start gridheader -->
+    <!-- start gridrow --><tr style=\"background-color:{bkheader}\">
+    <!-- start gridfields --><!-- start gridfield --><td><a href=\"{link}\">{fieldvalue}</a>{arrow}</td><!-- end gridfield -->
+    <!-- end gridfields -->
+    <td colspan=\"{numactions}\">---</td></tr><!-- end gridrow -->
+    <!-- end gridheader -->
+
+    <!-- start gridbody -->
+    <!-- start gridrow -->
+    <tr style=\"background-color:{bkrow}\" onmouseover=\"trh(1,this)\" onmouseout=\"trh(0,this)\"   >
+    <!-- start gridfields --><!-- start gridfield --><td>{fieldvalue}</td><!-- end gridfield --><!-- end gridfields --></tr>
+    <!-- end gridrow -->
+    <!-- end gridbody -->
 </table>
 <!-- end table -->
 <!-- end grid -->
@@ -284,6 +284,11 @@ Pages : <!-- start pages --><!-- start page --><a href=\"{pagelink}\">{pagetitle
     {
         $paramsFRM=array();
         $paramsFRM['siteurl']=isset($params['siteurl']) ? $params['siteurl'] : "";
+        if (isset($params['charset_storage']))
+            $paramsFRM['charset_storage']=$params['charset_storage'];
+        else
+            $paramsFRM['charset_storage']="UTF-8";
+            
         $table=new FieldFrm("$dbname",$tablename,$path,$lang,$languages,$paramsFRM);
     }
     $siteurl="";
@@ -334,28 +339,28 @@ Pages : <!-- start pages --><!-- start page --><a href=\"{pagelink}\">{pagetitle
 function set_changed()
 {
 try{
-	document.getElementById('exit_$postgetkey').setAttribute('onclick',
-	'if(confirm (\"".addslashes($textexitwithoutsaving)."\")){window.location=\"?".str_replace("&amp;","&",$tlink)."\";}');
-	var allLinks = document.getElementsByTagName('a');
-	for (var i in allLinks)
-	{
-		if (!allLinks[i].onclick || allLinks[i].onclick=='' || allLinks[i].onclick==undefined && allLinks[i].href )
-		{
-			if (allLinks[i].setAttribute)
-			{
-				allLinks[i].setAttribute('onclick','return confirm_exitnosave()');
-			}
-		}
-	}
-     }catch(e){}
+    document.getElementById('exit_$postgetkey').setAttribute('onclick',
+    'if(confirm (\"".addslashes($textexitwithoutsaving)."\")){window.location=\"?".str_replace("&amp;","&",$tlink)."\";}');
+    var allLinks = document.getElementsByTagName('a');
+    for (var i in allLinks)
+    {
+        if (!allLinks[i].onclick || allLinks[i].onclick=='' || allLinks[i].onclick==undefined && allLinks[i].href )
+        {
+            if (allLinks[i].setAttribute)
+            {
+                allLinks[i].setAttribute('onclick','return confirm_exitnosave()');
+            }
+        }
+    }
+ }catch(e){}
 }
 function confirm_exitnosave()
 {
-	if(confirm ('".addslashes($textexitwithoutsaving)."'))
-	{
-		return true;
-	}
-	return false;
+    if(confirm ('".addslashes($textexitwithoutsaving)."'))
+    {
+        return true;
+    }
+    return false;
 }
 </script>
 	";
@@ -611,8 +616,8 @@ set_changed();
                 $html.="\n</div></form>";
                 if ($textviewlist)
                     $html.="<br /><a  href=\"?page_$postgetkey=$page&amp;order_$postgetkey=$order&amp;desc_$postgetkey=$reverse&amp;$flink_listmode\">$textviewlist</a> ";
-               // if ($enablenew)
-               //     $html.="&nbsp;<a href=\"?page_$postgetkey=$page&amp;order_$postgetkey=$order&amp;desc_$postgetkey=$reverse&amp;op_{$postgetkey}=insnew$mlink\">$textnew</a>";
+                // if ($enablenew)
+                //     $html.="&nbsp;<a href=\"?page_$postgetkey=$page&amp;order_$postgetkey=$order&amp;desc_$postgetkey=$reverse&amp;op_{$postgetkey}=insnew$mlink\">$textnew</a>";
 
 
                 break;

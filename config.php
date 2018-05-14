@@ -14,7 +14,7 @@ $_FN['site_subtitle'] = "www.flatnux.org";
 #[i18n]Keywords
 $_FN['keywords']="";
 #[i18n]Contents languages {+languages/*}
-$_FN['languages'] = "en,it,fr";
+$_FN['languages'] = "en";
 #[i18n]Default theme{./themes}
 $_FN['theme'] = "default";
 #[i18n]default control center theme{./controlcenter/themes}

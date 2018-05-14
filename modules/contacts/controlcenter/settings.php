@@ -13,7 +13,7 @@ $type=FN_GetParam("type",$_GET,"html");
 $archive=FN_GetParam("archive",$_GET,"html");
 $unarchive=FN_GetParam("unarchive",$_GET,"html");
 //--------------------init----------------------------------------------------->
-$config=FN_LoadConfig("modules/contacts/config.php");
+$config=FN_LoadConfig();
 $tablename=empty($config['tablename']) ? "contact_message" : $config['tablename'];
 $t=FN_XmlTable("{$tablename}");
 if (empty($t->fields['status']))
@@ -90,12 +90,12 @@ echo " | <a href=\"".("?mod={$_FN['mod']}&amp;opt=$opt")."\">".FN_Translate("new
 echo "</div>";
 
 FNCC_XmltableEditor("{$tablename}",$params);
+$config=FN_LoadConfig();
+$tablename=empty($config['tablename']) ? "contact_message" : $config['tablename'];
 
 $link="controlcenter.php?opt=$opt&amp;csv=1";
-echo "<hr /><p><button type=\"button\" onclick=\"window.location='$link'\"><img alt=\"download csv\" src=\"".FN_FromTheme("images/mime/xls.png")."\" /> ".FN_Translate("download list of messages")."</button></p>";
-echo "<p><button type=\"button\" onclick=\"window.location='controlcenter.php?mod=&opt=utilities/xmldb_admin&op=edit&t=contact_message'\"><img alt=\"edit\" src=\"".FN_FromTheme("images/modify.png")."\" /> ".FN_Translate("edit message fields")."</button></p>";
-
-
+echo "<hr /><p><button type=\"button\" onclick=\"window.location='$link'\"><img alt=\"download csv\" src=\"".FN_FromTheme("images/download.png")."\" /> ".FN_Translate("download list of messages")."</button></p>";
+echo "<p><button type=\"button\" onclick=\"window.location='controlcenter.php?mod=&opt=utilities/xmldb_admin&op=edit&t=$tablename'\"><img alt=\"edit\" src=\"".FN_FromTheme("images/modify.png")."\" /> ".FN_Translate("edit message fields")."</button></p>";
 
 /**
  *
@@ -125,13 +125,17 @@ function SaveToCSV($data,$filename)
  */
 function INS_archive($id,$table)
 {
+
+    $config=FN_LoadConfig();
+    $tablename=empty($config['tablename']) ? "contact_message" : $config['tablename'];
+
     $values=$table->xmltable->GetRecordByPrimarykey($id);
     $opt=FN_GetParam("opt",$_GET);
     $type=FN_GetParam("type",$_GET);
     if ($values['status']== "archived")
-        $html="<a href=\"controlcenter.php?type=$type&opt=$opt&unarchive=$id&t=contact_message\">".FN_Translate("unarchive")."</a>";
+        $html="<a href=\"controlcenter.php?type=$type&opt=$opt&unarchive=$id&t=$tablename\">".FN_Translate("unarchive")."</a>";
     else
-        $html="<a href=\"controlcenter.php?type=$type&opt=$opt&archive=$id&t=contact_message\">".FN_Translate("archive")."</a>";
+        $html="<a href=\"controlcenter.php?type=$type&opt=$opt&archive=$id&t=$tablename\">".FN_Translate("archive")."</a>";
     return $html;
 }
 

@@ -650,7 +650,7 @@ function FNNAV_MakeLink($params=false,$sep="&amp;",$norewrite=false)
 
     $link="index.php?".implode($sep,$link);
     if ($norewrite)
-        return str_replace($blank,"",$link);
+        return $_FN['siteurl'].str_replace($blank,"",$link);
     return str_replace($blank,"",FN_RewriteLink($link,$sep,true));
 }
 

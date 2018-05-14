@@ -17,6 +17,8 @@ global $currentSectionType;
 $currentSectionType=null;
 $opt=FN_GetParam("opt",$_GET);
 $modcont=FN_GetParam("edit",$_GET);
+FN_InitSections();
+
 $is_in_details=false;
 if (!empty($_GET['pk___xdb_fn_sections']))
     $is_in_details=true;
@@ -565,6 +567,9 @@ var syncdiv = function (id)
         else
         {
             $forminsert=FN_XmlForm("fn_sections");
+            if (file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/form.tp.html"))
+                $forminsert->SetlayoutTemplate(file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/form.tp.html"));
+                
             $newvalues=isset($_POST['newsection']) ? $forminsert->GetByPost() : false;
             $errors=array();
             $forminsert->formvals['id']['frm_show']="0";

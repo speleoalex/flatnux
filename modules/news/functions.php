@@ -31,20 +31,20 @@ if (!defined("FNNEWS_FUNCTIONS"))
         $itemnews=$Tablenews->xmltable->GetRecordByPrimarykey($idnews);
         $sig="";
         $gopt="";
-        if ($opt!="")
+        if ($opt!= "")
         {
             $gopt="&amp;opt=$opt";
         }
-        if ($signewsmode!="")
+        if ($signewsmode!= "")
         {
             $sig="&amp;signews=1";
         }
         $page=FN_GetParam("page___xdb_{$Tablenews->tablename}",$_GET,"int");
-        if ($page!="")
+        if ($page!= "")
         {
             $page="&amp;page___xdb_{$Tablenews->tablename}=$page";
         }
-        if ($itemnews['status']!=1)
+        if ($itemnews['status']!= 1)
             return "<form action=\"".("?mod={$_FN['mod']}&amp;mode=edit$page$sig$gopt")."\" method=\"post\"><input name=\"pubnewsid\" value=\"$idnews\" type=\"hidden\"/><button type=\"submit\">".FN_Translate("publish")."</button></form>";
         else
             return "<form action=\"".("?mod={$_FN['mod']}&amp;mode=edit$page$sig$gopt")."\" method=\"post\"><input name=\"hidenewsid\" value=\"$idnews\" type=\"hidden\"/><button type=\"submit\">".FN_Translate("hide news")."</button></form>";
@@ -60,7 +60,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
 
             $_FN['force_htmleditor']=$config['htmleditornews'];
             $this->tablename=$config['tablename'];
-            if ($this->tablename=="")
+            if ($this->tablename== "")
             {
                 $this->tablename="news";
             }
@@ -313,7 +313,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             // la prima volta metto almeno un argomento--->
             //$tablearguments = xmldb_table("fndatabase", "{$tablename}_arguments");
             $args=$tablearguments->xmltable->GetRecords();
-            if (!is_array($args)||count($args)==0)
+            if (!is_array($args) || count($args)== 0)
             {
                 $newvalues=array();
                 $newvalues['title']="News";
@@ -365,7 +365,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             $item['accesskey_READ']=FN_GetAccessKey($_LEGGITUTTO,$_FN['mod']."&amp;op={$item['txtid']}","$id_accesskey");
             $id_accesskey++;
             $item['news_USER']=$item['username'];
-            if ($item['news_USER']=="")
+            if ($item['news_USER']== "")
             {
                 $item['news_USER']=FN_Translate("unknown");
             }
@@ -403,7 +403,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             $item['argument_values']=array();
             $item['img_argument_thumb']="";
             $item['title_argument']="";
-            if ($item['argument']!="")
+            if ($item['argument']!= "")
             {
                 $TableArguments=xmldb_frm("fndatabase",$tablename."_arguments",$_FN['datadir'],$_FN['lang'],$_FN['languages']);
                 $argvalues=$TableArguments->xmltable->GetRecordByPrimaryKey($item['argument']);
@@ -412,7 +412,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
                     $argvalues=$TableArguments->GetRecordTranslated($argvalues);
                     $item['title_argument']=htmlentities($argvalues['title'],ENT_QUOTES,$_FN['charset_page']);
                 }
-                if (!empty($argvalues['icon'])&&$this->config['show_news_icon'])
+                if (!empty($argvalues['icon']) && $this->config['show_news_icon'])
                 {
                     $item['argument_values']=$argvalues;
 
@@ -427,7 +427,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             }
             $item['img_news']="";
             $item['img_news_thumb']="";
-            if ($item['photo1']!="")
+            if ($item['photo1']!= "")
             {
                 $item['img_news']="{$_FN['siteurl']}{$_FN['datadir']}/fndatabase/$tablename/{$item['unirecid']}/photo1/".$item['photo1'];
                 $item['img_news_thumb']="{$_FN['siteurl']}{$_FN['datadir']}/fndatabase/$tablename/{$item['unirecid']}/photo1/thumbs/".$item['photo1'].".jpg";
@@ -458,7 +458,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             $item['txt_TAGS']="";
             if ($this->config['show_tags'])
             {
-                if (count($tags)>0&&$tags[0]!="")
+                if (count($tags) > 0 && $tags[0]!= "")
                 {
                     $sep="";
                     $item['txt_TAGS']=FN_Translate("tags").": ";
@@ -480,7 +480,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
                 if (!empty($this->config['enable_googleplus']))
                 {
                     $strSocialNetworks.="<g:plusone data-href=\"$urlpage\"></g:plusone>";
-                    if ($fbexists===false||!empty($_GET['op']))
+                    if ($fbexists=== false || !empty($_GET['op']))
                     {
                         $strSocialNetworks.="<script type=\"text/javascript\">
       window.___gcfg = {
@@ -499,7 +499,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
                 //facebook----------------------------------------------------->
                 if (!empty($this->config['enable_facebook']))
                 {
-                    if ($fbexists===false||!empty($_GET['op']))
+                    if ($fbexists=== false || !empty($_GET['op']))
                     {
                         $fbexists=true;
                         $ll=$_FN['lang']."_".strtoupper($_FN['lang']);
@@ -561,14 +561,14 @@ if (!defined("FNNEWS_FUNCTIONS"))
         function HtmlDate($date)
         {
             global $_FN;
-            if ($date=="")
+            if ($date== "")
                 return "";
             $date=explode("-",$date);
             if (!isset($date[1]))
                 return "";
             $h=explode(" ",$date[2]);
             $h=isset($h[1]) ? $h[1] : "";
-            return intval($date[2])." ".$_FN['months'][intval($date[1])-1]." ".$date[0]." - ".$h;
+            return intval($date[2])." ".$_FN['months'][intval($date[1]) - 1]." ".$date[0]." - ".$h;
         }
 
         /**
@@ -582,7 +582,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             $conf=FN_LoadConfig("modules/news/config.php");
             FN_CreateGroupIfNotExists($conf['group_news']);
 
-            if ($_FN['user']!=""&&$conf['group_news']!=""&&FN_UserInGroup($_FN['user'],$conf['group_news']))
+            if ($_FN['user']!= "" && $conf['group_news']!= "" && FN_UserInGroup($_FN['user'],$conf['group_news']))
                 return true;
             return FN_UserCanEditSection();
         }
@@ -599,7 +599,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             global $_FN;
             $unirecid=$newsvalues['unirecid'];
             $txtid=$newsvalues['txtid'];
-            if ($_FN['user']==""&&!$this->config['guestcomment'])
+            if ($_FN['user']== "" && !$this->config['guestcomment'])
             {
                 echo FN_Translate("you need to register on")." ".$_FN['sitename']." ".FN_Translate("to add a comment");
                 FN_LoginForm();
@@ -617,7 +617,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
                     $commentvalues['unirecidrecord']=$unirecid;
                     $commentvalues['username']=$_FN['user'];
                     $commentvalues['insert']=FN_Now();
-                    if ($text=="")
+                    if ($text== "")
                     {
                         echo FN_Translate("you skipped some fields or you made some error").":<br />";
                         $tit=FN_Translate("back");
@@ -642,7 +642,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
                 }
                 else
                 {
-                    if ($unirecid!="")
+                    if ($unirecid!= "")
                     {
                         echo "\n<form method=\"post\" enctype=\"multipart/form-data\" action=\"".FN_RewriteLink("index.php?mod={$_FN['mod']}&op=$txtid&mode=comment")."\" >";
                         $tablecomments->SetLayout("flat");
@@ -673,7 +673,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             $users=array();
             foreach($comments as $item)
             {
-                if (!isset($users[$item['username']])&&$commentvalues['username']!=$item['username']&&$newvalues['username']!=$item['username'])
+                if (!isset($users[$item['username']]) && $commentvalues['username']!= $item['username'] && $newvalues['username']!= $item['username'])
                 {
                     $users[$item['username']]=$item['username'];
                     $uservalues=FN_GetUser($item['username']);
@@ -721,11 +721,11 @@ if (!defined("FNNEWS_FUNCTIONS"))
             {
                 $comments[$k]['txt_FROM']=FN_Translate("unknown");
                 $comments[$k]['html_USER']=$comment['username'];
-                if ($comments[$k]['html_USER']=="")
+                if ($comments[$k]['html_USER']== "")
                     $comments[$k]['html_USER']=FN_Translate("unknown");
 
 
-                if ($comment['username']!=""&&$uservalues=FN_GetUser($comment['username']))
+                if ($comment['username']!= "" && $uservalues=FN_GetUser($comment['username']))
                 {
                     //immagine utente ---->
                     $comments[$k]['img_USER']=FN_GetUserImage($comment['username']);
@@ -762,7 +762,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             $databasename=$_FN['database'];
             $tablelinks=FN_XmlForm($tablename."_comments");
             $unirecidrecord=FN_GetParam('unirecidrecord',$_GET,"html");
-            if (FN_IsAdmin()&&isset($_GET['unirecidrecord'])&&$unirecidrecord!="")
+            if (FN_IsAdmin() && isset($_GET['unirecidrecord']) && $unirecidrecord!= "")
             {
                 $unirecidrecord=intval($unirecidrecord);
                 $tablelinks->xmltable->DelRecord($unirecidrecord);
@@ -818,7 +818,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             if (!empty($newvalues['title_'.$_FN['lang_default']]))
                 $newvalues['title']=$newvalues['title_'.$_FN['lang_default']];
 
-            if ($newvalues['title']!="")
+            if ($newvalues['title']!= "")
             {
                 $textid=$this->GenTxtId($newvalues['title']);
                 $newvalues['txtid']=$textid;
@@ -832,7 +832,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
                     return;
                 }
                 $errors=$table->Verify($newvalues);
-                if (count($errors)==0)
+                if (count($errors)== 0)
                 {
                     $newvalues['title'.$_FN['lang']]=$newvalues['title']=htmlspecialchars($newvalues['title']);
                     $newvalues['body_'.$_FN['lang']]=$newvalues['body']=htmlspecialchars($newvalues['body']);
@@ -898,7 +898,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             if (!empty($this->config['use_cache']))
             {
                 $filename="{$_FN['datadir']}/_cache/news/$varname";
-                if (file_exists($filename)&&(false!==$v=file_get_contents($filename)))
+                if (file_exists($filename) && (false!== $v=file_get_contents($filename)))
                 {
                     return @unserialize($v);
                 }
@@ -935,7 +935,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             global $_FN;
             $tablename=$this->config['tablename'];
             $all=$this->ReadVarFromCache("allnews{$_FN['mod']}");
-            if ($all==false)
+            if ($all== false)
             {
                 $DB=new XMLDatabase("fndatabase",$_FN['datadir']);
                 $all=$DB->query("SELECT * FROM $tablename WHERE status LIKE '1' ORDER BY date DESC");
@@ -956,7 +956,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             $newspp=$this->config['newspp'];
             $all=$this->GetListNews();
             $idlang="";
-            if ($_FN['lang']!=$_FN['lang_default'])
+            if ($_FN['lang']!= $_FN['lang_default'])
             {
                 $idlang="_{$_FN['lang']}";
             }
@@ -964,7 +964,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             $newstoprint=false;
             $locktop=$this->ReadVarFromCache("locktop{$_FN['mod']}");
             $newstoprint=$this->ReadVarFromCache("newstoprint{$_FN['mod']}");
-            if (!is_array($newstoprint)||!is_array($locktop))
+            if (!is_array($newstoprint) || !is_array($locktop))
             {
                 $locktop=array();
                 $newstoprint=array();
@@ -975,19 +975,19 @@ if (!defined("FNNEWS_FUNCTIONS"))
                     $i=1;
                     foreach($all as $item)
                     {
-                        if ($item['title'.$idlang]!=""||$item['body'.$idlang]!=""||$item['summary'.$idlang]!="")
+                        if ($item['title'.$idlang]!= "" || $item['body'.$idlang]!= "" || $item['summary'.$idlang]!= "")
                         {
 
-                            if ($item['startdate']!=""&&$curtime<strtotime($item['startdate']))
+                            if ($item['startdate']!= "" && $curtime < strtotime($item['startdate']))
                             {
                                 continue;
                             }
-                            if ($item['enddate']!=""&&$curtime>strtotime($item['enddate']))
+                            if ($item['enddate']!= "" && $curtime > strtotime($item['enddate']))
                             {
                                 continue;
                             }
 
-                            if ($i>$newspp)
+                            if ($i > $newspp)
                                 break;
                             if ($item['locktop'])
                             {
@@ -1050,12 +1050,16 @@ if (!defined("FNNEWS_FUNCTIONS"))
             $text=preg_replace("/[^A-Z^a-z_0-9]/s","_",$text);
             $text=str_replace("-","_",$text);
             $text=str_replace(".","_",$text);
+            if ($text== "")
+            {
+                $text=$_FN['mod']!= "" ? $_FN['mod'] : "news";
+            }
             $acc="";
             do
             {
                 $textid=$text.$acc;
                 $rec=$table->xmltable->GetRecord(array("txtid"=>$textid));
-                $acc=intval($acc)+1;
+                $acc=intval($acc) + 1;
             }while(isset($rec['unirecid']));
             return $textid;
         }
@@ -1091,7 +1095,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             foreach($_FN['listlanguages'] as $llang)
             {
                 $idlang="";
-                if ($llang!=$_FN['lang_default'])
+                if ($llang!= $_FN['lang_default'])
                 {
                     $idlang="_{$llang}";
                 }
@@ -1103,20 +1107,20 @@ if (!defined("FNNEWS_FUNCTIONS"))
                     $i=1;
                     foreach($all as $item)
                     {
-                        if ($item['title'.$idlang]!=""||$item['body'.$idlang]!=""||$item['summary'.$idlang]!="")
+                        if ($item['title'.$idlang]!= "" || $item['body'.$idlang]!= "" || $item['summary'.$idlang]!= "")
                         {
 
 
 
-                            if ($item['startdate']!=""&&$curtime<strtotime($item['startdate']))
+                            if ($item['startdate']!= "" && $curtime < strtotime($item['startdate']))
                             {
                                 continue;
                             }
-                            if ($item['enddate']!=""&&$curtime>strtotime($item['enddate']))
+                            if ($item['enddate']!= "" && $curtime > strtotime($item['enddate']))
                             {
                                 continue;
                             }
-                            if ($i>$newspp)
+                            if ($i > $newspp)
                                 break;
                             if ($item['locktop'])
                             {
@@ -1178,7 +1182,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             foreach($_FN['listlanguages'] as $llang)
             {
                 $idlang="";
-                if ($llang!=$_FN['lang_default'])
+                if ($llang!= $_FN['lang_default'])
                 {
                     $idlang="_{$llang}";
                 }
@@ -1187,14 +1191,14 @@ if (!defined("FNNEWS_FUNCTIONS"))
                 {
                     foreach($all as $item)
                     {
-                        if ($item['title'.$idlang]!=""||$item['body'.$idlang]!=""||$item['summary'.$idlang]!="")
+                        if ($item['title'.$idlang]!= "" || $item['body'.$idlang]!= "" || $item['summary'.$idlang]!= "")
                         {
 
-                            if ($item['startdate']!=""&&$curtime<strtotime($item['startdate']))
+                            if ($item['startdate']!= "" && $curtime < strtotime($item['startdate']))
                             {
                                 continue;
                             }
-                            if ($item['enddate']!=""&&$curtime>strtotime($item['enddate']))
+                            if ($item['enddate']!= "" && $curtime > strtotime($item['enddate']))
                             {
                                 continue;
                             }
@@ -1252,7 +1256,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             }
             $tbtmp=FN_XmlTable($tablename."_stat");
             $tmprow['unirecid']=$row[$pkf];
-            if (($oldview=$tbtmp->GetRecordByPrimaryKey($row[$pkf]))==false)
+            if (($oldview=$tbtmp->GetRecordByPrimaryKey($row[$pkf]))== false)
             {
                 $tmprow['view']=1;
                 $rowtmp=$tbtmp->InsertRecord($tmprow);
@@ -1282,7 +1286,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             }
             $tbtmp=FN_XmlTable($tablename."_stat");
             $tmprow['unirecid']=$row[$pkf];
-            if (($oldview=$tbtmp->GetRecordByPrimaryKey($row[$pkf]))==false)
+            if (($oldview=$tbtmp->GetRecordByPrimaryKey($row[$pkf]))== false)
             {
                 return 0;
             }
@@ -1306,7 +1310,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             $mode=FN_GetParam("mode",$_GET,"html");
             $opt=FN_GetParam("opt",$_GET,"html"); //if is controlcenter
             $gopt="";
-            if ($opt!="")
+            if ($opt!= "")
             {
                 $gopt="&amp;opt=$opt";
             }
@@ -1328,7 +1332,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             $params['fields']="title|icon";
             $params['textnew']=$imgnew.FN_Translate("new argument");
             echo "<div class=\"news_editor\">";
-            if (basename($_FN['self'])=="controlcenter.php")
+            if (basename($_FN['self'])== "controlcenter.php")
             {
                 FNCC_XmlTableEditor($tablename."_arguments",$params);
             }
@@ -1354,11 +1358,11 @@ if (!defined("FNNEWS_FUNCTIONS"))
             $signews=FN_GetParam("signews",$_GET,"html");
 
             $gopt=$sig="";
-            if ($opt!="")
+            if ($opt!= "")
             {
                 $gopt="&amp;opt=$opt";
             }
-            if ($signewsmode!="")
+            if ($signewsmode!= "")
             {
                 $sig="&amp;signews=1";
             }
@@ -1373,28 +1377,28 @@ if (!defined("FNNEWS_FUNCTIONS"))
 //toolbar ---->
             $numsig=$this->CountSigNews($tablename);
             $b1=$b2="";
-            if ($mode=="edit"&&!$signews)
+            if ($mode== "edit" && !$signews)
             {
                 $b1="<b>";
                 $b2="</b>";
             }
             $html.="$imgeview&nbsp;<a href=\"".("?mod={$_FN['mod']}&amp;mode=edit$gopt")."\">$b1".FN_Translate("manage news")."$b2</a>";
             $b1=$b2="";
-            if ($mode=="edit"&&$signews)
+            if ($mode== "edit" && $signews)
             {
                 $b1="<b>";
                 $b2="</b>";
             }
             $html.=" ! $imgeview&nbsp;<a href=\"".("?mod={$_FN['mod']}&amp;mode=edit&amp;signews=1$gopt")."\">$b1".FN_Translate("signed news")."$b2</a> ($numsig)";
             $b1=$b2="";
-            if ($mode=="editarguments")
+            if ($mode== "editarguments")
             {
                 $b1="<b>";
                 $b2="</b>";
             }
             $html.=" | $imgedit&nbsp;<a href=\"".("?mod={$_FN['mod']}&amp;mode=editarguments$gopt")."\">$b1".FN_Translate("edit arguments")."$b2</a>";
             $b1=$b2="";
-            if ($mode=="editconfig")
+            if ($mode== "editconfig")
             {
                 $b1="<b>";
                 $b2="</b>";
@@ -1439,11 +1443,11 @@ if (!defined("FNNEWS_FUNCTIONS"))
             $mode=FN_GetParam("mode",$_GET,"html");
             $opt=FN_GetParam("opt",$_GET,"html"); //if is controlcenter
             $gopt=$sig="";
-            if ($opt!="")
+            if ($opt!= "")
             {
                 $gopt="&amp;opt=$opt";
             }
-            if ($signewsmode!="")
+            if ($signewsmode!= "")
             {
                 $sig="&amp;signews=1";
             }
@@ -1454,7 +1458,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             //if (empty($_GET["op___xdb_$tablename"]) || $_GET["op___xdb_$tablename"] == "del")
 //---pub news---->
             $pubnewsid=FN_GetParam("pubnewsid",$_POST,"html");
-            if ($pubnewsid!="")
+            if ($pubnewsid!= "")
             {
                 $Tablenews=xmldb_frm("fndatabase",$tablename,$_FN['datadir'],$_FN['lang'],$_FN['languages']);
                 $itemnews=$Tablenews->xmltable->GetRecordByPrimarykey($pubnewsid);
@@ -1477,7 +1481,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
 //---pub news----<
 //hide news---->
             $pubnewsid=FN_GetParam("hidenewsid",$_POST,"html");
-            if ($pubnewsid!="")
+            if ($pubnewsid!= "")
             {
                 $Tablenews=xmldb_frm("fndatabase",$tablename,$_FN['datadir'],$_FN['lang'],$_FN['languages']);
                 $itemnews=$Tablenews->xmltable->GetRecordByPrimarykey($pubnewsid);
@@ -1517,11 +1521,11 @@ if (!defined("FNNEWS_FUNCTIONS"))
             {
                 $generate_id=true;
                 $pkid=FN_GetParam("unirecid",$_POST,"html");
-                if ($pkid!="")
+                if ($pkid!= "")
                 {
                     $Table=xmldb_frm("fndatabase",$this->config['tablename'],$_FN['datadir'],$_FN['lang'],$_FN['languages']);
                     $itemnews=$Table->xmltable->GetRecordByPrimarykey($pkid);
-                    if (isset($itemnews['txtid'])&&$itemnews['txtid']!="")
+                    if (isset($itemnews['txtid']) && $itemnews['txtid']!= "")
                     {
                         $generate_id=false;
                     }
@@ -1532,7 +1536,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
                     {
                         $textid=$this->GenTxtId($_POST['title']);
                     }
-                    elseif ($_POST['title_'.$_FN['lang_default']]!="")//se esiste per la lingua di default
+                    elseif ($_POST['title_'.$_FN['lang_default']]!= "")//se esiste per la lingua di default
                     {
                         $textid=$this->GenTxtId($_POST['title_'.$_FN['lang_default']]);
                     }
@@ -1541,7 +1545,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
                         foreach($_FN['listlanguages'] as $ll)
                         {
                             $idl="";
-                            if ($ll!=$_FN['lang_default'])
+                            if ($ll!= $_FN['lang_default'])
                             {
                                 $idl="_$ll";
                             }
@@ -1581,7 +1585,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             }
             //if (empty($_GET["op___xdb_{$this->tablename}"]) || $_GET["op___xdb_{$this->tablename}"] == "del")
             {
-                if ($signewsmode!="")
+                if ($signewsmode!= "")
                 {
                     $params['restr']=array("status"=>"0","guestnews"=>1);
                     $html.="<h3>".FN_Translate("signed news").":</h3>";
@@ -1594,7 +1598,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             $params['layout']="flat";
             $html.="<div class=\"news_editor\">";
             ob_start();
-            if (basename($_FN['self'])=="controlcenter.php")
+            if (basename($_FN['self'])== "controlcenter.php")
             {
                 FNCC_XmlTableEditor($tablename,$params);
             }
@@ -1605,7 +1609,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
             $html.=ob_get_clean();
             $html.="</div>";
 //generate RSS----->
-            if (count($_POST)>0)
+            if (count($_POST) > 0)
             {
                 $this->GenerateRSS();
                 if ($this->config['generate_googlesitemap'])
