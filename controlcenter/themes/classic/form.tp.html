@@ -1,16 +1,15 @@
-<!-- contents -->
-<div class="form-group row">
+<table style="width:100%">
+    <!-- contents -->
     <!-- group -->
-    <fieldset><legend>{groupname}</legend>
-        <!-- end_group -->
-        <!-- item --><div class="form-group row">
-            <label  class="col-sm-2 col-form-label" for="{fieldname}">{title}:<!-- error --><em style="color:red"><br />{error}</em><!-- end_error --></label>
-            <div class="col-sm-10">
-                    <!-- inputattributes text:class="form-control" style="color:red" --> <!-- inputattributes:class="form-control"  -->{input}
-            </div>        
-        </div> <!-- end_item -->
-        <!-- endgroup -->
-    </fieldset>
+    <tr><td style="color:#ffffff;background-color:#808080;padding:1em" colspan="2" style=text-align:center"><b>{groupname}</b></td></tr>
+    <!-- end_group -->
+    <!-- item -->
+    <tr >
+        <td  valign="top" style="text-align:right;background-color:#c6d3ef;padding:.5em"><b>{title}</b><!-- error --><span style="color:red"><br />{error}</span><!-- end_error --><br /></td>
+        <td  valign="top" style="background-color:#ffffff;padding:.5em">{input}<div><em>{help}</em></div></td>
+    </tr>
+    <!-- end_item -->
+    <!-- endgroup -->
     <!-- end_endgroup -->
-</div>
-<!-- end_contents -->
+    <!-- end_contents -->
+</table>
