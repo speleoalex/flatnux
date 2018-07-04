@@ -24,6 +24,7 @@
  */
 ini_set('mssql.textlimit','65536');
 ini_set('mssql.textsize','65536');
+//ini_set('mssql.charset', 'UTF-8');
 
 class XMLTable_sqlserver
 {
@@ -40,6 +41,7 @@ class XMLTable_sqlserver
         $this->xmldescriptor=&$xmltable->xmldescriptor;
         $this->sqlfields=array();
         $this->nullfields=false;
+        $this->isview=false;
         if (is_array($params))
         {
             foreach($params as $k=> $v)
@@ -139,11 +141,16 @@ class XMLTable_sqlserver
         }
         //---da variabili globali che sostituiscono xml------------------------<
         //verifico se esiste il db--------------------------------------------->
+
         $query="SELECT name FROM master.sys.databases WHERE name = '{$this->sqldatabasename}'";
         $res=$this->dbQuery($query);
         $dbexists=false;
         if (isset($res[0]['name']))
+        {
             $dbexists=true;
+        }
+
+
         //verifico se esiste il db---------------------------------------------<
         //--------------creo il db--------------------------------------------->
         if (!$dbexists)
@@ -162,7 +169,17 @@ class XMLTable_sqlserver
         {
             $exists=true;
         }
-
+        else
+        {
+            $query="SELECT * FROM sys.views where name = '{$this->sqltablename}'";
+            $res=$this->dbQuery($query);
+            //dprint_r($res);
+            if (isset($res[0]['name']))
+            {
+                $exists=true;
+                $this->isview=true;
+            }
+        }
 
         //verifico se esiste la tabella----------------------------------------<
         /* CREATE TABLE [dbo].[WhatsUpIn](
@@ -222,8 +239,8 @@ class XMLTable_sqlserver
                         $query.=" IDENTITY(1,1) ";
                     }
                 }
-                $query.=" NOT NULL";
-                if (!isset($field['extra']) || $field['extra']=!"autoincrement")
+                $query.=" NOT NULL ";
+                if (empty($field['extra']) || $field['extra']=!"autoincrement")
                 {
                     $query.="DEFAULT('')";
                 }
@@ -231,7 +248,7 @@ class XMLTable_sqlserver
                     $query.=",";
             }
             $query.=") ;";
-
+            //die($query);
             if (!$this->dbQuery($query))
             {
                 die("sqlservererror".__LINE__);
@@ -275,6 +292,10 @@ class XMLTable_sqlserver
         $flag_tablechanged=false;
         foreach($xmlfield as $fieldname=> $fieldvalues)
         {
+            if ($this->isview)
+            {
+                break;
+            }
             if (!isset($sql_fields[$fieldname]) && $fieldvalues->type!= "innertable")
             {
                 $field=get_object_vars($fieldvalues);
@@ -489,8 +510,11 @@ class XMLTable_sqlserver
 
 
         $res=$this->dbQuery($query);
-
-        if ($res && $min!== false)
+        if (!is_array($res))
+        {
+          //  dprint_r($query);
+        }
+        if ($res && is_array($res) && $min!== false)
         {
             $tmp=array();
             for($a=$min; $a < count($res); $a++)
@@ -947,13 +971,14 @@ class XMLTable_sqlserver
  * @param type $path
  * @return boolean
  */
-function xmldb_sqlserver_CreateTableIfNotExistsFromDb($tablename,$path="misc/fndatabase")
+function xmldb_sqlserver_CreateTableIfNotExistsFromDb($tablename,$path="misc/fndatabase",$xmltablename="")
 {
     global $xmldb_mssqldatabase,$xmldb_mssqlusername,$xmldb_mssqlpassword,$xmldb_mssqlhost,$xmldb_mssqlport;
-
+    if ($xmltablename=="")
+        $xmltablename=$tablename;
     $query="SELECT * FROM information_schema.tables  WHERE TABLE_TYPE='BASE TABLE'  AND TABLE_NAME='$tablename'";
 
-    if (file_exists("$path/$tablename.php"))
+    if (file_exists("$path/$xmltablename.php"))
     {
         return;
     }
@@ -1026,9 +1051,11 @@ sys.columns cref
         }
 
         $xml.="\n\t<driver>sqlserver</driver>";
+        $xml.="\n\t<sqltable>$tablename</sqltable>";
+        
         $xml.="\n</tables>\n";
         //die("tabella mancante, scommentare per crearla");
-        file_put_contents("$path/$tablename.php",$xml);
+        file_put_contents("$path/$xmltablename.php",$xml);
     }
     else
     {

@@ -1917,7 +1917,7 @@ class xmldbfrm_field_select
                 {
                     $htmlfirst="";
                 }
-                if ($option['value']=== $fieldform_values['value'])
+                if ($option['value'] == $fieldform_values['value']) //gestire == e ===
                 {
                     $optionselected=$option['value'];
                 }

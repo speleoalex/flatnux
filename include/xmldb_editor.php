@@ -288,7 +288,7 @@ Pages : <!-- start pages --><!-- start page --><a href=\"{pagelink}\">{pagetitle
             $paramsFRM['charset_storage']=$params['charset_storage'];
         else
             $paramsFRM['charset_storage']="UTF-8";
-            
+
         $table=new FieldFrm("$dbname",$tablename,$path,$lang,$languages,$paramsFRM);
     }
     $siteurl="";
@@ -869,6 +869,7 @@ set_changed();
                                     $orderfield[$ofield]=isset($table->formvals[$__ofield]) ? $table->formvals[$__ofield] : "";
                                     $tf=$tf[0];
                                     $tf=str_replace("[","",$tf);
+                                    $orderfield[$ofield]=array();
                                     $orderfield[$ofield]['title']=$tf;
                                 }
                                 else
