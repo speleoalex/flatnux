@@ -132,7 +132,7 @@ function FN_HtmlAdminOptions()
             $html.=FN_OpenAdminSection(FN_Translate("page contents"),true);
             if (file_exists("sections/{$_FN['mod']}/section.php"))
             {
-                $html.="<button onclick=\"window.location='index.php?mod={$_FN['mod']}&opt=sections/{$_FN['mod']}/section.php'\"><img src=\"".FN_FromTheme("images/mime/php.png")."\" /> ".FN_Translate("modify")."</button><br />";
+                $html.="<button onclick=\"window.location='index.php?mod={$_FN['mod']}&opt=sections/{$_FN['mod']}/section.php'\">".FN_Translate("modify")."</button><br />";
             }
             //----------------section.xx.html------------------------------>
             //----------------settings button---------------------------------->

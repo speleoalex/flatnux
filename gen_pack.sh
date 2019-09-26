@@ -1,6 +1,6 @@
 #!/bin/bash
 #cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd /home/speleoalex/public_html/flatnux
+cd /home/speleoalex/public_html/flatnux/flatnux
 
 
 ######################### rimozione sitemap ####################################
@@ -58,16 +58,16 @@ echo $pwd-$(date +"%Y-%m.%d") > ../FLATNUXDEVEL
 echo $pwd-$(date +"%Y-%m.%d") > ../FLATNUXSTABLE
 
 ###########################         minimal       ##############################
-rm -rf /home/speleoalex/public_html/flatnux_minimal/*
+rm -rf /home/speleoalex/public_html/flatnux/flatnux_minimal/*
 while read F  ; do
 #        ls  $F
 if [ -d $F ]
 then
 #    echo "$F Directory"
-    mkdir /home/speleoalex/public_html/flatnux_minimal/$F
+    mkdir /home/speleoalex/public_html/flatnux/flatnux_minimal/$F
 else
  #   echo "$F File"
-    cp -p ./$F /home/speleoalex/public_html/flatnux_minimal/$F
+    cp -p ./$F /home/speleoalex/public_html/flatnux/flatnux_minimal/$F
 fi
 done <minimal.txt
 
@@ -125,11 +125,11 @@ if [ -d "$pwd" ]; then
 	cd /home/speleoalex/Documents/SVN-flatnux/trunk/
 	#svn commit 
 ## per creare versione stabile ##
-#	svn copy ./trunk https://flatnux.svn.sourceforge.net/svnroot/flatnux/tags/flatnux_1.0 -m flatnux_1.0
+#	#svn copy ./trunk https://flatnux.svn.sourceforge.net/svnroot/flatnux/tags/flatnux_1.0 -m flatnux_1.0
 ## per creare versione testing ##
-#	svn copy ./trunk https://flatnux.svn.sourceforge.net/svnroot/flatnux/testing/$pwd-$(date +"%Y-%m.%d").$n -m $(date +"%Y-%m.%d")
+#	#svn copy ./trunk https://flatnux.svn.sourceforge.net/svnroot/flatnux/testing/$pwd-$(date +"%Y-%m.%d").$n -m $(date +"%Y-%m.%d")
 
-	cd /home/speleoalex/public_html/
+	cd /home/speleoalex/public_html/flatnux/
 
 
         #ripristino esclusi

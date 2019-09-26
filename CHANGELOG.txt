@@ -1,122 +1,134 @@
+11/2018
+ -bug fix
+ -aggiunte traduzioni in italiano
+
 7/2018
-    -fix xmldb mssql
-    -bug fix
+ -fix xmldb mssql
+ -bug fix
+
 5/2018
-    -bug fix
+ -bug fix
+
 1/2018
-    -aggiornamenti su filamanager 
-    -bug fix news con titolo vuoto
-    -vari fix su xmldb
+ -aggiornamenti su filamanager 
+ -bu g fix news con titolo vuoto
+ -vari fix su xmldb
 
 12/2017
-    -supporto https HTTP_X_FORWARDED_PROTO (es. Altervista)
-11/2017
-    -aggiornato ckeditor
-    -aggiornato filemanager
-    -vari fix
+ -supporto https HTTP_X_FORWARDED_PROTO (es. Altervista)
 
 11/2017
-    -bug fix
-    -aggiunto ckeditor 4.7
+ -aggiornato ckeditor
+ -aggiornato filemanager
+ -vari fix
+
+11/2017
+ -bug fix
+ -aggiunto ckeditor 4.7
 
 8/2017
-    -implementati templates in modulo navigator
-    -uniti moduli news archive e news
-    -cambiato metodo predefinito di cifratura password
-    -implementati nuovi temi
-    -possibilità di cambiare le immagini di un tema dal pannello di controllo
-7/2017
-    -aggiornato fckeditor
-    -pannello di controllo bug fix su gestione blocchi e pagine
-    -xmldb corretto bugs perdita alcuni caratteri html
-    -spostata barra di amministrazione in basso
-    -corretto tema flatnux-orange
-    -creazione nuovo tema da pannello di controllo
-    -migliorata gestione tema del pannello di controllo
-6/2017
-    -ottimizzazione inclusioni non necessarie
-    -supporto vecchie versioni di files
-    -creato modulo html_template 
-    -implementazione cache
+ -implementati templates in modulo navigator
+ -uniti moduli news archive e news
+ -cambiato metodo predefinito di cifratura password
+ -implementati nuovi temi
+ -possibilità di cambiare le immagini di un tema dal pannello di controllo
 
+7/2017
+ -aggiornato fckeditor
+ -pannello di controllo bug fix su gestione blocchi e pagine
+ -xmldb corretto bugs perdita alcuni caratteri html
+ -spostata barra di amministrazione in basso
+ -corretto tema flatnux-orange
+ -creazione nuovo tema da pannello di controllo
+ -migliorata gestione tema del pannello di controllo
+
+6/2017
+ -ottimizzazione inclusioni non necessarie
+ -supporto vecchie versioni di files
+ -creato modulo html_template 
+ -implementazione cache
 
 5/2017
-    -bug fix
-    -migliorato supporto per i temi
+ -bug fix
+ -migliorato supporto per i temi
+
 2/2017
-    -supporto temi nel pannello di controllo
-    -bug fix
-    -aggiornate sezioni del pannello di controllo
-    -aggiornate funzioni xmldb
-    -supporto chiavi primarie multiple su sqlserver
+ -supporto temi nel pannello di controllo
+ -bug fix
+ -aggiornate sezioni del pannello di controllo
+ -aggiornate funzioni xmldb
+ -supporto chiavi primarie multiple su sqlserver
 
 12/2016
-    -aggiornate xmldb
-    -bug fix
-    -eliminati moduli obsoleti
-    -supporto per bootstrap
-    -implementati templates su tutti i moduli
+ -aggiornate xmldb
+ -bug fix
+ -eliminati moduli obsoleti
+ -supporto per bootstrap
+ -implementati templates su tutti i moduli
 
 7/2016
-    -aggiornato modulo contatti
-    -compatibilità con php7
+ -aggiornato modulo contatti
+ -compatibilità con php7
 
 5/2016
-    -Templetizzato modulo navigator
-    -Bug fix
-    -aggiunto modulo newsletter
+ -Templetizzato modulo navigator
+ -Bug fix
+ -aggiunto modulo newsletter
 
 9/2015
-    -bug fix : sqlite3, control center 
+ -bug fix : sqlite3, control center 
+
 6/2015 
-    -aggiornato modulo news
-    -creata scrivibile la cartella misc/media/[GRUPPO UTENTE]/
-    -aggiunto plugin per inserimento codice all'interno dell'header
-    -bug fix
+ -aggiornato modulo news
+ -creata scrivibile la cartella misc/media/[GRUPPO UTENTE]/
+ -aggiunto plugin per inserimento codice all'interno dell'header
+ -bug fix
 
 3/2015
-    -aggiunte funzionalità nel template dei temi
-    -corretto driver mysql
-    -aggiunto supporto utenti del pannello di controllo
-    -migliorato modulo contatti
-    -vari bug fix
+ -aggiunte funzionalità nel template dei temi
+ -corretto driver mysql
+ -aggiunto supporto utenti del pannello di controllo
+ -migliorato modulo contatti
+ -vari bug fix
 
 1/2015
-    -supporto per la timezone
+ -supporto per la timezone
+
 7/2014
-    -vari bug-fix
-    -risctitto tema base
-    -reso tema di default e HC responsive
-    -migliorato installer
-    -aggiornato ckeditor
+ -vari bug-fix
+ -risctitto tema base
+ -reso tema di default e HC responsive
+ -migliorato installer
+ -aggiornato ckeditor
+
 6/2014
-    -vari bug-fix
-    -migliorata sezione news e aggiornato supporto facebook
-    -migliorato gestore dei temi
-    -riscritta generazione del file .htaccess
+ -vari bug-fix
+ -migliorata sezione news e aggiornato supporto facebook
+ -migliorato gestore dei temi
+ -riscritta generazione del file .htaccess
+
 Flatnux Next - 3/2014
-    -supporto per sqlite2 (sperimentale)
-    -migliorata configurazione delle news
+ -supporto per sqlite2 (sperimentale)
+ -migliorata configurazione delle news
 
 Flatnux Next - 2/2014
-    -supporto per sqlite3 (sperimentale)
-    -possibilità di avere db completamente su mysql,sqlite,csv,ecc.
-    -aggiunte configurazioni in include/config.vars.php
-
-
-Flatnux Next - 7/2013
-  -migliorata gestione utenti sul pannello di controllo
-  -vari bug fix
+ -supporto per sqlite3 (sperimentale)
+ -possibilità di avere db completamente su mysql,sqlite,csv,ecc.
+ -aggiunte configurazioni in include/config.vars.php
 
 Flatnux Next - 7/2013
-  -migliorato engine per i temi
+ -migliorata gestione utenti sul pannello di controllo
+ -vari bug fix
+
+Flatnux Next - 7/2013
+ -migliorato engine per i temi
 
 Flatnux Next - 6/2013
-  -bug fix su modulo news
-  -filemanager: eliminata navigazione su tutto il filesystem 
+ -bug fix su modulo news
+ -filemanager: eliminata navigazione su tutto il filesystem 
  
 Flatnux Next - 1/2013
-  -vari bug fix su xmldb
+ -vari bug fix su xmldb
 
 Flatnux Next - 10/2012
  -navigator aggiunta gestione filtri
@@ -141,26 +153,28 @@ Flatnux Next - 6/2012
  -Implementato messaggio di conferma a registrazione avvenuta
 
 Flatnux Next - 4/2012
- - Gestione mod-rewrite personalizzabile
+ -Gestione mod-rewrite personalizzabile
 
 Flatnux Next - 3/2012
- - abbozzata gestione amministrazione remota
- - abilitazione della cache sulle sezioni statiche
- - corretto multi upload in gallery
- - migliorata ricerca includendo i titoli e le descrizioni delle pagine
+ -abbozzata gestione amministrazione remota
+ -abilitazione della cache sulle sezioni statiche
+ -corretto multi upload in gallery
+ -migliorata ricerca includendo i titoli e le descrizioni delle pagine
+
 Flatnux Next - 2/2012
  - migliorata interfaccia di amministrazione 
  - corretti vari bugs
 
 Flatnux Next - 1/2012
- - abilitato traduzione messaggi dal pannello di controllo 
- - Gallery: corretto download della foto
- - Aggiornato ckeditor
- - Aggiunto supporto alle toolbars per ckeditor
- - supporto aggiornamenti automatici
- - migliorato editor blocchi
- - migliorato editor sezioni
- - controlcenter corretta sparizione sezioni figlie dopo rinomina della sezione padre
+ -abilitato traduzione messaggi dal pannello di controllo 
+ -Gallery: corretto download della foto
+ -Aggiornato ckeditor
+ -Aggiunto supporto alle toolbars per ckeditor
+ -supporto aggiornamenti automatici
+ -migliorato editor blocchi
+ -migliorato editor sezioni
+ -controlcenter corretta sparizione sezioni figlie dopo rinomina della sezione padre
+
 Flatnux Next Beta - 12/2011
  -Nuova cartella extra che autoinclude le personalizzazioni sempre
  -Gallery: ridimensionamento delle immagini dopo averle caricate 
@@ -170,43 +184,44 @@ Flatnux Next Beta - 12/2011
  -Personalizzazione crediti
  -News corretta codifica RSS
  -aggiunto rss su navigator
+
 Flatnux Next Beta - 11/2011
-- aggiunto supporto Google analytics
-- nuova configurazione menu sul tema di default
-- corretto bug su modulo contacts
-- corretto bug calendario su sezione archivio news
-- gestione blocchi da visualizzare o nascondere per pagina
-- corretto xmldb_frm su campi di tipo check
-- corretto js calendar
-- merge con modulo gallery di John D'Orazio
+-aggiunto supporto Google analytics
+-nuova configurazione menu sul tema di default
+-corretto bug su modulo contacts
+-corretto bug calendario su sezione archivio news
+-gestione blocchi da visualizzare o nascondere per pagina
+-corretto xmldb_frm su campi di tipo check
+-corretto js calendar
+-merge con modulo gallery di John D'Orazio
 
 
 Flatnux Next Beta - 10/2011
-- gestione permessi modifica di una sezione
-- migliorata la funzione loadconfig
-- creato blocco menu/sottomenu configurabile
-- migliorato il supporto blocchi senza titolo
-- editor dei blocchi
-- possibilità di poter caricare un modulo nei blocchi
-- supporto blocchi in alto e in basso nel dema default
-- vari fix su aggiornamento sezione
-- modulo sitemap configurabile
-- possibilita' di rinominare id sezione
-- migliorata compatibilita' con ie6
-- modulo welcome modificabile
-- aggiunto google +1 sulle news
-- corretto bugs su captcha multipli sulla stessa pagina
-- modificata selezione lingua da installer
-- varie implementazioni
-- supporto title.i18n.fn per dare la traduzione di default ad una cartella
+-gestione permessi modifica di una sezione
+-migliorata la funzione loadconfig
+-creato blocco menu/sottomenu configurabile
+-migliorato il supporto blocchi senza titolo
+-editor dei blocchi
+-possibilità di poter caricare un modulo nei blocchi
+-supporto blocchi in alto e in basso nel dema default
+-vari fix su aggiornamento sezione
+-modulo sitemap configurabile
+-possibilita' di rinominare id sezione
+-migliorata compatibilita' con ie6
+-modulo welcome modificabile
+-aggiunto google +1 sulle news
+-corretto bugs su captcha multipli sulla stessa pagina
+-modificata selezione lingua da installer
+-varie implementazioni
+-supporto title.i18n.fn per dare la traduzione di default ad una cartella
 
 Flatnux Next Beta - 9/2011
-- corrette alcune validazioni xhtml strict sul cms e sezioni forum,gallery,news
-- supporto captcha
-- corretti alcuni errori di validazione
-- corretto bug inserimento news su una data diversa dalla corrente
-- ottimizzate prestazioni fn_getsectiontree
-- risistemato pannelòlo di controllo e menu
+-corrette alcune validazioni xhtml strict sul cms e sezioni forum,gallery,news
+-supporto captcha
+-corretti alcuni errori di validazione
+-corretto bug inserimento news su una data diversa dalla corrente
+-ottimizzate prestazioni fn_getsectiontree
+-risistemato pannelòlo di controllo e menu
 
 Flatnux Next Beta - 8/2011
 -corretto bugs su update via ftp

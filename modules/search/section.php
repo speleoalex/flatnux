@@ -202,6 +202,7 @@ $params['q']= $q;
 $params['op']= $op;
 $params['where']= $where;
 $params['results']= $htmlresults;
+$_FN['result']=$params;
 $tplfile =FN_FromTheme("modules/search/searchform.tp.html",false);
 $html =file_get_contents($tplfile);
 $html =preg_replace("/<option([^>]*)value=\"$method\"/ms","<option\\1value=\"$method\" selected=\"selected\"",$html);

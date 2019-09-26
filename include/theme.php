@@ -615,7 +615,23 @@ function FN_TPL_ApplyTplString($str,$vars,$basepath=false)
     $listparams="<pre>";
     foreach($sharedParams as $key=> $value)
     {
-        if (is_string($value) || is_numeric($value))
+        if (is_array($value))
+        {
+            $html_array="";
+            //array   --->
+            $html_template_array=FN_TPL_GetHtmlPart("foreach {".$key."}",$strout);
+            if ($html_template_array)
+            {
+                foreach($value as $item)
+                {
+                    $html_array.=FN_TPL_ApplyTplString($html_template_array,$item,$basepath);
+                }
+                $strout=FN_TPL_ReplaceHtmlPart("foreach {".$key."}",$html_array,$strout);
+            }
+            //array   ---<
+        }
+
+        if (is_string($value) || is_numeric($value) || $value== "")
         {
 
             $listparams.="$key = ".htmlentities($value)."\n";
@@ -651,7 +667,6 @@ function FN_TPL_ApplyTplString($str,$vars,$basepath=false)
         $strout=str_replace($siteurl,$_FN['sitepath'],$strout);
 
 //    return str_replace($skeep,"{",$strout);
-
     return FN_TPL_decode($strout);
 }
 
@@ -675,10 +690,29 @@ function FN_TPL_tp_create_hmenu($str="&nbsp;|&nbsp;")
 function FN_TPL_GetHtmlPart($partname,$tp_str,$default="")
 {
     $out=array();
+    if (preg_match("/<!-- $partname -->.*<!-- $partname -->/s",$tp_str))//se il nome del nodo contiene un elemento con lo stesso nome
+    {
+        $tmp=explode("<!-- $partname -->",$tp_str);
+        //dprin_r_arrayxml($tmp);
+        $tmp = $tmp[1];
+        if (false !== strpos($tmp,"<!-- end $partname -->"))
+            $tmp = explode("<!-- end $partname -->",$tmp);
+        elseif (false !== strpos($tmp,"<!-- end$partname -->"))
+            $tmp = explode("<!-- end$partname -->",$tmp);
+        if (is_array($tmp))
+        {
+            $tmp =$tmp[0];
+            $tp_str="<!-- $partname -->".$tmp."<!-- end $partname -->";
+            return $tp_str;
+        }
+        //dprint_r($partname);
+        //dprint_xml($tp_str);
+    }    
     preg_match("/<!-- $partname -->(.*)<!-- end$partname -->/is",$tp_str,$out) || preg_match("/<!-- $partname -->(.*)<!-- end $partname -->/is",$tp_str,$out);
     $tp_str=empty($out[0]) ? $default : $out[0];
     return $tp_str;
 }
+
 
 /**
  * 
@@ -851,8 +885,8 @@ function FN_TPL_html_menu($str="",$part,$parent=false)
 function FN_TPL_tp_create_submenu_($str,$idsection)
 {
     global $_FN;
-    static $cache_tp_menuitem="";
-    static $cache_tp_menuitem_old="";
+    static $cache_tp_menuitem=array();
+    static $cache_tp_menuitem_old=array();
     //$cache_tp_menuitem=array();
     //$cache_tp_menuitem_old=array();
     $idcache=md5($str);
@@ -863,7 +897,7 @@ function FN_TPL_tp_create_submenu_($str,$idsection)
     if (!$sections)
         return "";
 
-    if (empty($cache_tp_menuitem[$idcache]))
+    if (empty($cache_tp_menuitem["$idcache"]))
     {
         preg_match('/<!-- submenuitems -->(.*)<!-- endsubmenuitems -->/is',$str,$out);
         $tp_menuitem_old=FN_TPL_GetHtmlPart("submenuitems",$str,"<li><a href=\"link\">title</a></li>");
@@ -880,8 +914,8 @@ function FN_TPL_tp_create_submenu_($str,$idsection)
                 $tp_menuitem[$k]=preg_replace("/(<a.*>)(.*)(<\/a)/im","\\1{title}\\3",$tp_menuitem[$k]);
             }
         }
-        $cache_tp_menuitem[$idcache]=$tp_menuitem;
-        $cache_tp_menuitem_old[$idcache]=$tp_menuitem_old;
+        $cache_tp_menuitem["$idcache"]=$tp_menuitem;
+        $cache_tp_menuitem_old["$idcache"]=$tp_menuitem_old;
         foreach($tp_menuitem as $k=> $tp_menu)
         {
             if (false== strpos($tp_menuitem[$k],"title="))
@@ -896,8 +930,8 @@ function FN_TPL_tp_create_submenu_($str,$idsection)
     }
     else
     {
-        $tp_menuitem_old=$cache_tp_menuitem_old[$idcache];
-        $tp_menuitem=$cache_tp_menuitem[$idcache];
+        $tp_menuitem_old=$cache_tp_menuitem_old["$idcache"];
+        $tp_menuitem=$cache_tp_menuitem["$idcache"];
     }
     $htmlout="";
     foreach($sections as $sectionvalues)
@@ -1263,6 +1297,7 @@ if (!function_exists("FN_HtmlModalWindow"))
 
 if (!function_exists("FN_HtmlButton"))
 {
+
     /**
      * 
      * @param type $attributes
@@ -1278,7 +1313,6 @@ if (!function_exists("FN_HtmlButton"))
         $html.=" >$value</button>";
         return $html;
     }
+
 }
-
-
 ?>

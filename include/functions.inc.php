@@ -589,21 +589,26 @@ function FN_IncludeCSS($include_theme_css=true,$include_section_css=true)
     $html="";
     $css="";
     $sectionvalues=FN_GetSectionValues($_FN['mod']);
+    if (!empty($_FN['use_urlserverpath']))
+        $sitepath=$_FN['sitepath'];
+    else
+        $sitepath=$_FN['siteurl'];
+
     if ($include_section_css && !empty($sectionvalues['type']) && file_exists("modules/{$sectionvalues['type']}/style.css"))
     {
-        $html.="\n\t<link rel='StyleSheet' type='text/css' href=\"{$_FN['sitepath']}modules/{$sectionvalues['type']}/style.css\" />";
+        $html.="\n\t<link rel='StyleSheet' type='text/css' href=\"{$sitepath}modules/{$sectionvalues['type']}/style.css\" />";
         $css.=file_get_contents("modules/{$sectionvalues['type']}/style.css")."\n";
     }
     if ($include_section_css && file_exists("sections/{$_FN['mod']}/style.css"))
     {
-        $html.="\n\t<link rel='StyleSheet' type='text/css' href=\"{$_FN['sitepath']}sections/{$_FN['mod']}/style.css\" />";
+        $html.="\n\t<link rel='StyleSheet' type='text/css' href=\"{$sitepath}sections/{$_FN['mod']}/style.css\" />";
         $css.=file_get_contents("sections/{$_FN['mod']}/style.css")."\n";
     }
     $listcss=glob("include/css/*.css");
     foreach($listcss as $cssfile)
     {
         $ftime=@filemtime($cssfile);
-        $html.="\n\t<link rel='StyleSheet' type='text/css' href=\"{$_FN['sitepath']}$cssfile?$ftime\" />";
+        $html.="\n\t<link rel='StyleSheet' type='text/css' href=\"{$sitepath}$cssfile?$ftime\" />";
         $css.=file_get_contents($cssfile)."\n";
     }
     if ($include_theme_css)
@@ -611,7 +616,7 @@ function FN_IncludeCSS($include_theme_css=true,$include_section_css=true)
         $listcss=glob("themes/{$_FN['theme']}/*.css");
         foreach($listcss as $cssfile)
         {
-            $html.="\n\t<link rel='StyleSheet' type='text/css' href=\"{$_FN['sitepath']}$cssfile\" />";
+            $html.="\n\t<link rel='StyleSheet' type='text/css' href=\"{$sitepath}$cssfile\" />";
             $css.=file_get_contents($cssfile)."\n";
         }
     }
@@ -629,11 +634,15 @@ function FN_IncludeCSS($include_theme_css=true,$include_section_css=true)
 function FN_IncludeJS()
 {
     global $_FN;
+    if (!empty($_FN['use_urlserverpath']))
+        $sitepath=$_FN['sitepath'];
+    else
+        $sitepath=$_FN['siteurl'];
     $html="";
     $listcss=glob("include/javascripts/*.js");
     foreach($listcss as $file)
     {
-        $html.="\n\t<script defer=\"defer\" type=\"text/javascript\" src=\"{$_FN['sitepath']}$file\"></script>";
+        $html.="\n\t<script defer=\"defer\" type=\"text/javascript\" src=\"{$sitepath}$file\"></script>";
     }
     return $html;
 }
@@ -650,6 +659,15 @@ function FN_FromTheme($file,$absolute=true)
     global $_FN;
     if ($absolute)
         return file_exists("themes/{$_FN['theme']}/".$file) ? "{$_FN['siteurl']}themes/{$_FN['theme']}/".$file : $_FN['siteurl'].$file;
+    else
+        return file_exists("themes/{$_FN['theme']}/".$file) ? "themes/{$_FN['theme']}/".$file : $file;
+}
+
+function FN_FromThemeFS($file,$absolute=true)
+{
+    global $_FN;
+    if ($absolute)
+        return file_exists("themes/{$_FN['theme']}/".$file) ? realpath("themes/{$_FN['theme']}/".$file) : realpath($file);
     else
         return file_exists("themes/{$_FN['theme']}/".$file) ? "themes/{$_FN['theme']}/".$file : $file;
 }
@@ -1762,7 +1780,8 @@ function FN_BlockIsEnabled($block)
         {
             if (in_array($block['id'],$blocks))
                 return false;
-        }elseif ($_FN['sectionvalues']['blocksmode']== "show")
+        }
+        elseif ($_FN['sectionvalues']['blocksmode']== "show")
         {
             if (!in_array($block['id'],$blocks))
                 return false;
@@ -1776,7 +1795,8 @@ function FN_BlockIsEnabled($block)
         {
             if (in_array($_FN['sectionvalues']['id'],$sections))
                 return false;
-        }elseif ($block['blocksmode']== "show")
+        }
+        elseif ($block['blocksmode']== "show")
         {
             if (!in_array($_FN['sectionvalues']['id'],$sections))
                 return false;
@@ -2317,7 +2337,7 @@ function FN_MakeSectionId($sectiontitle)
  */
 function FN_CheckMail($email)
 {
-    if (preg_match('/^([a-z0-9_\.-])+@(([a-z0-9_-])+\.)+[a-z]{2,6}$/si',trim($email)))
+    if (preg_match('/^([a-z0-9_\.-])+@(([a-z0-9_-])+\.)+[a-z]{2,128}$/si',trim($email)))
         return true;
     else
         return false;
@@ -2691,4 +2711,40 @@ function FN_ClearCache()
     mkdir("misc/_cache");
 }
 
+
+
+/**
+ * 
+ * @staticvar int $level
+ * @param type $var
+ */
+function dprint_r_arrayxml($var)
+{
+    static $level=0;
+    if ($level== 0)
+        echo "<pre style='border:1px solid red'>";
+    if (is_array($var))
+    {
+        echo "\narray{\n";
+        foreach($var as $k=> $v)
+        {
+            echo "\t[$k]{\n";
+            $level++;
+
+            dprin_r_arrayxml($v);
+            $level--;
+            echo "\n\t}\n";
+        }
+        echo "\n}\n";
+    }
+    else
+    {
+        if (is_string($var))
+            echo htmlspecialchars($var);
+        else
+            print_r($var);
+    }
+    if ($level== 0)
+        echo "</pre>";
+}
 ?>

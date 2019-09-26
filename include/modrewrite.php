@@ -7,7 +7,7 @@
  */
 
 global $_FN;
-if (!empty($_FN['links_mode']) && file_exists("include/mod_rewrite/{$_FN['links_mode']}/modrewrite.php"))
+if ($_FN['enable_mod_rewrite'] > 0 && !empty($_FN['links_mode']) && file_exists("include/mod_rewrite/{$_FN['links_mode']}/modrewrite.php"))
 {
     require_once ("include/mod_rewrite/{$_FN['links_mode']}/modrewrite.php");
 }
@@ -46,7 +46,6 @@ else
         if ($full)
         {
             $siteurl = empty($_FN['use_urlserverpath']) ? $_FN['siteurl'] : $_FN['sitepath'];
-
             $href = $siteurl.$href;
         }
         return $href;

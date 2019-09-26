@@ -3,7 +3,7 @@
 /**
  * @package Flatnux_controlcenter
  * @author Alessandro Vernassa <speleoalex@gmail.com>
- * @copyright Copyright (c) 1011
+ * @copyright Copyright (c) 2011
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License
  */
 defined('_FNEXEC') or die('Restricted access');
@@ -21,9 +21,9 @@ if ($themetoedit== "")
     $themetoedit=$_FN['theme_default'];
 }
 
+//-----------edit theme-------------------------------------------------------->
 if ($edit!= "" && file_exists("themes/$themetoedit/$edit"))
 {
-    //($file,$formaction = "",$exit = "",$editor_params = false)
     FN_EditContent(
             "themes/$themetoedit/$edit"
             ,"?mod={$_FN['mod']}&amp;opt=$opt&amp;themetoedit=$themetoedit&amp;edit=$edit"
@@ -31,6 +31,7 @@ if ($edit!= "" && file_exists("themes/$themetoedit/$edit"))
             ,array("css_file"=>"themes/$themetoedit/style.css","fullpage"=>true)
     );
 }
+//-----------edit theme--------------------------------------------------------<
 elseif ($editconf!= "")
 {
     $theme=$themetoedit;
@@ -54,8 +55,19 @@ elseif ($editconf!= "")
 else
 {
 
-    $list_themes=get_list_themes();
     $theme=FN_GetParam("theme",$_POST,"html");
+    $list_themes=get_list_themes();
+    if (0)
+    {
+        foreach($list_themes as $theme)
+        {
+            $image="images/px_transparent.png";
+            if (file_exists("themes/$theme/screenshot.png"))
+                $image="themes/$theme/screenshot.png";
+            echo "<button onclick=\"document.getElementById('thumb').src='index.php?theme=$theme';\" style=\"text-shadow:1px 1px 1px #ffffff;color:#000000;overflow:hidden;text-align:center;background-color:#ffffff;padding:0px;margin:2px;border:1px solid #dddddd;height:100px;width:150px;float:left;background-image:url($image)\">$theme</button>";
+        }
+        echo "<br style=\"clear:both\" />";
+    }
     if ($theme!= "" && file_exists("themes/$theme"))
     {
         $t=FN_XmlTable("fn_settings");
@@ -64,7 +76,8 @@ else
     echo "
 <div>
 	<form method=\"post\" action=\"\" name=\"feditth\">";
-    echo FN_i18n("theme")." : <select name=\"theme\" onchange=\"window.location='?mod=".$_FN['mod']."&themetoedit='+ document.feditth.theme.options[document.feditth.theme.selectedIndex].text + '&amp;opt=$op'\" >";
+    echo FN_i18n("theme")." : <select name=\"theme\" 
+        onchange=\"window.location='?mod=".$_FN['mod']."&themetoedit='+ document.feditth.theme.options[document.feditth.theme.selectedIndex].text + '&amp;opt=$op'\" >";
     foreach($list_themes as $theme_)
     {
         echo "\n<option ";
@@ -74,8 +87,7 @@ else
         }
         echo ">$theme_</option>";
     }
-    echo "
-		</select>";
+    echo "</select>";
     echo "<button type=\"submit\" >".FN_i18n("apply this theme")."</button>";
     echo "
 	</form>
@@ -154,7 +166,7 @@ function resizeThumb(w,h){
     $oldimageimage=FN_GetParam("oldimageimage",$_POST,"flat");
 
 
-    if ($oldimageimage!="" && file_exists($oldimageimage) && !empty($_FILES['image']['tmp_name']))
+    if ($oldimageimage!= "" && file_exists($oldimageimage) && !empty($_FILES['image']['tmp_name']))
     {
         $oldimagevalues=getimagesize($oldimageimage);
         $newimagevalues=getimagesize($_FILES['image']['tmp_name']);

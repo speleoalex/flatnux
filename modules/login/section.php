@@ -45,13 +45,16 @@ switch($op)
         {
             $templateStr=file_get_contents(FN_FromTheme("modules/login/profile.tp.html",false));
             $tplbasepath=dirname(FN_FromTheme("modules/login/profile.tp.html",false))."/";
-            $tplvars=$_FN;
-            $tplvars=$_FN;
+            $tplvars=FN_GetUser($_FN['user']);
             $tplvars['urllogout']=FN_RewriteLink("index.php?mod={$_FN['mod']}&amp;fnlogin=logout");
             $tplvars['urleditprofile']=FN_RewriteLink("index.php?mod={$_FN['mod']}&amp;op=editreg");
             $tplvars['username']=$_FN['user'];
             $tplvars['urlimage']=FN_GetUserImage($_FN['user']);
             $tplvars['urllogout']=FN_RewriteLink("index.php?mod={$_FN['mod']}&amp;fnlogin=logout");
+            foreach ($tplvars as $k=>$var)
+            {
+                $_FN['result'][$k]=$var;
+            }
             echo FN_TPL_ApplyTplString($templateStr,$tplvars,$tplbasepath);
         }
         break;

@@ -67,7 +67,7 @@ function FNSEARCH_module_navigator($tosearch_array,$method,$sectionvalues,$maxre
     {
         foreach($records as $data)
         {
-            $link=FN_RewriteLink("index.php?mod=$section_to_search&amp;op=view&id={$data['unirecid']}");
+            $link=FN_RewriteLink("index.php?mod=$section_to_search&amp;op=view&id={$data[$Table->primarykey]}");
             $results[$cont]['link']=$link;
             $results[$cont]['title']=$sectionvalues['title'].(isset($data[$config['titlefield']]) ? ": ".$data[$config['titlefield']] : "");
             $results[$cont]['text']="";

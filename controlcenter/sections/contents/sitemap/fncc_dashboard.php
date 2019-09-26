@@ -25,7 +25,7 @@ echo "<tr><td colspan=\"9\">
         
 </td></tr>";
 echo "</table><br />";
-echo "<p>    <button onclick=\"window.location='controlcenter.php?opt=contents/sitemap'\">".FN_Translate("modify")."</button>
+echo "<p>    <button onclick=\"window.location='controlcenter.php?opt=contents/sitemap'\">".FN_Translate("edit the pages and the structure of the website")."</button>
     <button onclick=\"window.location='controlcenter.php?mod=&opt=contents/sitemap&newsection=1'\">".FN_Translate("create a new page")."</button></p>
 ";
 

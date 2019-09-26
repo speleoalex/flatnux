@@ -260,7 +260,7 @@ MonthName = new Array
 
 
         $jscal="DateSeparator='$DateSeparator';return NewCssCal('$idInput', '$dateformat_js','$Navigation_pattern',$Display_time_in_calendar,$Time_mode,$Show_Seconds)";
-        $html.="<input onclick=\"$jscal\" $toltips name=\"".$params['name']."\" id=\"xmldb_bcalendar_".$params['name']."$idcalendar\" value=\"".$val."\" /><button onclick=\"$jscal\" type=\"button\" ><img style=\"border:0px;vertical-align:middle\" alt = \"\" src=\"".FN_FromTheme("images/calendar.png")."\" /></button>";
+        $html.="<input autocomplete=\"off\" onclick=\"$jscal\" $toltips name=\"".$params['name']."\" id=\"xmldb_bcalendar_".$params['name']."$idcalendar\" value=\"".$val."\" /><button onclick=\"$jscal\" type=\"button\" ><img style=\"border:0px;vertical-align:middle\" alt = \"\" src=\"".FN_FromTheme("images/calendar.png")."\" /></button>";
         return $html;
     }
 

@@ -124,9 +124,8 @@ Pages : <!-- start pages --><!-- start page --><a href=\"{pagelink}\">{pagetitle
         ,"maxrows"=>false
         ,'max_cell_text_lenght'=>40
     );
-
-//   dprint_r($_GET);
-
+    $function_update =isset($params['function_update']) ? $params['function_update'] : false;
+    $function_insert =isset($params['function_insert']) ? $params['function_insert'] : false;
 
     $textcancel=isset($params['textcancel']) ? $params['textcancel'] : "Cancel";
     $textnew=isset($params['textnew']) ? $params['textnew'] : "[ new ]";
@@ -288,7 +287,6 @@ Pages : <!-- start pages --><!-- start page --><a href=\"{pagelink}\">{pagetitle
             $paramsFRM['charset_storage']=$params['charset_storage'];
         else
             $paramsFRM['charset_storage']="UTF-8";
-
         $table=new FieldFrm("$dbname",$tablename,$path,$lang,$languages,$paramsFRM);
     }
     $siteurl="";
@@ -464,7 +462,12 @@ set_changed();
                     {
                         if ($toupdate)
                         {
-                            $newvalues=$table->UpdateRecord($newvalues,$pk);
+                            if ($function_update)
+                            {
+                                $newvalues=$function_update($newvalues,$pk);
+                            }
+                            else
+                                $newvalues=$table->UpdateRecord($newvalues,$pk);
                             if (is_array($table->xmltable->primarykey))
                             {
                                 $pk=array();
@@ -479,8 +482,8 @@ set_changed();
                             }
                             if ($onupdate!= "")
                             {
-                                $html.=$onupdate;
-                                die("UPDATE");
+                                //$html.=$onupdate;
+                                //die("UPDATE");
                                 break;
                             }
                             if (is_array($newvalues))
@@ -507,7 +510,14 @@ set_changed();
                         else
                         {
                             //insert record
-                            $newvalues=$table->InsertRecord($newvalues);
+                            if ($function_insert)
+                            {
+                                $newvalues=$function_insert($newvalues);
+                            }
+                            else
+                            {
+                                $newvalues=$table->InsertRecord($newvalues);
+                            }
                             if (is_array($newvalues) && count($newvalues) > 0)
                             {
                                 $oldvalues=$newvalues;
@@ -618,6 +628,8 @@ set_changed();
                     $html.="<br /><a  href=\"?page_$postgetkey=$page&amp;order_$postgetkey=$order&amp;desc_$postgetkey=$reverse&amp;$flink_listmode\">$textviewlist</a> ";
                 // if ($enablenew)
                 //     $html.="&nbsp;<a href=\"?page_$postgetkey=$page&amp;order_$postgetkey=$order&amp;desc_$postgetkey=$reverse&amp;op_{$postgetkey}=insnew$mlink\">$textnew</a>";
+//                if ($enablenew && $textnewinner)
+//                    $html.="&nbsp;<button id='exit_$postgetkey' type=\"button\" onclick=\"window.location='?".str_replace("&amp;","&","?page_$postgetkey=$page&amp;order_$postgetkey=$order&amp;desc_$postgetkey=$reverse&amp;op_{$postgetkey}=insnew$mlink")."'\" >".$textnewinner."</button>";
 
 
                 break;
@@ -971,8 +983,10 @@ set_changed();
                             $urlquery=(http_build_query($httpqueryparams));
                             //---------- $httpqueryparams actions--<
                             /* dprint_r($httpqueryparams);
-                              dprint_r($urlquery); */
-
+                              dprint_r($urlquery);
+                              dprint_r($flink_listmode); */
+                            $flink_listmode_tmp=explode("index.php?",$flink_listmode);
+                            $flink_listmode_tmp=isset($flink_listmode_tmp[1]) ? $flink_listmode_tmp[1] : $flink_listmode_tmp[0];
                             if (!empty($params['actions_before_fields']))
                             {
                                 if ($enableview && $numcols++)
@@ -980,7 +994,7 @@ set_changed();
                                 if ($enableedit && $numcols++)
                                     $html_gridfields.=str_replace("{fieldvalue}","<a href=\"?$urlquery&amp;op_$postgetkey=insnew$mlink\">".$textmodify."</a>",$template_gridbody_gridrow_gridfield);
                                 if ($enabledelete && $numcols++)
-                                    $html_gridfields.=str_replace("{fieldvalue}","<a href=\"javascript:check('?$urlquery&op_$postgetkey=del&$flink_listmode');\">".$textdelete."</a>",$template_gridbody_gridrow_gridfield);
+                                    $html_gridfields.=str_replace("{fieldvalue}","<a href=\"javascript:check('?$urlquery&op_$postgetkey=del&$flink_listmode_tmp');\">".$textdelete."</a>",$template_gridbody_gridrow_gridfield);
                             }
 
 
@@ -1116,12 +1130,15 @@ set_changed();
 
                             if (empty($params['actions_before_fields']))
                             {
+                                $flink_listmode_tmp=explode("index.php?",$flink_listmode);
+                                $flink_listmode_tmp=isset($flink_listmode_tmp[1]) ? $flink_listmode_tmp[1] : $flink_listmode_tmp[0];
+
                                 if ($enableview && $numcols++)
                                     $html_gridfields.=str_replace("{fieldvalue}","<a href=\"?$urlquery&amp;op_$postgetkey=view$mlink\">".$textview."</a>",$template_gridbody_gridrow_gridfield);
                                 if ($enableedit && $numcols++)
                                     $html_gridfields.=str_replace("{fieldvalue}","<a href=\"?$urlquery&amp;op_$postgetkey=insnew$mlink\">".$textmodify."</a>",$template_gridbody_gridrow_gridfield);
                                 if ($enabledelete && $numcols++)
-                                    $html_gridfields.=str_replace("{fieldvalue}","<a href=\"javascript:check('?$urlquery&op_$postgetkey=del&$flink_listmode');\">".$textdelete."</a>",$template_gridbody_gridrow_gridfield);
+                                    $html_gridfields.=str_replace("{fieldvalue}","<a href=\"javascript:check('?$urlquery&op_$postgetkey=del&$flink_listmode_tmp');\">".$textdelete."</a>",$template_gridbody_gridrow_gridfield);
                             }
                             $tmp_html=str_replace("{bkrow}",$backgroundcolor,$template_gridbody_gridrow);
 

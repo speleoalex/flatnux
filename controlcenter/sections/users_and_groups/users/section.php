@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @package Flatnux_controlcenter
  * @author Alessandro Vernassa <speleoalex@gmail.com>
@@ -9,83 +8,104 @@
  */
 defined('_FNEXEC') or die('Restricted access');
 global $_FN;
+
 /**
  * 
  * @param type $user
  * @param type $Table
  * @return type
  */
-function EnableDisable($user,$Table)
+function EnableDisable($primarykey,$TableUsers)
 {
     global $_FN;
-    $values=$Table->xmltable->GetRecordByPrimarykey($user);
+    $TableUsers=FN_GetUserForm();
+    if (empty($TableUsers->fieldname_active) && !empty($TableUsers->formvals['active']))
+    {
+        $TableUsers->fieldname_active="active";
+    }
+    $values=$TableUsers->xmltable->GetRecordByPrimaryKey($primarykey);
     $opt=FN_GetParam("opt",$_GET);
     $filter=FN_GetParam("filter",$_GET);
     $gopt="";
-    if($opt!="")
+    if ($opt!= "")
     {
         $gopt="&amp;opt=$opt";
     }
-    $page=FN_GetParam("page___xdb_{$Table->tablename}",$_GET,"int");
-    if($page!="")
+    $page=FN_GetParam("page___xdb_{$TableUsers->tablename}",$_GET,"int");
+    if ($page!= "")
     {
-        $page="&amp;page___xdb_{$Table->tablename}=$page";
+        $page="&amp;page___xdb_{$TableUsers->tablename}=$page";
     }
-    $htmlsendmail="<input type=\"checkbox\" name=\"sendwelcomemessage\" value=\"1\"/>".FN_Translate("send welcome message");
-    if($values['active']!=1)
-        return "<form action=\"".("?mod={$_FN['mod']}&amp;filter=$filter$page$gopt")."\" method=\"post\"><img src=\"images/useronline/level_n.gif\" alt=\"\"/><input name=\"active\" value=\"1\" type=\"hidden\"/><input name=\"userid\" value=\"$user\" type=\"hidden\"/><button type=\"submit\">".FN_Translate("enable")."</button>$htmlsendmail</form>";
+    $htmlsendmail="";
+    if (function_exists("FN_SendMailWelcome"))        
+        $htmlsendmail="<input type=\"checkbox\" name=\"sendwelcomemessage\" value=\"1\"/>".FN_Translate("send welcome message");
+    if ($values["{$TableUsers->fieldname_active}"]!= 1)
+        return "<form action=\"".("?mod={$_FN['mod']}&amp;filter=$filter$page$gopt")."\" method=\"post\"><img src=\"images/useronline/level_n.gif\" alt=\"\"/><input name=\"{$TableUsers->fieldname_active}\" value=\"1\" type=\"hidden\"/><input name=\"userid\" value=\"$primarykey\" type=\"hidden\"/><button type=\"submit\">".FN_Translate("enable")."</button>$htmlsendmail</form>";
     else
-        return "<form action=\"".("?mod={$_FN['mod']}&amp;filter=$filter$page$gopt")."\" method=\"post\"><img src=\"images/useronline/level_y.gif\" alt=\"\"/><input name=\"active\" value=\"0\" type=\"hidden\"/><input name=\"userid\" value=\"$user\" type=\"hidden\"/><button type=\"submit\">".FN_Translate("disable")."</button></form>";
+        return "<form action=\"".("?mod={$_FN['mod']}&amp;filter=$filter$page$gopt")."\" method=\"post\"><img src=\"images/useronline/level_y.gif\" alt=\"\"/><input name=\"{$TableUsers->fieldname_active}\" value=\"0\" type=\"hidden\"/><input name=\"userid\" value=\"$primarykey\" type=\"hidden\"/><button type=\"submit\">".FN_Translate("disable")."</button></form>";
 }
 
-$userid=FN_GetParam("userid",$_POST);
-if($userid)
+$table=FN_GetUserForm();
+if (empty($table->fieldname_active) && !empty($table->formvals['active']))
 {
-    $active=FN_GetParam("active",$_POST);
+    $table->fieldname_active="active";
+}
+if (isset($table->formvals['username']))
+    $table->formvals['username']['frm_allowupdate']="onlyadmin";
+
+
+$userid=FN_GetParam("userid",$_POST);
+if ($userid)
+{
+
+    $active=FN_GetParam("{$table->fieldname_active}",$_POST);
     $sendwelcomemessage=FN_GetParam("sendwelcomemessage",$_POST);
 
-    if($_FN['user']==$userid)
+    if ($_FN['user']== $userid)
         FN_Alert("operation is not permitted");
     else
     {
         require_once 'modules/login/functions_login.php';
-        FN_UpdateUser($userid,array("active"=>$active));
-        if($active&&$sendwelcomemessage)
+        $uservalues=FN_UpdateUser($userid,array("{$table->fieldname_active}"=>$active));
+        if ($uservalues&&$active && $sendwelcomemessage)
         {
-            $uservalues=FN_GetUser($userid);
-            $mailbody=FNREG_GetWelcomeMessage();
-            $mailbody=str_replace("!USERNAME!",$uservalues['username'],$mailbody);
-            $mailbody=str_replace("!SITENAME!",$_FN['sitename'],$mailbody);
-            $mailbody=str_replace("!SITEURL!",$_FN['siteurl'],$mailbody);
-            $mailbody=FN_FixNewline($mailbody);
-            $ishtml=false;
-            if(FN_SendMail($uservalues['email'],FN_Translate("confirm registration site")." ".$_FN['sitename'],$mailbody,$ishtml))
-                FN_Alert(FN_Translate("it has been sended one email to you to the address")." ".$uservalues['email']);
+            if (function_exists("FN_SendMailWelcome"))
+            {
+                FN_SendMailWelcome($uservalues);
+            }
         }
     }
 }
 
 
-$table=FN_GetUserForm();
-$table->formvals['username']['frm_allowupdate']="onlyadmin";
-
-if(isset($table->formvals['passwd']))
+if (isset($table->formvals['passwd']))
 {
-    if (isset($_POST['passwd']) && $_POST['passwd']=="")
+    if (isset($_POST['passwd']) && $_POST['passwd']== "")
     {
         unset($_POST['passwd']);
     }
     $table->formvals['passwd']['frm_required']=false;
     $table->formvals['level']['frm_show']="1";
-    $table->formvals['active']['frm_show']="1";
+    $table->formvals[$table->fieldname_active]['frm_show']="1";
     $table->formvals['group']['frm_show']="1";
 }
-$table->LoadFieldsClasses();
+if (isset($table->formvals['password']))
+{
+    if (isset($_POST['password']) && $_POST['password']== "")
+    {
+        unset($_POST['password']);
+    }
+    $table->formvals['password']['frm_required']=false;
+    $table->formvals['level']['frm_show']="1";
+    $table->formvals[$table->fieldname_active]['frm_show']="1";
+    $table->formvals['group']['frm_show']="1";
+}
 
+$table->LoadFieldsClasses();
 
 $params=array();
 $params['fields']="username|email|level|group|EnableDisable()";
-if(isset($table->formvals['registrationdate']))
+if (isset($table->formvals['registrationdate']))
 {
     $table->formvals['registrationdate']['frm_show']="1";
     $params['fields']="username|email|level|group|registrationdate|EnableDisable()";
@@ -97,10 +117,10 @@ $filters=explode("^",$getfilters);
 $arrayfilter=array();
 foreach($filters as $filter)
 {
-    if(!empty($filter))
+    if (!empty($filter))
     {
         $tmp=explode(":",$filter);
-        $arrayfilter[$tmp[0]]=isset($tmp[1])?$tmp[1]:false;
+        $arrayfilter[$tmp[0]]=isset($tmp[1]) ? $tmp[1] : false;
     }
 }
 global $_FN;
@@ -109,28 +129,28 @@ $op=FN_GetParam("opt",$_GET,"html");
 
 //-----form----->
 $fv=array();
-$exlude=array("passwd","emailhidden","avatarimage","avatar","rnd","level","groups","active","ip","registrationdate");
-if(empty($_GET['op___xdb_fn_users']))
+$exlude=array("password","passwd","emailhidden","avatarimage","avatar","rnd","level","groups",$table->fieldname_active,"ip","registrationdate");
+if (empty($_GET['op___xdb_fn_users']))
 {
     echo "<form action=\"?mod={$_FN['mod']}&amp;opt=$op\" method=\"post\" >";
     echo "<fieldset><legend>".FN_Translate("filter")."</legend>";
     echo "<table>";
     foreach($table->formvals as $k=> $v)
     {
-        if(!in_array($k,$exlude))
+        if (!in_array($k,$exlude))
         {
-            if(isset($_POST[$k]))
+            if (isset($_POST[$k]))
             {
                 $fv[$k]=FN_GetParam($k,$_POST,"html");
             }
-            elseif(isset($arrayfilter[$k]))
+            elseif (isset($arrayfilter[$k]))
             {
                 $fv[$k]=$arrayfilter[$k];
             }
-            if(isset($fv[$k]))
+            if (isset($fv[$k]))
             {
                 $arrayfilter[$k]=$fv[$k];
-                if($arrayfilter[$k]!=false&&$arrayfilter[$k]!=="")
+                if ($arrayfilter[$k]!= false && $arrayfilter[$k]!== "")
                 {
                     $postfilter[$k]="$k:{$arrayfilter[$k]}";
                     $arrayfilter[$k]="%".$arrayfilter[$k]."%";
@@ -144,7 +164,7 @@ if(empty($_GET['op___xdb_fn_users']))
 
             echo "\n<tr>";
             echo "<td>{$table->formvals[$k]['title']}</td>";
-            $fv[$k]=isset($fv[$k])?$fv[$k]:"";
+            $fv[$k]=isset($fv[$k]) ? $fv[$k] : "";
             echo "<td><input name=\"$k\" value=\"{$fv[$k]}\"/></td>";
             echo "</tr>";
         }
@@ -153,13 +173,13 @@ if(empty($_GET['op___xdb_fn_users']))
     echo "</table></fieldset></form>";
 //-----form----->
 }
-if(count($postfilter)>0)
+if (count($postfilter) > 0)
 {
     $getfilters=implode("^",$postfilter);
 }
 
 $params['filters']="";
-if(count($arrayfilter))
+if (count($arrayfilter))
 {
     $params['filters']=$arrayfilter;
 }
@@ -170,11 +190,47 @@ $params['textviewlist']="<img style=\"vertical-align:middle;border:0px;\" alt=\"
 $params['textnew']="<img style=\"vertical-align:middle;border:0px;\" alt=\"\"  src=\"".FN_FromTheme("images/add.png")."\" />&nbsp;".FN_Translate("add a user");
 $params['textmodify']="<img alt=\"".FN_Translate("modify")."\" title=\"".FN_Translate("modify")."\" style=\"vertical-align:middle;border:0px;\" alt=\"\"  src=\"".FN_FromTheme("images/modify.png")."\" />";
 $params['textdelete']="<img alt=\"".FN_Translate("delete")."\" title=\"".FN_Translate("delete")."\" style=\"vertical-align:middle;border:0px;\" alt=\"\"  src=\"".FN_FromTheme("images/delete.png")."\" />";
-
-echo "<a ".($getfilters==""?" style=\"font-weight:bold\" ":"")."href=\"?mod={$_FN['mod']}&amp;opt=$op&amp;filter=\">".FN_Translate("view all")."</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
-echo "<a ".($getfilters=="active:1"?" style=\"font-weight:bold\" ":"")."href=\"?mod={$_FN['mod']}&amp;opt=$op&amp;filter=active:1\"><img src=\"images/useronline/level_y.gif\" alt=\"\"/> ".FN_Translate("view only enabled")."</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
-echo "<a ".($getfilters=="active:0"?" style=\"font-weight:bold\" ":"")."href=\"?mod={$_FN['mod']}&amp;opt=$op&amp;filter=active:0\"><img src=\"images/useronline/level_n.gif\" alt=\"\"/> ".FN_Translate("view only disabled")."</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
-echo "<a ".($getfilters=="level:10"?" style=\"font-weight:bold\" ":"")."href=\"?mod={$_FN['mod']}&amp;opt=$op&amp;filter=level:10\">".FN_Translate("view only administrators")."</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
+$params['function_update']="FN_UpdateUserXmldbEditor";
+$params['function_insert']="FN_InsertUserXmldbEditor";
+echo "<a ".($getfilters== "" ? " style=\"font-weight:bold\" " : "")."href=\"?mod={$_FN['mod']}&amp;opt=$op&amp;filter=\">".FN_Translate("view all")."</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
+echo "<a ".($getfilters== "{$table->fieldname_active}:1" ? " style=\"font-weight:bold\" " : "")."href=\"?mod={$_FN['mod']}&amp;opt=$op&amp;filter={$table->fieldname_active}:1\"><img src=\"images/useronline/level_y.gif\" alt=\"\"/> ".FN_Translate("view only enabled")."</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
+echo "<a ".($getfilters== "{$table->fieldname_active}:0" ? " style=\"font-weight:bold\" " : "")."href=\"?mod={$_FN['mod']}&amp;opt=$op&amp;filter={$table->fieldname_active}:0\"><img src=\"images/useronline/level_n.gif\" alt=\"\"/> ".FN_Translate("view only disabled")."</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
+echo "<a ".($getfilters== "level:10" ? " style=\"font-weight:bold\" " : "")."href=\"?mod={$_FN['mod']}&amp;opt=$op&amp;filter=level:10\">".FN_Translate("view only administrators")."</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
 echo "<br />";
 FNCC_xmltableeditor($table,$params);
+
+function FN_UpdateUserXmldbEditor($newvalues,$pk)
+{
+    $password="";
+    if (isset($newvalues['passwd']))
+        $password=$newvalues['passwd'];
+    else
+    if (isset($newvalues['password']))
+        $password=$newvalues['password'];
+
+    $table=FN_GetUserForm();
+    $username=!empty($table->fieldname_user) ? $table->fieldname_user : "username";
+    FN_UpdateUser($pk,$newvalues,$password);
+    return FN_GetUser($newvalues[$username]);
+}
+
+function FN_InsertUserXmldbEditor($newvalues)
+{
+    global $_FN;
+    $password="";
+    if (isset($newvalues['passwd']))
+        $password=$newvalues['passwd'];
+    else
+    if (isset($newvalues['password']))
+        $password=$newvalues['password'];
+    FN_AddUser($newvalues,$password);
+    if (!empty($_FN['error_FN_AddUser']))
+    {
+        echo($_FN['error_FN_AddUser']);
+    }
+    $table=FN_GetUserForm();
+    $username=!empty($table->fieldname_user) ? $table->fieldname_user : "username";
+    return FN_GetUser($newvalues[$username]);
+}
+
 ?>

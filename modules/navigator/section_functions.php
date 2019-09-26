@@ -1051,7 +1051,6 @@ function FNNAV_DelRecordForm($unirecid)
 function FNNAV_EditRecordForm($unirecid,$Table,$errors=array(),$reloadDataFromDb=false)
 {
     global $_FN;
-    //  dprint_r($unirecid);
 //--config-->
     $config=FN_LoadConfig();
     $tables=explode(",",$config['tables']);
@@ -1153,8 +1152,18 @@ set_changed();
 //editor inner tables ----------------------------------------------------->
     if ($Table->innertables)
     {
+
         foreach($Table->innertables as $k=> $v)
         {
+            if (isset($_GET['inner']))
+            {
+                if (!isset($_GET["op___xdb_".$v['tablename']]))
+                {
+                    //dprint_r($_FN);
+                    continue;
+                }
+            }
+
             $params=array();
             if (isset($_FN['modparams'][$_FN['mod']]['editorparams']['innertables'][$v["tablename"]]))
                 $params=$_FN['modparams'][$_FN['mod']]['editorparams']['innertables'][$v["tablename"]];
@@ -1162,10 +1171,33 @@ set_changed();
             $title=$v['tablename'];
             $innertablemaxrows=isset($v['innertablemaxrows']) ? $v['innertablemaxrows'] : "";
 
+            $tmptable=FN_XmlForm($v["tablename"],$params);
+            if (FNNAV_CanEditRecord($Table->xmltable->primarykey,$v["tablename"]))
+            {
+                $v['enabledelete']=true;
+            }
+
+
             if (isset($v["frm_{$_FN['lang']}"]))
                 $title=$v["frm_{$_FN['lang']}"];
             $html.="<div class=\"FNNAV_innerform\">";
-            $html.="<h3>{$title}:</h3>";
+            $innertile=$title;
+
+            if (isset($_GET['inner']))
+            {
+                $innertile="{$_FN['sections'][$_FN['mod']]['title']} -&gt; {$title}";
+                $tmptitle=explode(",",$config['titlefield']);
+                foreach($tmptitle as $tmp_t)
+                {
+                    $sep=" -&gt; ";
+                    if (!empty($row[$tmp_t]))
+                    {
+                        $innertile.="$sep".$row[$tmp_t];
+                        $sep=" ";
+                    }
+                }
+            }
+            $html.="<h3>$innertile</h3>";
             $params['path']=$Table->path;
             $params['enableedit']=true;
             $params['maxrows']=$innertablemaxrows;
@@ -1175,9 +1207,8 @@ set_changed();
             $templateInner=file_get_contents($tplfile);
             $params['layout_template']=$templateInner;
             $link=FNNAV_MakeLink(array("op"=>"edit","id"=>$unirecid,"inner"=>"1"),"&",true);
-            $link=str_replace("index.php?","",$link);
-
-            $params['link']=$link;
+            $link=explode("index.php?",$link);
+            $params['link']=$link[1];
             $link=FNNAV_MakeLink(array("op"=>"edit","id"=>$unirecid,"inner"=>null),"&",true);
             $params['link_listmode']=$link;
             $params['textviewlist']="";
@@ -1186,18 +1217,30 @@ set_changed();
                 $params['fields']=str_replace(",","|",$v['innertablefields']);  //innertablefields	
             }
 
+
             //op___xdb_
             $t=explode(",",$v["linkfield"]);
             if (isset($t[1]) && $t[1]!= "" && isset($row[$t[0]]))
                 $params['restr']=array($t[1]=>$row[$t[0]]);
+            $params['restr']=isset($params['restr']) ? $params['restr'] : false;
             $params['forcenewvalues']=$params['forceupdatevalues']=$params['restr'];
             //dprint_r($params);
             if (isset($v["tablename"]) && isset($row[$Table->xmltable->primarykey]))
             {
                 ob_start();
+                $params['textnew']=FN_Translate("add a new item into")." ".$title;
                 FN_xmltableeditor($v["tablename"],$params);
                 $html.=ob_get_clean();
             }
+            
+            
+            /*
+              if (isset($_GET["op___xdb_".$v['tablename']]))
+              {
+              $linknewinner = "index.php?page___xdb_{$v['tablename']}=&desc___xdb_{$v['tablename']}=&op___xdb_{$v['tablename']}=insnew&page___xdb_{$v['tablename']}=&mod={$_FN['mod']}&op=edit&id=1&inner=1";
+              $html.="&nbsp;<button type=\"button\" onclick=\"window.location='?".str_replace("&amp;","&",$linknewinner)."'\" >".FN_Translate("add a new item into")."</button>";
+              }
+             */
             $html.="</div>";
         }
     }
@@ -1871,6 +1914,7 @@ function FNNAV_UserCanEditField($user,$row)
         return false;
     $t=FN_XmlTable($tablename);
     $restr=array();
+//    dprint_r($row);
     $restr['table_unirecid']=$row[$t->primarykey];
     $restr['tablename']=$tablename;
     $restr['username']=$user;
@@ -2191,17 +2235,17 @@ function FNNAV_HtmlToolbar($config,$row)
                 break;
             }
         }
-        
-        
-    
+
+
+
     $linkusermodify=FNNAV_MakeLink(array("op"=>"users","id"=>$unirecid),"&");
     $linkmodify=FNNAV_MakeLink(array("op"=>"edit","id"=>$unirecid),"&");
     $linkprev=FNNAV_MakeLink(array("id"=>$prev),"&");
-    $linkhistory =FNNAV_MakeLink(array("op"=>"history","id"=>$unirecid),"&");
+    $linkhistory=FNNAV_MakeLink(array("op"=>"history","id"=>$unirecid),"&");
     $linknext=FNNAV_MakeLink(array("id"=>$next),"&");
     $linklist=FNNAV_MakeLink(array("op"=>null),"&");
     $linkview=FNNAV_MakeLink(array("op"=>"view","id"=>$unirecid),"&");
-    
+
     $vars['txt_rsults']=( $k + 1)."/".count($results);
     $vars['linkusermodify']=$linkusermodify;
     $vars['linkmodify']=$linkmodify;
@@ -2209,7 +2253,7 @@ function FNNAV_HtmlToolbar($config,$row)
     $vars['linkpreviouspage']=$linkprev;
     $vars['linknextpage']=$linknext;
     $vars['linkhistory']=$linkhistory;
-    
+
     $tp_str=FN_TPL_ApplyTplString($tp_str,$vars);
 
 
@@ -2231,13 +2275,6 @@ function FNNAV_HtmlToolbar($config,$row)
     $vars['link']=$linknext;
     $navigatebar_pages.=FN_TPL_ApplyTplString($htmlRecordpage,$vars);
     //-----next / prev / list buttons -----------------------------------------<
-
-
-
-
-
-
-
     //-----view/modify/history/users buttons ---------------------------------->
     $s=$op== "view" ? "class=\"nv_selected\"" : "";
     $navigatebar_options="";
@@ -2323,8 +2360,8 @@ function FNNAV_ViewRecordHistory($unirecid,$_tablename="")
     $action=FN_GetParam("action",$_GET,"flat");
     if ($action== "delete")
     {
-
-        if (FNNAV_IsAdminRecord($unirecid))
+        $item = $t->xmltable->GetRecordByPrimarykey($unirecid);
+        if (FNNAV_IsAdminRecord($item))
         {
             $Table_history->xmltable->DelRecord($version);
             $version="";
@@ -2343,18 +2380,19 @@ function FNNAV_ViewRecordHistory($unirecid,$_tablename="")
         {
             $link_deleteversion=FNNAV_MakeLink(array("action"=>"delete","op"=>"history","id"=>$unirecid,"version"=>$item['idversions']),"&");
             $link_version=FNNAV_MakeLink(array("op"=>"history","id"=>$unirecid,"version"=>$item['idversions']),"&");
+
             if ($version== $item['idversions'])
             {
                 $html.="<h3>".FN_GetDateTime($item['recordupdate'])." by {$item['userupdate']}</h3>";
                 $html.=FNNAV_ViewRecordPage($item['idversions'],"{$tablename}_versions",false); // visualizza la pagina col record
-                if (FNNAV_IsAdminRecord($unirecid))
+                if (FNNAV_IsAdminRecord($item))
                     $html.="<div><a href=\"javascript:check('$link_deleteversion')\">".FN_Translate("delete this version")."</a></div>";
                 $html.="<hr />";
             }
             else
             {
                 $html.="<div>".FN_GetDateTime($item['recordupdate'])." by {$item['userupdate']} <a href=\"$link_version\">".FN_i18n("view")."</a>";
-                if (FNNAV_IsAdminRecord($unirecid))
+                if (FNNAV_IsAdminRecord($item))
                     $html.="&nbsp;<a href=\"javascript:check('$link_deleteversion')\">".FN_i18n("delete")."</a></div>";
             }
         }
@@ -2526,13 +2564,13 @@ function FNNAV_ViewRecordPage($unirecid,$_tablename="",$shownavigatebar=true)
                 $allview=$tmptable->xmltable->getRecords($params['restr']);
                 if (is_array($allview) && count($allview) > 0)
                 {
-                    $ft =  "<h3>{$title}:</h3>";
+                    $ft="<h3>{$title}:</h3>";
                     foreach($allview as $view)
                     {
                         if (FNNAV_CanViewRecord($view[$tmptable->xmltable->primarykey],$v["tablename"]))
                         {
                             echo $ft.FNNAV_ViewRecordPage($view[$tmptable->xmltable->primarykey],$v["tablename"],false);
-                            $ft = "";
+                            $ft="";
                         }
                     }
                 }
@@ -2554,6 +2592,36 @@ function FNNAV_ViewRecordPage($unirecid,$_tablename="",$shownavigatebar=true)
 //------------------------------visualizzazione--------------------------------<
 }
 
+function FNNAV_CanEditRecord($id,$tablename)
+{
+    global $_FN;
+    if (FN_IsAdmin())
+        return true;
+    $config=FN_LoadConfig();
+    //----if inner table is in other section----------------------------------->
+    if ($config['tables']!= $tablename)
+    {
+        foreach($_FN['sections'] as $section)
+        {
+            if ($section['type']== "navigator")
+            {
+                $configTmp=FN_LoadConfig("",$section['id']);
+                if ($configTmp['tables']== $tablename)
+                {
+                    $config=$configTmp;
+                    if (!FN_UserCanViewSection($section['id']))
+                    {
+                        return false;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    //----if inner table is in other section-----------------------------------<
+    return true;
+}
+
 /**
  * return true if user can view record
  * @global array $_FN
@@ -2568,14 +2636,14 @@ function FNNAV_CanViewRecord($id,$tablename)
         return true;
     $config=FN_LoadConfig();
     //----if inner table is in other section----------------------------------->
-    if ($config['tables']!=$tablename)
+    if ($config['tables']!= $tablename)
     {
-        foreach ($_FN['sections'] as $section)
+        foreach($_FN['sections'] as $section)
         {
-            if ($section['type']=="navigator")
+            if ($section['type']== "navigator")
             {
                 $configTmp=FN_LoadConfig("",$section['id']);
-                if ($configTmp['tables']==$tablename)
+                if ($configTmp['tables']== $tablename)
                 {
                     $config=$configTmp;
                     if (!FN_UserCanViewSection($section['id']))

@@ -11,7 +11,7 @@ ob_start();
 $script_name=basename(__FILE__);
 require_once ("include/flatnux.php");
 $_FN['controlcenter']=$script_name;
-if (empty($_FN['controlcenter_theme'])||!file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}"))
+if (empty($_FN['controlcenter_theme']) || !file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}"))
     $_FN['controlcenter_theme']="classic";
 if (file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/theme.php"))
     require_once("controlcenter/themes/{$_FN['controlcenter_theme']}/theme.php");
@@ -23,7 +23,7 @@ $_FN['fneditmode']="0";
 $opt=FN_GetParam("opt",$_GET,"html");
 $op=FN_GetParam("op",$_GET,"html");
 $modcont=FN_GetParam("modcont",$_GET,"flat");
-if ($opt=="")
+if ($opt== "")
 {
     $section_enabled=FN_XMLQuery("SELECT * FROM fn_cc_users WHERE username LIKE '{$_FN['user']}'");
     if (!empty($section_enabled[0]['default']))
@@ -33,7 +33,7 @@ if ($opt=="")
     }
 }
 //-------------------------init table cc_users--------------------------------->
-    $xml='<?xml version="1.0" encoding="UTF-8"?>
+$xml='<?xml version="1.0" encoding="UTF-8"?>
 <?php exit(0);?>
 <tables>
 	<field>
@@ -78,7 +78,7 @@ foreach($items as $sections)
 {
     foreach($sections['sections'] as $section)
     {
-        if ($section['opt']==$opt)
+        if ($section['opt']== $opt)
         {
             $params['section_title']=$section['title'];
             $can_view=true;
@@ -86,7 +86,7 @@ foreach($items as $sections)
     }
 }
 
-if ($opt!=""&&$can_view==false&&!FN_IsAdmin())
+if ($opt!= "" && $can_view== false && !FN_IsAdmin())
 {
     //------------------------------------------------------login form----->
     $params=array();
@@ -103,7 +103,7 @@ if (file_exists("controlcenter/sections/$opt/help/"))
     $params['htmlhelp']=FN_HtmlContent("controlcenter/sections/$opt/help/");
 }
 
-if (($modcont!=""&&!FN_CanModifyFile($_FN['user'],$modcont))||!FN_IsAdmin()&&FNCC_GetCCSections()==false)
+if (($modcont!= "" && !FN_CanModifyFile($_FN['user'],$modcont)) || !FN_IsAdmin() && FNCC_GetCCSections()== false)
 {
     //------------------------------------------------------login form----->
     $params=array();
@@ -117,15 +117,24 @@ else
 {
 //-----------------------------MAIN PAGE--------------------------------------->
     $sectionvalues=FN_GetSectionValues($sect);
-    if (!empty($opt)&&UserCanAdmin($opt))
+    if (!empty($opt) && UserCanAdmin($opt))
     {
         $html=FN_TPL_include_tpl(FN_TPL_ApplyTplFile("controlcenter/themes/{$_FN['controlcenter_theme']}/controlcenter.tp.html",$params),$params);
     }
     else
     {
-        $html=FN_TPL_include_tpl(FN_TPL_ApplyTplFile("controlcenter/themes/{$_FN['controlcenter_theme']}/controlcenter.dashboard.tp.html",$params),$params);
+        if (file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/controlcenter.dashboard.tp.html"))
+        {
+            $html=FN_TPL_include_tpl(FN_TPL_ApplyTplFile("controlcenter/themes/{$_FN['controlcenter_theme']}/controlcenter.dashboard.tp.html",$params),$params);
+        }
+        else
+        {
+            $str=file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/controlcenter.tp.html");
+            $str=str_replace("include ccsection","include dashboard",$str);
+            $html=FN_TPL_include_tpl(FN_TPL_ApplyTplString($str,$params,"controlcenter/themes/{$_FN['controlcenter_theme']}/"),$params);
+        }
     }
-    $html = str_replace("</head>","{$_FN['section_header_footer']}</head>",$html);
+    $html=str_replace("</head>","{$_FN['section_header_footer']}</head>",$html);
 }
 //-----------------------------MAIN PAGE---------------------------------------<
 die($html);
@@ -146,7 +155,7 @@ function FN_TPL_tp_create_ccsection()
     $opt=FN_GetParam("opt",$_GET);
     $modcont=FN_GetParam("modcont",$_GET,"flat");
     //----edit file on filesystem----->
-    if ($modcont!=""&&FN_CanModifyFile($_FN['user'],$modcont)&&file_exists($modcont))
+    if ($modcont!= "" && FN_CanModifyFile($_FN['user'],$modcont) && file_exists($modcont))
     {
         $linkcancel=FN_RewriteLink("index.php?mod={$_FN['mod']}");
         FN_EditContent($modcont,$linkcancel,$linkcancel);
@@ -186,7 +195,7 @@ function FN_TPL_tp_create_ccsection()
         $fileconfig_to_edit="plugins/$plugin_to_edit_config/config.php";
     }
     //editor
-    if ($fileconfig_to_edit!=""&&file_exists($fileconfig_to_edit))
+    if ($fileconfig_to_edit!= "" && file_exists($fileconfig_to_edit))
     {
         ob_start();
         echo FNCC_HtmlEditConfFile("$fileconfig_to_edit","?opt=$opt");
@@ -205,7 +214,7 @@ function FN_TPL_tp_create_ccsection()
         {
             $filetoinclude="sections/$sect/controlcenter/settings.php";
         }
-        elseif (!empty($sectionvalues['type'])&&file_exists("modules/{$sectionvalues['type']}/controlcenter/settings.php"))
+        elseif (!empty($sectionvalues['type']) && file_exists("modules/{$sectionvalues['type']}/controlcenter/settings.php"))
         {
             $filetoinclude="modules/{$sectionvalues['type']}/controlcenter/settings.php";
         }
@@ -221,7 +230,7 @@ function FN_TPL_tp_create_ccsection()
         {
             $filetoinclude="modules/$sect/controlcenter/settings.php";
         }
-        elseif (!empty($sectionvalues['type'])&&file_exists("modules/{$sectionvalues['type']}/controlcenter/settings.php"))
+        elseif (!empty($sectionvalues['type']) && file_exists("modules/{$sectionvalues['type']}/controlcenter/settings.php"))
         {
             $filetoinclude="modules/{$sectionvalues['type']}/controlcenter/settings.php";
         }
@@ -260,7 +269,7 @@ function FN_TPL_tp_create_ccsection()
 
     $title=FN_GetFolderTitle("controlcenter/sections/$opt/");
     ob_start();
-    if (!empty($opt)&&file_exists("controlcenter/sections/$opt/section.php"))
+    if (!empty($opt) && file_exists("controlcenter/sections/$opt/section.php"))
     {
         include "controlcenter/sections/$opt/section.php";
     }
@@ -282,7 +291,7 @@ function FNCC_GetSectionsConfigs()
     {
         $section['opt']="fnc_ccnf_config_section_".$section['id'];
         $section['description']=" ";
-        if (!empty($section['type'])&&(file_exists("modules/{$section['type']}/config.php") /* || file_exists("modules/{$section['type']}/controlcenter/settings.php") */))
+        if (!empty($section['type']) && (file_exists("modules/{$section['type']}/config.php") /* || file_exists("modules/{$section['type']}/controlcenter/settings.php") */))
         {
             $section['cc_icon']="controlcenter/sections/settings/cms/icon.png";
             $section['title']=FN_Translate("page")." ".FN_GetFolderTitle("modules/{$section['type']}/").": ".$section['title']."";
@@ -304,7 +313,7 @@ function FNCC_GetSectionsConfigs()
     {
         $section['opt']="fnc_ccnf_config_block_".$section['id'];
         $section['description']=" ";
-        if (!empty($section['type'])&&(file_exists("modules/{$section['type']}/config.php") /* || file_exists("modules/{$section['type']}/controlcenter/settings.php") */))
+        if (!empty($section['type']) && (file_exists("modules/{$section['type']}/config.php") /* || file_exists("modules/{$section['type']}/controlcenter/settings.php") */))
         {
             $section['cc_icon']="controlcenter/sections/settings/cms/icon.png";
             $section['title']=FN_Translate("block")." ".(FN_GetFolderTitle("modules/{$section['type']}/")." in \"".$section['title']."\"");
@@ -340,12 +349,12 @@ function FNCC_GetSectionsSettings()
     {
         $section['opt']="fnc_ccnf_section_{$section['id']}";
         $ttype=ucfirst(FN_GetFolderTitle($_FN['filesystempath']."/modules/{$section['type']}"));
-        if ($section['type']=="")
+        if ($section['type']== "")
             $section['title']=$section['title'];
         else
             $section['title']=$ttype." in \"".$section['title']."\"";
         $section['description']=" ";
-        if (!empty($section['type'])&&file_exists("modules/{$section['type']}/controlcenter/settings.php"))
+        if (!empty($section['type']) && file_exists("modules/{$section['type']}/controlcenter/settings.php"))
         {
 
             $section['cc_icon']=FN_FromTheme("controlcenter/images/configure.png");
@@ -366,7 +375,7 @@ function FNCC_GetSectionsSettings()
         $section['opt']="fnc_ccnf_block_{$section['id']}";
         $section['description']=" ";
 
-        if (!empty($section['type'])&&file_exists("modules/{$section['type']}/controlcenter/settings.php"))
+        if (!empty($section['type']) && file_exists("modules/{$section['type']}/controlcenter/settings.php"))
         {
 
             $section['cc_icon']=FN_FromTheme("controlcenter/images/configure.png");
@@ -467,7 +476,7 @@ function FNCC_HtmlDashBoard($htmltemplate)
         return;
     }
     $html="";
-    if (strstr($htmltemplate,"dashboard_contents")===false)
+    if (strstr($htmltemplate,"dashboard_contents")=== false)
     {
         $htmltemplate="<h2>{dashboard_title}</h2>
                     <div>{dashboard_contents}</div>";
@@ -481,7 +490,7 @@ function FNCC_HtmlDashBoard($htmltemplate)
         if (!empty($section['type']))
         {
             $sectiondir="modules/{$section['type']}";
-            if (is_dir($sectiondir)&&file_exists("$sectiondir/controlcenter/fncc_dashboard.php"))
+            if (is_dir($sectiondir) && file_exists("$sectiondir/controlcenter/fncc_dashboard.php"))
             {
                 $params['dashboard_title']=$section['title'];
                 ob_start();
@@ -497,7 +506,7 @@ function FNCC_HtmlDashBoard($htmltemplate)
     {
         $section=basename($sectiondir);
         $title=FN_GetFolderTitle($sectiondir);
-        if (is_dir($sectiondir)&&file_exists("$sectiondir/controlcenter/fncc_dashboard.php"))
+        if (is_dir($sectiondir) && file_exists("$sectiondir/controlcenter/fncc_dashboard.php"))
         {
 
             $params['dashboard_title']=$title;
@@ -515,7 +524,7 @@ function FNCC_HtmlDashBoard($htmltemplate)
             $sectiondirs=glob("$cc_sectiondir/*");
             foreach($sectiondirs as $sectiondir)
             {
-                if (is_dir($sectiondir)&&file_exists("$sectiondir/fncc_dashboard.php"))
+                if (is_dir($sectiondir) && file_exists("$sectiondir/fncc_dashboard.php"))
                 {
 
                     $params['dashboard_title']=FN_GetFolderTitle($sectiondir);
@@ -586,7 +595,7 @@ function FNCC_GetMenuItems()
     if (!empty($section_enabled[0]['ccsections']))
     {
         $toShow=explode(",",$section_enabled[0]['ccsections']);
-        $default = isset($section_enabled[0]['default'])?$section_enabled[0]['default']:"";
+        $default=isset($section_enabled[0]['default']) ? $section_enabled[0]['default'] : "";
         if ($default && !in_array($default,$toShow))
             $toShow[]=$default;
     }
@@ -608,7 +617,7 @@ function FNCC_GetMenuItems()
             $item['opt']="$sectiongroup/$section";
             $item['id']="$sectiongroup/$section";
             $item['description']="";
-            if (is_array($toShow)&&!in_array($item['opt'],$toShow))
+            if (is_array($toShow) && !in_array($item['opt'],$toShow))
             {
                 
             }
@@ -624,7 +633,7 @@ function FNCC_GetMenuItems()
                 $sectionsIngroup[]=$item;
             }
         }
-        if ($sectiongroup=="settings")
+        if ($sectiongroup== "settings")
         {
 //---------------get list of config.php in plugins and sections---------------->
             $_sectionsIngroup=array();
@@ -638,7 +647,7 @@ function FNCC_GetMenuItems()
 
                 //  dprint_r($item);
 
-                if (is_array($toShow)&&!in_array($item['opt'],$toShow))
+                if (is_array($toShow) && !in_array($item['opt'],$toShow))
                 {
                     continue;
                 }
@@ -658,7 +667,7 @@ function FNCC_GetMenuItems()
                 $item['id']="$sectiongroup/fnc_ccnf_config_plugin_{$_section['id']}";
                 $item['description']="";
 
-                if (is_array($toShow)&&!in_array($item['opt'],$toShow))
+                if (is_array($toShow) && !in_array($item['opt'],$toShow))
                 {
                     continue;
                 }
@@ -672,7 +681,7 @@ function FNCC_GetMenuItems()
             //plugins configs----<
 //---------------get list of config.php in plugins and sections----------------<				
         }
-        if ($sectiongroup=="contents")
+        if ($sectiongroup== "contents")
         {
             $dirs=FNCC_GetSectionsSettings();
             //dprint_r($dirs);
@@ -682,7 +691,7 @@ function FNCC_GetMenuItems()
                 $item['id']=$section['opt'];
                 $item['description']="";
 
-                if (is_array($toShow)&&!in_array($item['opt'],$toShow))
+                if (is_array($toShow) && !in_array($item['opt'],$toShow))
                 {
                     continue;
                 }
@@ -700,7 +709,7 @@ function FNCC_GetMenuItems()
             }
             //customs configs----<            
         }
-        if (count($sectionsIngroup)==0)
+        if (count($sectionsIngroup)== 0)
         {
             unset($menu[$sectiongroup]);
         }
@@ -736,7 +745,7 @@ function FNCC_GetMenuItems()
         $item['id']="fnc_ccnf_plugin_{$section['id']}";
         $item['description']="";
 
-        if (is_array($toShow)&&!in_array($item['opt'],$toShow))
+        if (is_array($toShow) && !in_array($item['opt'],$toShow))
         {
             continue;
         }
@@ -747,7 +756,7 @@ function FNCC_GetMenuItems()
     }
 //---------------get settings.php in plugins and sections ---------------------<		
     $menu['fnc_ccnf_plugin']['sections']=$sectionsIngroup;
-    if (count($sectionsIngroup)==0)
+    if (count($sectionsIngroup)== 0)
         unset($menu['fnc_ccnf_plugin']);
 
     return $menu;
@@ -781,7 +790,7 @@ function FN_TPL_tp_create_ccmenu($str)
     $tp_menuitemactive=FN_TPL_GetHtmlPart("menuitemactive",$str,$tp_menuitem);
     $tp_menuitemdropdown=FN_TPL_GetHtmlPart("menuitemdropdown",$str);
     $tp_menuitemdropdownactive=FN_TPL_GetHtmlPart("menuitemdropdownactive",$str);
-    if ($tp_menuitemdropdownactive=="")
+    if ($tp_menuitemdropdownactive== "")
         $tp_menuitemdropdownactive=$tp_menuitemdropdown;
     $tp_menuitem=preg_replace("/<a([^>]+)(href)=(\")([^\"]*)(\")/im","<a\\1\\2=\\3{link}\\3",$tp_menuitem);
     $tp_menuitem=preg_replace("/<a([^>]+)(href)=(\')([^\']*)(\')/im","<a\\1\\2=\\3{link}\\3",$tp_menuitem);
@@ -791,59 +800,59 @@ function FN_TPL_tp_create_ccmenu($str)
     $tp_menuitemdropdown=preg_replace("/<a([^>]+)(href)=(\')([^\']*)(\')/im","<a\\1\\2=\\3#\\3",$tp_menuitemdropdown);
     $tp_menuitemdropdownactive=preg_replace("/<a([^>]+)(href)=(\")([^\"]*)(\")/im","<a\\1\\2=\\3#\\3",$tp_menuitemdropdownactive);
     $tp_menuitemdropdownactive=preg_replace("/<a([^>]+)(href)=(\')([^\']*)(\')/im","<a\\1\\2=\\3#\\3",$tp_menuitemdropdownactive);
-    if (strpos($tp_menuitem,'{title}')===false)
+    if (strpos($tp_menuitem,'{title}')=== false)
     {
         $tp_menuitem=preg_replace("/(<a.*>)(.*)(<\/a)/im","\\1{title}\\3",$tp_menuitem);
     }
-    if (strpos($tp_menuitemactive,'{title}')===false)
+    if (strpos($tp_menuitemactive,'{title}')=== false)
     {
         $tp_menuitemactive=preg_replace("/(<a.*>)(.*)(<\/a)/im","\\1{title}\\3",$tp_menuitemactive);
     }
-    if (strpos($tp_menuitemdropdown,'{title}')===false)
+    if (strpos($tp_menuitemdropdown,'{title}')=== false)
     {
         $tp_menuitemdropdown=preg_replace("/(<a.*>)(.*)(<\/a)/im","\\1{title}\\3",$tp_menuitemdropdown);
     }
-    if (strpos($tp_menuitemdropdownactive,'{title}')===false)
+    if (strpos($tp_menuitemdropdownactive,'{title}')=== false)
     {
         $tp_menuitemdropdownactive=preg_replace("/(<a.*>)(.*)(<\/a)/im","\\1{title}\\3",$tp_menuitemdropdownactive);
     }
     //add title
-    if (false==strpos($tp_menuitem,"title="))
+    if (false== strpos($tp_menuitem,"title="))
     {
         $tp_menuitem=str_replace("<a","<a title=\"{description}\" ",$tp_menuitem);
     }
     //add title
-    if (false==strpos($tp_menuitemactive,"title="))
+    if (false== strpos($tp_menuitemactive,"title="))
     {
         $tp_menuitemactive=str_replace("<a","<a title=\"{description}\" ",$tp_menuitemactive);
     }
     //add title
-    if (false==strpos($tp_menuitemactive,"title="))
+    if (false== strpos($tp_menuitemactive,"title="))
     {
         $tp_menuitemdropdown=str_replace("<a","<a title=\"{description}\" ",$tp_menuitemdropdown);
     }
     //add title
-    if (false==strpos($tp_menuitemactive,"title="))
+    if (false== strpos($tp_menuitemactive,"title="))
     {
         $tp_menuitemdropdownactive=str_replace("<a","<a title=\"{description}\" ",$tp_menuitemdropdownactive);
     }
     //add accesskey
-    if (false==strpos($tp_menuitem,"{accesskey"))
+    if (false== strpos($tp_menuitem,"{accesskey"))
     {
         $tp_menuitem=str_replace("<a","<a accesskey=\"{accesskey}\" ",$tp_menuitem);
     }
     //add accesskey
-    if (false==strpos($tp_menuitemactive,"{accesskey"))
+    if (false== strpos($tp_menuitemactive,"{accesskey"))
     {
         $tp_menuitemactive=str_replace("<a","<a accesskey=\"{accesskey}\" ",$tp_menuitemactive);
     }
     //add accesskey
-    if (false==strpos($tp_menuitemdropdown,"{accesskey"))
+    if (false== strpos($tp_menuitemdropdown,"{accesskey"))
     {
         $tp_menuitemdropdown=str_replace("<a","<a accesskey=\"{accesskey}\" ",$tp_menuitemdropdown);
     }
     //add accesskey
-    if (false==strpos($tp_menuitemdropdownactive,"{accesskey"))
+    if (false== strpos($tp_menuitemdropdownactive,"{accesskey"))
     {
         $tp_menuitemdropdownactive=str_replace("<a","<a accesskey=\"{accesskey}\" ",$tp_menuitemdropdownactive);
     }
@@ -853,7 +862,7 @@ function FN_TPL_tp_create_ccmenu($str)
         //dprint_r($sectionvalues);
         $sectionvalues['accesskey']="";
         $htmlmenuitem="";
-        if (FN_erg("^fnc_ccnf_config_section",$opt)||FN_erg("^fnc_ccnf_config_block",$opt))
+        if (FN_erg("^fnc_ccnf_config_section",$opt) || FN_erg("^fnc_ccnf_config_block",$opt))
         {
             $opt="settings/$opt";
         }
@@ -861,7 +870,7 @@ function FN_TPL_tp_create_ccmenu($str)
         {
             $opt="settings/$opt";
         }
-        elseif (FN_erg("^fnc_ccnf_section",$opt)||FN_erg("^fnc_ccnf_block",$opt)) //nc_ccnf_block
+        elseif (FN_erg("^fnc_ccnf_section",$opt) || FN_erg("^fnc_ccnf_block",$opt)) //nc_ccnf_block
         {
             $opt="contents/$opt";
         }
@@ -869,12 +878,12 @@ function FN_TPL_tp_create_ccmenu($str)
         $sectionvalues['description']=htmlspecialchars($sectionvalues['description'],ENT_QUOTES);
 
         //dprint_r(" $opt,{$sectionvalues['id']}  $tp_menuitemdropdownactive");
-        if ($tp_menuitemdropdownactive!=""&&false!==strpos($opt,$sectionvalues['id']))
+        if ($tp_menuitemdropdownactive!= "" && false!== strpos($opt,$sectionvalues['id']))
         {
             $htmlmenuitem=FN_TPL_ApplyTplString($tp_menuitemdropdownactive,$sectionvalues,false);
             $tp_submenuitem_ori_template=FN_TPL_GetHtmlPart("submenu",$tp_menuitemdropdownactive);
         }
-        elseif ($tp_menuitemdropdown!="")
+        elseif ($tp_menuitemdropdown!= "")
         {
             $htmlmenuitem=FN_TPL_ApplyTplString($tp_menuitemdropdown,$sectionvalues,false);
             $tp_submenuitem_ori_template=FN_TPL_GetHtmlPart("submenu",$tp_menuitemdropdown);
@@ -898,7 +907,7 @@ function FN_TPL_tp_create_ccsubmenu_($str,$sections)
 {
     global $_FN;
     $opt=FN_GetParam("opt",$_GET);
-    if ($str=="")
+    if ($str== "")
         return "";
     if (!$sections)
         return "";
@@ -912,28 +921,28 @@ function FN_TPL_tp_create_ccsubmenu_($str,$sections)
     $tp_menuitem=preg_replace("/<a([^>]+)(href)=(\')([^\']*)(\')/im","<a\\1\\2=\\3{link}\\3",$tp_menuitem);
     $tp_menuitemactive=preg_replace("/<a([^>]+)(href)=(\")([^\"]*)(\")/im","<a\\1\\2=\\3{link}\\3",$tp_menuitemactive);
     $tp_menuitemactive=preg_replace("/<a([^>]+)(href)=(\')([^\']*)(\')/im","<a\\1\\2=\\3{link}\\3",$tp_menuitemactive);
-    if (strpos($tp_menuitem,'{title}')===false)
+    if (strpos($tp_menuitem,'{title}')=== false)
     {
         $tp_menuitem=preg_replace("/(<a.*>)(.*)(<\/a)/im","\\1{title}\\3",$tp_menuitem);
         $tp_menuitemactive=preg_replace("/(<a.*>)(.*)(<\/a)/im","\\1{title}\\3",$tp_menuitemactive);
     }
     //add title
-    if (false==strpos($tp_menuitem,"title="))
+    if (false== strpos($tp_menuitem,"title="))
     {
         $tp_menuitem=str_replace("<a","<a title=\"{description}\" ",$tp_menuitem);
     }
     //add title
-    if (false==strpos($tp_menuitemactive,"title="))
+    if (false== strpos($tp_menuitemactive,"title="))
     {
         $tp_menuitemactive=str_replace("<a","<a title=\"{description}\" ",$tp_menuitemactive);
     }
     //add accesskey
-    if (false==strpos($tp_menuitem,"{accesskey"))
+    if (false== strpos($tp_menuitem,"{accesskey"))
     {
         $tp_menuitem=str_replace("<a","<a accesskey=\"{accesskey}\" ",$tp_menuitem);
     }
     //add accesskey
-    if (false==strpos($tp_menuitemactive,"{accesskey"))
+    if (false== strpos($tp_menuitemactive,"{accesskey"))
     {
         $tp_menuitemactive=str_replace("<a","<a accesskey=\"{accesskey}\" ",$tp_menuitemactive);
     }
@@ -947,16 +956,16 @@ function FN_TPL_tp_create_ccsubmenu_($str,$sections)
 
         //dprint_r("$opt {$sectionvalues['id']} ");
         $sectionvalues['accesskey']="";
-        if ($opt==$sectionvalues['opt'])
+        if ($opt== $sectionvalues['opt'])
             $htmlout.=FN_TPL_ApplyTplString($tp_menuitemactive,$sectionvalues,false);
         else
             $htmlout.=FN_TPL_ApplyTplString($tp_menuitem,$sectionvalues,false);
-        if (strpos($htmlout,'{submenu}')!==false)
+        if (strpos($htmlout,'{submenu}')!== false)
         {
             $htmlout=str_replace("{submenu}",FN_TPL_tp_create_ccsubmenu_($str,$sectionvalues['id']),$htmlout);
         }
     }
-    if ($htmlout!="")
+    if ($htmlout!= "")
         $htmlout=str_replace($tp_menuitem_old,$htmlout,$str);
     return $htmlout;
 }
@@ -972,22 +981,22 @@ function FNCC_XmltableEditor($tablename,$params=false,$params2=false)
     global $_FN;
     if (is_array($params2))
     {
-        if (empty($params2['layout_template'])&&file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/form.tp.html"))
+        if (empty($params2['layout_template']) && file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/form.tp.html"))
         {
             $params2['layout_template']=file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/form.tp.html");
         }
-        if (empty($params['html_template_grid'])&&file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/grid.tp.html"))
+        if (empty($params['html_template_grid']) && file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/grid.tp.html"))
         {
             $params2['html_template_grid']=file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/grid.tp.html");
         }
     }
     else
     {
-        if (empty($params['layout_template'])&&file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/form.tp.html"))
+        if (empty($params['layout_template']) && file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/form.tp.html"))
         {
             $params['layout_template']=file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/form.tp.html");
         }
-        if (empty($params['html_template_grid'])&&file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/grid.tp.html"))
+        if (empty($params['html_template_grid']) && file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/grid.tp.html"))
         {
             $params['html_template_grid']=file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/grid.tp.html");
         }
@@ -1007,17 +1016,17 @@ function FN_HtmlModalWindow($body,$title="",$textbutton="ok")
 {
     global $_FN;
     static $html="";
-    if ($title=="")
+    if ($title== "")
     {
         $title="{$_FN['sitename']}";
     }
 
-    if ($html==""&&file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/modal.tp.html"))
+    if ($html== "" && file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/modal.tp.html"))
     {
         $html=file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/modal.tp.html");
     }
 
-    if ($html=="")
+    if ($html== "")
     {
         $html="\n<script language=\"javascript\">";
         $html.="\n setTimeout(function(){alert(\"".str_replace("\n","\\n",addslashes($body))."\",0)});";
@@ -1044,10 +1053,10 @@ function FN_HtmlModalWindow($body,$title="",$textbutton="ok")
 function FNCC_HtmlEditConfFile($file,$formaction="",$exit="",$allow=false,$write_to_file=false,$mod="",$block="",$tableHtmlattibutes="")
 {
     global $_FN;
-    if ($tableHtmlattibutes==""&&file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/editconf.tp.html"))
+    if ($tableHtmlattibutes== "" && file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/editconf.tp.html"))
     {
         preg_match("/<!-- editconf table attributes -->(.*)<!-- end editconf table attributes -->/is",file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/editconf.tp.html"),$out);
-        $tableHtmlattibutes=empty($out[1]) ? "" : $out[1];       
+        $tableHtmlattibutes=empty($out[1]) ? "" : $out[1];
     }
 
     return FN_HtmlEditConfFile($file,$formaction,$exit,$allow,$write_to_file,$mod,$block,$tableHtmlattibutes);

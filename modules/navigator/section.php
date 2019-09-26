@@ -223,7 +223,7 @@ else
                 if (FN_IsAdmin() && $config['permissions_records_groups'] && $config['enable_permissions_each_records'])
                 {
                     $l=FN_RewriteLink("index.php?mod={$_FN['mod']}&amp;op=admingroups");
-                    $html.="<div><a href=\"$l\">".FN_Translate("access control")."</a></div>";
+                    $html.="<div><br /><a href=\"$l\">".FN_Translate("access control")."</a></div>";
                 }
 
                 break;
@@ -308,7 +308,7 @@ function FNNAV_ViewGridForm()
     if (FNNAV_CanAddRecord())
     {
         $link=FNNAV_MakeLink(array("op"=>"new"),"&");
-        $tplvars['html_addnew']="<div class=\"searchnewrecord\"><button class=\"button\" onclick=\"window.location='$link'\"><img style=\"vertical-align: middle;\" src=\"".FN_FromTheme("images/mime/doc.png")."\" alt=\"\" />&nbsp;<b>".FN_Translate("add new")."</b></button></div>";
+        $tplvars['html_addnew']="<div class=\"searchnewrecord\"><button class=\"button\" onclick=\"window.location='$link'\">".FN_Translate("add new")."</button></div>";
     }
     $tplvars['html_footer']="";
     if (file_exists("sections/{$_FN['mod']}/grid_footer.php"))
@@ -699,6 +699,7 @@ function FNNAV_HtmlItem($tablename,$pk,$templateStringAll)
     $data=$Table->GetRecordTranslatedByPrimarykey($pk,false);
     //-----image----------------------->
     $photo=isset($data[$config['image_titlefield']]) ? $Table->xmltable->getThumbPath($data,$config['image_titlefield']) : "";
+    $photo_fullsize=isset($data[$config['image_titlefield']]) ? $_FN['siteurl'].$Table->xmltable->getFilePath($data,$config['image_titlefield']) : "";
 
     if ($photo!= "")
     {
@@ -711,7 +712,7 @@ function FNNAV_HtmlItem($tablename,$pk,$templateStringAll)
     else
         $photo="modules/navigator/default.png";
     if (empty($config['image_size']))
-        $config['image_size']=100;
+        $config['image_size']=200;
     if (file_exists("thumb.php"))
         $img="{$_FN['siteurl']}thumb.php?h={$config['image_size']}&w={$config['image_size']}&f=".$photo;
     else
@@ -722,6 +723,8 @@ function FNNAV_HtmlItem($tablename,$pk,$templateStringAll)
     $tplvars['item_urledit']=FNNAV_MakeLink(array("op"=>"edit","id"=>$pk),"&amp;");
     $tplvars['item_urldelete']=FNNAV_MakeLink(array("op"=>"del","id"=>$pk),"&amp;");
     $tplvars['item_urlimage']=$img;
+    $tplvars['item_urlimage_fullsize']=$photo_fullsize;
+    
     $dettlink=FNNAV_MakeLink(array("op"=>"view","id"=>$pk),"&amp;");
 
     //----title-------------------------------->
@@ -740,8 +743,12 @@ function FNNAV_HtmlItem($tablename,$pk,$templateStringAll)
         }
         else
         {
-            $titlename=each($data);
-            $titlename=$titlename[1];
+            foreach($data as $tv)
+            {
+                $titlename=$tv;
+                break;                
+            }
+            $titlename=isset($titlename[1])?$titlename[1]:"";
         }
     $tplvars['item_title']=FN_FixEncoding($titlename);
     //----title--------------------------------<
@@ -949,7 +956,7 @@ function FNNAV_PrintList($results,$tplvars)
                 //---------------------calcolo paginazione --------------------<
                 //---------------------tabella paginazione -------------------->
                 $tpl_vars=array();
-                
+
                 $tp_str_navpages="
 <div class=\"FNNAV_pages\"><span>{i18n:results per page} </span>
 <!-- pagination -->
@@ -976,15 +983,15 @@ function FNNAV_PrintList($results,$tplvars)
 &nbsp;<a title=\"{txtview}\" onclick=\"call_ajax('{linkviewmode}','pageresults');return false\" href=\"{linkviewmode}\">
 <img style=\"vertical-align:middle;border:0px\" src=\"{imageviewmode}\"></a> - {txt_rsults}</div>
 ";
-                $tp_str_navpages_theme =FN_TPL_GetHtmlPart("nav pagination",$templateString);
-                if ($tp_str_navpages_theme!="")
+                $tp_str_navpages_theme=FN_TPL_GetHtmlPart("nav pagination",$templateString);
+                if ($tp_str_navpages_theme!= "")
                 {
                     $tp_str_navpages=$tp_str_navpages_theme;
                     $templateString=str_replace($tp_str_navpages_theme,"{html_pages}",$templateString);
                 }
-               /* dprint_xml($tp_str_navpages);
-                dprint_xml($templateString);
-                die();*/
+                /* dprint_xml($tp_str_navpages);
+                  dprint_xml($templateString);
+                  die(); */
                 //----------------------------pagination----------------------->
                 $tp_str_pagination=FN_TPL_GetHtmlPart("pagination",$tp_str_navpages);
                 $tp_str_recordpage=FN_TPL_GetHtmlPart("recordpage",$tp_str_pagination);
@@ -1013,6 +1020,24 @@ function FNNAV_PrintList($results,$tplvars)
                     else
                         $html_rpp.=FN_TPL_ApplyTplString($tp_str_recordpage,$tplvars);
                 }
+
+
+                if ($viewmode== "icon")
+                {
+                    $linkpage=FNNAV_MakeLink(array("viewmode"=>"list"),"&");
+                    $tplvars['linkviewmode']=$linkpage;
+                    $tplvars['imageviewmode']="{$_FN['siteurl']}modules/{$_FN['sectionvalues']['type']}/icons.png";
+
+                    //$htmlpages.="<a title=\"".FN_Translate("icon view")."\" onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\" ><img style=\"vertical-align:middle;border:0px\" src=\"{$_FN['siteurl']}modules/{$_FN['sectionvalues']['type']}/icons.png\" /></a>";
+                }
+                else
+                {
+                    $linkpage=FNNAV_MakeLink(array("viewmode"=>"icon"),"&");
+                    $tplvars['linkviewmode']=$linkpage;
+                    $tplvars['imageviewmode']="{$_FN['siteurl']}modules/{$_FN['sectionvalues']['type']}/list.png";
+                    //$htmlpages.="<a title=\"".FN_Translate("list view")."\" onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\" ><img style=\"vertical-align:middle;border:0px\" src=\"{$_FN['siteurl']}modules/{$_FN['sectionvalues']['type']}/list.png\" /></a>";
+                }
+
                 $tp_str_navpages=FN_TPL_ReplaceHtmlPart("pagination",$html_rpp,$tp_str_navpages);
                 $tp_str_navpages=FN_TPL_ApplyTplString($tp_str_navpages,$tplvars);
 
@@ -1032,8 +1057,8 @@ function FNNAV_PrintList($results,$tplvars)
                 else
                 {
                     $tplvars['linkpreviouspage']="#";
-              
-                   // $htmlpages.="<a class=\"disabled\" href=\"#\">".FN_Translate("previous")."</a>&nbsp;";
+
+                    // $htmlpages.="<a class=\"disabled\" href=\"#\">".FN_Translate("previous")."</a>&nbsp;";
                 }
                 $max_pages=8;
                 $startpage=$page;
@@ -1056,7 +1081,7 @@ function FNNAV_PrintList($results,$tplvars)
                     $hclass="";
                     if ($page== $i)
                         $hclass="class=\"nv_selected\"";
-                   // $htmlpages.="<a $hclass onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\">$i</a>&nbsp;";
+                    // $htmlpages.="<a $hclass onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\">$i</a>&nbsp;";
                     $tplvars['link']=$linkpage;
                     $tplvars['txt_page']=$i;
                     if ($page== $i)
@@ -1075,21 +1100,7 @@ function FNNAV_PrintList($results,$tplvars)
                 {
                     $tplvars['linknextpage']="#";
                 }
-                if ($viewmode== "icon")
-                {
-                    $linkpage=FNNAV_MakeLink(array("viewmode"=>"list"),"&");
-                    $tplvars['linkviewmode']=$linkpage;
-                    $tplvars['imageviewmode']="{$_FN['siteurl']}modules/{$_FN['sectionvalues']['type']}/icons.png";
-                    
-                    //$htmlpages.="<a title=\"".FN_Translate("icon view")."\" onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\" ><img style=\"vertical-align:middle;border:0px\" src=\"{$_FN['siteurl']}modules/{$_FN['sectionvalues']['type']}/icons.png\" /></a>";
-                }
-                else
-                {
-                    $linkpage=FNNAV_MakeLink(array("viewmode"=>"icon"),"&");
-                    $tplvars['linkviewmode']=$linkpage;
-                    $tplvars['imageviewmode']="{$_FN['siteurl']}modules/{$_FN['sectionvalues']['type']}/list.png";
-                    //$htmlpages.="<a title=\"".FN_Translate("list view")."\" onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\" ><img style=\"vertical-align:middle;border:0px\" src=\"{$_FN['siteurl']}modules/{$_FN['sectionvalues']['type']}/list.png\" /></a>";
-                }
+
                 $tplvars['txt_rsults']=FN_Translate("search results","Aa")."  $start - $end  ".FN_i18n("of")." $num_records"."";
 //                $htmlpages.=" - ".FN_Translate("search results","Aa")."  $start - $end  ".FN_i18n("of")." $num_records"."";
 //                $htmlpages.="</div>";
@@ -1105,16 +1116,36 @@ function FNNAV_PrintList($results,$tplvars)
                     $tplvars['html_rss']="<div><a href=\"{$_FN['rss_link']}\"><img src=\"{$_FN['siteurl']}modules/navigator/rss.png\"  alt=\"rss\"/></a></div>";
                 $tp_str_navpages=FN_TPL_ReplaceHtmlPart("pages",$html_pages,$tp_str_navpages);
                 $tp_str_navpages=FN_TPL_ApplyTplString($tp_str_navpages,$tplvars);
-                
-                
+
+
                 $tplvars['html_pages']=$tp_str_navpages;
             }
             else
             {
-                $htmlItems="{$_FN['sectionvalues']['title']} : ".FN_i18n("no result");
+                if ($viewmode== "icon")
+                {
+                    $linkpage=FNNAV_MakeLink(array("viewmode"=>"list"),"&");
+                    $tplvars['linkviewmode']=$linkpage;
+                    $tplvars['imageviewmode']="{$_FN['siteurl']}modules/{$_FN['sectionvalues']['type']}/icons.png";
+
+                    //$htmlpages.="<a title=\"".FN_Translate("icon view")."\" onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\" ><img style=\"vertical-align:middle;border:0px\" src=\"{$_FN['siteurl']}modules/{$_FN['sectionvalues']['type']}/icons.png\" /></a>";
+                }
+                else
+                {
+                    $linkpage=FNNAV_MakeLink(array("viewmode"=>"icon"),"&");
+                    $tplvars['linkviewmode']=$linkpage;
+                    $tplvars['imageviewmode']="{$_FN['siteurl']}modules/{$_FN['sectionvalues']['type']}/list.png";
+                    //$htmlpages.="<a title=\"".FN_Translate("list view")."\" onclick=\"call_ajax('$linkpage','pageresults');return false\" href=\"$linkpage\" ><img style=\"vertical-align:middle;border:0px\" src=\"{$_FN['siteurl']}modules/{$_FN['sectionvalues']['type']}/list.png\" /></a>";
+                }
+                $tplvars['linknextpage']="#";
+                $tplvars['linkpreviouspage']="#";
+                $tplvars['txt_rsults']="{$_FN['sectionvalues']['title']} : ".FN_i18n("no result");
+                $tplvars['txt_page']="-";
+                $htmlItems="<br /><br />";
             }
             break;
         }
+
 
 
 

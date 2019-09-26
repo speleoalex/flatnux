@@ -1,6 +1,6 @@
 <?php
-
 global $_FN;
+ob_start();
 include "./include/flatnux.php";
 $usecache=$_FN['use_cache'];
 
@@ -12,35 +12,35 @@ $id=FN_GetParam("i",$_GET,"flat");
 $d=FN_GetParam("d",$_GET,"flat");
 $field=FN_GetParam("c",$_GET,"flat");
 $exists=true;
-if ($d=="")
+if ($d== "")
     $d="fndatabase";
-if ($table!=""&&$id!=""&&$field!="")
+if ($table!= "" && $id!= "" && $field!= "")
 {
     $tb=new XMLTable("$d",$table,$_FN['datadir']);
     $filename=$tb->get_file(array("{$tb->primarykey}"=>$id),"$field");
     $filename=str_replace($_FN['siteurl'],"",$filename);
 }
-if ($maxh==""&&$maxw=="")
+if ($maxh== "" && $maxw== "")
 {
     $maxh=24;
     $maxw=24;
 }
-if ($maxh==""&&$maxw!="")
+if ($maxh== "" && $maxw!= "")
 {
     $maxh=$maxw;
 }
-if ($maxw==""&&$maxh!="")
+if ($maxw== "" && $maxh!= "")
 {
     $maxw=$maxh;
 }
-if ($filename==""||!file_exists($filename))
+if ($filename== "" || !file_exists($filename))
 {
     $filename="images/mime/image.png";
     $exists=false;
 }
 
 $thumbcachefile="{$_FN['datadir']}/_THUMBS/{$maxw}x{$maxh}_".md5($filename).".".filemtime($filename).".jpg";
-if ($usecache&&$exists&&file_exists("$thumbcachefile"))
+if ($usecache && $exists && file_exists("$thumbcachefile"))
 {
     header("Location:".$thumbcachefile);
     die();
@@ -54,19 +54,19 @@ if (!$width)
 }
 
 $new_height=$height;
-if ($maxw!=""&&$width>=$maxw)
+if ($maxw!= "" && $width>= $maxw)
 {
     $new_width=$maxw;
-    $new_height=$height*($new_width/$width);
+    $new_height=$height * ($new_width / $width);
 }
 //se troppo alta
-if ($maxh!=""&&$new_height>=$maxh)
+if ($maxh!= "" && $new_height>= $maxh)
 {
     $new_height=$maxh;
-    $new_width=$width*($new_height/$height);
+    $new_width=$width * ($new_height / $height);
 }
 // se l' immagine e gia piccola
-if ($maxw!=""&&$maxh!=""&&$width<=$maxw&&$height<=$maxh)
+if ($maxw!= "" && $maxh!= "" && $width<= $maxw && $height<= $maxh)
 {
     $new_width=$width;
     $new_height=$height;
@@ -119,7 +119,8 @@ if ($usecache)
 }
 else
 {
-    ob_get_clean();
+    while(false!== ob_get_clean()
+    );
     header("Content-type: image/jpeg");
     imagejpeg($thumb);
     imagedestroy($thumb);

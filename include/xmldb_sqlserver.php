@@ -24,6 +24,7 @@
  */
 ini_set('mssql.textlimit','65536');
 ini_set('mssql.textsize','65536');
+
 //ini_set('mssql.charset', 'UTF-8');
 
 class XMLTable_sqlserver
@@ -300,7 +301,7 @@ class XMLTable_sqlserver
             {
                 $field=get_object_vars($fieldvalues);
                 echo "add field $fieldname";
-                $query="ALTER TABLE ".$this->sqltablename." ADD $fieldname ";
+                $query="ALTER TABLE ".$this->sqltablename." ADD [$fieldname] ";
                 $field['size']=isset($field['size']) ? $field['size'] : "";
                 switch($field['type'])
                 {
@@ -327,9 +328,9 @@ class XMLTable_sqlserver
                         $query.=" AUTO_INCREMENT ";
                 }
                 $query.=" NOT NULL";
-                if (!isset($field['extra']) || $field['extra']=!"autoincrement")
+                if (!isset($field['extra']) || $field['extra']!= "autoincrement")
                 {
-                    $query.="DEFAULT('')";
+                    $query.=" DEFAULT('')";
                 }
                 //dprint_r($query);
                 if (!$this->dbQuery($query))
@@ -512,12 +513,13 @@ class XMLTable_sqlserver
         $res=$this->dbQuery($query);
         if (!is_array($res))
         {
-          //  dprint_r($query);
+            //  dprint_r($query);
         }
         if ($res && is_array($res) && $min!== false)
         {
             $tmp=array();
-            for($a=$min; $a < count($res); $a++)
+            $count=is_array($res) ? count($res) : 0;
+            for($a=$min; $a < $count; $a++)
             {
                 if ($length && $a > ($min + $length))
                 {
@@ -609,6 +611,10 @@ class XMLTable_sqlserver
         $tablename=$this->tablename;
         // se i dati sono su database --->
         $query="SELECT * FROM {$this->sqltablename} WHERE ".$this->MakeQueryPk($pvalue);
+
+//        dprint_r($pvalue);
+//        dprint_r($query);
+//        die();
         $result=$this->dbQuery($query);
         if (!isset($result[0]))
         {
@@ -700,6 +706,7 @@ class XMLTable_sqlserver
             $query="INSERT INTO ".$this->sqltablename." (";
             if (!is_array($this->primarykey) && !isset($values[$this->primarykey]) && empty($this->fields[$this->primarykey]->autoincrement_db_side))
                 $values[$this->primarykey]="";
+
             $n=count($values);
             $tf=array();
             foreach($values as $k=> $v)
@@ -718,6 +725,11 @@ class XMLTable_sqlserver
                                 $v=$newid;
                                 $this->maxautoincrement[$k]=$newid;
                             }
+                        }
+                        else
+                        {
+                            unset($values[$k]);
+                            continue;
                         }
                     }
                     //------autoincrement---<
@@ -795,6 +807,7 @@ class XMLTable_sqlserver
     function UpdateRecordBypk($values,$pkey,$pvalue)
     {
 
+
         if ($this->conn)
         {
             $existsvalues=$this->GetRecordByPk($pvalue);
@@ -817,8 +830,9 @@ class XMLTable_sqlserver
             }
             $n=count($values2);
             if ($n== 0) //se non c'e' nulla da aggiornare
+            {
                 return $existsvalues;
-
+            }
             foreach($values2 as $k=> $value)
             {
                 if (isset($this->fields[$k]))
@@ -840,7 +854,7 @@ class XMLTable_sqlserver
                 }
             }
             $query.=" WHERE ".$this->MakeQueryPk($pvalue);
-            //die($query);
+            //dprint_r($query);
             $ret=$this->dbQuery($query);
             $this->gestfiles($values,$oldvalues);
             if (!$ret)
@@ -851,6 +865,8 @@ class XMLTable_sqlserver
         }
         else
             return false;
+
+
         return $newvalues;
     }
 
@@ -974,7 +990,7 @@ class XMLTable_sqlserver
 function xmldb_sqlserver_CreateTableIfNotExistsFromDb($tablename,$path="misc/fndatabase",$xmltablename="")
 {
     global $xmldb_mssqldatabase,$xmldb_mssqlusername,$xmldb_mssqlpassword,$xmldb_mssqlhost,$xmldb_mssqlport;
-    if ($xmltablename=="")
+    if ($xmltablename== "")
         $xmltablename=$tablename;
     $query="SELECT * FROM information_schema.tables  WHERE TABLE_TYPE='BASE TABLE'  AND TABLE_NAME='$tablename'";
 
@@ -1052,7 +1068,7 @@ sys.columns cref
 
         $xml.="\n\t<driver>sqlserver</driver>";
         $xml.="\n\t<sqltable>$tablename</sqltable>";
-        
+
         $xml.="\n</tables>\n";
         //die("tabella mancante, scommentare per crearla");
         file_put_contents("$path/$xmltablename.php",$xml);
@@ -1161,7 +1177,6 @@ function xmldb_sqlserver_dbQuery($query,$assoc_numeric=false)
             $result=true;
         }
     }
-
     else
     {
         //versione con le funzioni php native

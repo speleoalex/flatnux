@@ -7,6 +7,8 @@
         <primarykey>1</primarykey>
         <size>128</size>
         <frm_show>0</frm_show>
+        <frm_i18n>unique name</frm_i18n>
+        <frm_help_i18n>unique name of the page, used to identify the page in a unique way</frm_help_i18n>
     </field>
     <field>
         <name>type</name>

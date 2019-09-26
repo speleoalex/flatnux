@@ -8,7 +8,11 @@
  */
 define("_FNEXEC",1);
 defined('_FNEXEC') or die('Restricted access');
-$_FN=array();
+global $_FN;
+if (empty($_FN))
+{
+    $_FN=array();
+}
 $_FN_display_errors="on";
 $_FN_upload_max_filesize="20M";
 $_FN_default_database_driver="xmlphp";
@@ -24,10 +28,19 @@ $_FN['default_database_driver']=$_FN_default_database_driver;
 $xmldb_default_driver=$_FN['default_database_driver'];
 $mtime=microtime();
 $mtime=explode(" ",$mtime);
-$mtime=doubleval($mtime[1])+doubleval($mtime[0]);
+$mtime=doubleval($mtime[1]) + doubleval($mtime[0]);
 $_FN['timestart']=$mtime; // start time
 $_FN['filesystempath']=".";
 $_FN['consolemode']=false;
+//frameworkmode---------------------------------------------------------------->
+$_FN['frameworkmode']=defined("FN_FRAMEWORKMODE") ? FN_FRAMEWORKMODE : false;
+if (!empty($_FN['frameworkmode']))
+{
+    $_FN['filesystempath']=realpath(dirname(__FILE__)."/..");
+    $_FN['script_path']=getcwd();
+    chdir($_FN['filesystempath']);
+}
+//frameworkmode----------------------------------------------------------------<
 if (isset($_SERVER['SHELL']))
 {
     $_FN['filesystempath']=realpath(dirname(__FILE__)."/..");
@@ -35,6 +48,8 @@ if (isset($_SERVER['SHELL']))
     $_FN['script_path']=$_SERVER['PWD'];
     chdir($_FN['filesystempath']);
 }
+define("FN_FILESYSTEMPATH",$_FN['filesystempath']);
+
 $_FN['charset_lang']="UTF-8";  //default
 $_FN['database']="fndatabase";
 //files extra cms --->
@@ -43,19 +58,27 @@ if (is_array($files))
 {
     foreach($files as $file)
     {
+
         require_once $file;
     }
 }
 
+
+
 //files extra cms ---<
 //files in cms --->
+
+
 $files=glob($_FN['filesystempath']."/include/*.inc.php");
 foreach($files as $file)
 {
-    require_once $file;
+    include_once $file;
 }
+
 //files in cms ---<
 require_once $_FN['filesystempath']."/include/xmldb.php";
+
+
 require_once $_FN['filesystempath']."/include/xmldb_frm.php";
 require_once $_FN['filesystempath']."/include/xmldb_query.php";
 require_once $_FN['filesystempath']."/include/xmldb_frm_search.php";
@@ -63,23 +86,26 @@ require_once $_FN['filesystempath']."/include/xmldb_frm_search.php";
 
 require_once $_FN['filesystempath']."/include/auth/$_FN_default_auth_method.php";
 include $_FN['filesystempath']."/config.php";
-if ($_FN['consolemode'])
+if ($_FN['consolemode'] || $_FN['frameworkmode'])
 {
     $_FN['datadir']=realpath($_FN['datadir']);
 }
 
-FN_LoadVarsFromTable($_FN,"fn_settings",array("timestart","consolemode","filesystempath","charset_lang","default_database_driver","section_header_footer","FN_SendMail"));
+
+
+
+FN_LoadVarsFromTable($_FN,"fn_settings",array("result","timestart","consolemode","filesystempath","charset_lang","default_database_driver","section_header_footer","FN_SendMail","frameworkmode"));
 
 $_FN['use_urlserverpath']=false;
 
 //----------------------------------timezone----------------------------------->
 if (function_exists("date_default_timezone_get"))
 {
-    if ($_FN['timezone']=="")
+    if ($_FN['timezone']== "")
     {
         $_FN['timezone']=date_default_timezone_get();
     }
-    if (trim(ltrim($_FN['timezone']))=="")
+    if (trim(ltrim($_FN['timezone']))== "")
     {
         $_FN['timezone']="UTC";
     }
@@ -96,7 +122,7 @@ $_FN['user']="";
 $mod=basename(FN_GetParam("mod",$_GET));
 if (!file_exists($_FN['filesystempath']."/sections/{$_FN['home_section']}"))
     $_FN['home_section']="";
-if ($mod=="")
+if ($mod== "")
 {
     $mod=$_FN['home_section'];
 }
@@ -105,9 +131,9 @@ $_FN['mod']=$mod;
 $php_self=FN_GetParam("PHP_SELF",$_SERVER);
 $_FN ['self']=$php_self;
 
-if ($_FN['siteurl']=="")
+if ($_FN['siteurl']== "")
 {
-    if (!$_FN['consolemode']) //consolemode need explicit siteurl
+    if (!$_FN['consolemode'] && !$_FN['frameworkmode']) //consolemode need explicit siteurl
     {
         $dirname=dirname($php_self);
         if (isset($_SERVER ['SCRIPT_FILENAME']))
@@ -124,19 +150,19 @@ if ($_FN['siteurl']=="")
             $dirname=dirname(preg_replace('/\/$/','',$dirname));
             $serverpath=dirname(preg_replace('/\/$/','',$serverpath));
         }
-        if ($dirname=="/"||$dirname=="\\")
+        if ($dirname== "/" || $dirname== "\\")
             $dirname="";
         // server windows
         $dirname=str_replace("\\","/",$dirname);
         $protocol="http://";
-        if (isset($_SERVER ['HTTPS'])&&$_SERVER ['HTTPS']=="on")
+        if (isset($_SERVER ['HTTPS']) && $_SERVER ['HTTPS']== "on")
             $protocol="https://";
-        if (isset($_SERVER ['HTTP_X_FORWARDED_PROTO'])&&$_SERVER ['HTTP_X_FORWARDED_PROTO']=="https")
+        if (isset($_SERVER ['HTTP_X_FORWARDED_PROTO']) && $_SERVER ['HTTP_X_FORWARDED_PROTO']== "https")
             $protocol="https://";
         if (isset($_SERVER ['HTTP_HOST']))
         {
             $siteurl="$protocol".$_SERVER ['HTTP_HOST'].$dirname;
-            if (substr($siteurl,strlen($siteurl)-1,1)!="/")
+            if (substr($siteurl,strlen($siteurl) - 1,1)!= "/")
             {
                 $siteurl=$siteurl."/";
             }
@@ -156,12 +182,12 @@ if ($_FN['siteurl']=="")
 if (empty($_FN['sitepath']))
 {
     $_FN['sitepath']=FN_GetParam("PHP_SELF",$_SERVER);
-    if ($_FN['sitepath']=="")
+    if ($_FN['sitepath']== "")
         $_FN['sitepath']="/";
     else
     {
         $_FN['sitepath']=dirname($_FN['sitepath'])."/";
-        if ($_FN['sitepath']=="//")
+        if ($_FN['sitepath']== "//")
             $_FN['sitepath']="/";
     }
 }
@@ -175,7 +201,7 @@ if (!empty($FN_THEME))
     $_FN['theme']=$FN_THEME;
 }
 $_FN['theme_default']=$_FN['theme'];
-if ($_FN['theme']==""||!file_exists("themes/{$_FN['theme']}"))
+if ($_FN['theme']== "" || !file_exists("themes/{$_FN['theme']}"))
     $_FN['theme']="base";
 
 $_FN['charset_page']=$_FN['charset_lang'];
@@ -189,7 +215,7 @@ if (!$_FN['consolemode'])
         $path=pathinfo($urlcookie);
         $urlcookie=$path["dirname"]."/";
         $urlcookie=str_replace("\\","/",$urlcookie);
-        if ($urlcookie==""||$urlcookie=="\\"||$urlcookie=="//")
+        if ($urlcookie== "" || $urlcookie== "\\" || $urlcookie== "//")
             $urlcookie="/";
 
         $_FN['urlcookie']=$urlcookie;
@@ -207,7 +233,7 @@ if (!$_FN['consolemode'])
     $_FN['showaccesskey']=FN_SaveGetPostParam("showaccesskey");
     $usertheme=FN_SaveGetPostParam("theme");
     $_FN['section_header_footer']=isset($_FN['section_header_footer']) ? $_FN['section_header_footer'] : "";
-    if ($usertheme!="")
+    if ($usertheme!= "")
     {
         if (file_exists($_FN['filesystempath']."/themes/$usertheme"))
             $_FN['theme']=$usertheme;
@@ -215,10 +241,10 @@ if (!$_FN['consolemode'])
             $_FN['theme']=$_FN['theme_default'];
     }
 //--------------------preview theme-------------------------------------------->
-    if (!empty($_FN['switchtheme'])||FN_IsAdmin())
+    if (!empty($_FN['switchtheme']) || FN_IsAdmin())
     {
         $themepreview=FN_GetParam("themepreview",$_GET);
-        if ($themepreview!=""&&file_exists($_FN['filesystempath']."/themes/{$_FN['theme']}"))
+        if ($themepreview!= "" && file_exists($_FN['filesystempath']."/themes/{$_FN['theme']}"))
             $_FN['theme']=$themepreview;
     }
 //--------------------preview theme--------------------------------------------<
@@ -253,7 +279,7 @@ include_once($_FN['filesystempath']."/include/theme.php");
 
 FN_LoadMessagesFolder($_FN['filesystempath']."/");
 
-if (!$_FN['consolemode']&&!empty($_FN['maintenance'])&&basename($_SERVER['SCRIPT_FILENAME'])!="controlcenter.php")
+if (!$_FN['consolemode'] && !empty($_FN['maintenance']) && basename($_SERVER['SCRIPT_FILENAME'])!= "controlcenter.php")
 {
     if (!FN_IsAdmin())
     {
@@ -278,7 +304,7 @@ $_FN['site_title']=FN_i18n($_FN['site_title']);
 $_FN['site_subtitle']=FN_i18n($_FN['site_subtitle']);
 $_FN['formlogin']=FN_HtmlLoginForm();
 //include language----<
-if (!$_FN['consolemode']&&!file_exists("sections/".$_FN['mod']))
+if (!$_FN['consolemode'] && !file_exists("sections/".$_FN['mod']))
 {
     header("location:".FN_RewriteLink("index.php"));
     die(FN_RewriteLink("index.php"));
@@ -341,11 +367,11 @@ function FN_Debug_timer($str)
     global $_FN;
     static $oldTimer=false;
     $mtime=explode(" ",microtime());
-    $mtime=doubleval($mtime[1])+doubleval($mtime[0]);
-    if ($oldTimer===false)
+    $mtime=doubleval($mtime[1]) + doubleval($mtime[0]);
+    if ($oldTimer=== false)
         $oldTimer=$mtime;
-    $str.=" total ".sprintf("%.4f",abs($mtime-$_FN['timestart']));
-    $str.=" -  last:".sprintf("%.4f",abs($mtime-$oldTimer));
+    $str.=" total ".sprintf("%.4f",abs($mtime - $_FN['timestart']));
+    $str.=" -  last:".sprintf("%.4f",abs($mtime - $oldTimer));
     $oldTimer=$mtime;
     echo("<pre style=\"border:1px solid red\">$str</pre>");
 }

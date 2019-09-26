@@ -449,7 +449,7 @@ class XMLTable_mysql
         $tablename=$this->tablename;
         $pkey=$this->primarykey;
         // se i dati sono su database --->
-        if ($this->connection)
+        if ($this->connection && !empty($pkey))
         {
             if (!$this->conn)
                 die($this->conn->error);
@@ -868,7 +868,7 @@ class XMLTable_mysql
     function GetNumRecords($restr=null)
     {
         $query="SELECT COUNT(*) AS C FROM ".$this->sqltable;
-        if (is_array($restr) && count($restr > 0))
+        if (is_array($restr) && count($restr)>0)
         {
             $query.=" WHERE ";
             $and="";

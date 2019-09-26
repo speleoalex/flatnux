@@ -37,6 +37,8 @@ function FN_GetUserForm()
     if ($op=="editreg"||$pk___xdb_fn_users!="")
         $form->formvals['passwd']['frm_required']="false";
     $form->LoadFieldsClasses();
+    $form->fieldname_active="active";
+    $form->fieldname_user="username";    
     return $form;
 }
 
@@ -96,23 +98,42 @@ function FN_ManageLogin()
 /**
  * 
  */
-function FN_LoginForm()
+function FN_LoginForm($templateForm=false)
 {
-    echo FN_HtmlLoginForm();
+    echo FN_HtmlLoginForm($templateForm);
 }
 
 /**
  *
  * @global array $_FN
  */
-function FN_HtmlLoginForm()
+function FN_HtmlLoginForm($templateForm=false)
 {
     global $_FN;
-    $templateForm=false;
-    if (file_exists("themes/{$_FN['theme']}/template.tp.html"))
+    if ($templateForm)
     {
-        $templateForm=FN_TPL_GetHtmlPart("include FN_HtmlLoginForm",file_get_contents("themes/{$_FN['theme']}/template.tp.html"));
         $tplbasepath="themes/{$_FN['theme']}";
+    }
+    if (!$templateForm)
+    {
+        if (file_exists("themes/{$_FN['theme']}/template.{$_FN['mod']}.tp.html"))
+        {
+            $templateForm=FN_TPL_GetHtmlPart("include FN_HtmlLoginForm",file_get_contents("themes/{$_FN['theme']}/template.{$_FN['mod']}.tp.html"));
+            $tplbasepath="themes/{$_FN['theme']}";
+        }
+    }
+    if (file_exists("themes/{$_FN['theme']}/template.type.{$_FN['sectionvalues']['type']}.tp.html"))
+    {
+        $templateForm=FN_TPL_GetHtmlPart("include FN_HtmlLoginForm",file_get_contents("themes/{$_FN['theme']}/template.type.{$_FN['sectionvalues']['type']}.tp.html"));
+        $tplbasepath="themes/{$_FN['theme']}";
+    }
+    if (!$templateForm)
+    {
+        if (file_exists("themes/{$_FN['theme']}/template.tp.html"))
+        {
+            $templateForm=FN_TPL_GetHtmlPart("include FN_HtmlLoginForm",file_get_contents("themes/{$_FN['theme']}/template.tp.html"));
+            $tplbasepath="themes/{$_FN['theme']}";
+        }
     }
     if (!$templateForm)
     {
@@ -132,7 +153,7 @@ function FN_HtmlLoginForm()
     {
         $captcha=FN_GetSessionValue("captcha");
         $fnlogincode=FN_GetParam("fnlogin_code",$_POST);
-        if ($fnlogincode==""||empty($captcha['fnlogin_code'])||$captcha['fnlogin_code']!=$fnlogincode)
+        if ($fnlogincode== "" || empty($captcha['fnlogin_code']) || $captcha['fnlogin_code']!= $fnlogincode)
             $captcha_ok=false;
         FN_SetSessionValue("captcha",array("fnlogin_code"=>rand(1000,9999)));
         $htmlcaptcha.="<img style=\"vertical-align:middle\" src=\"{$_FN['siteurl']}captcha.php?t=fnlogin_code&amp;".time()."\" alt=\"\" title=\"\" /> <input size=\"4\" name=\"fnlogin_code\"  value = \"\" />";
@@ -143,8 +164,14 @@ function FN_HtmlLoginForm()
         $templateForm=FN_TPL_ReplaceHtmlPart("captcha","",$templateForm);
     }
     //------------------------------------ captcha ----------------------------<
-    $tplvars['urlpasswordrecovery']=FN_RewriteLink("index.php?mod=login&amp;op=recovery");
-    $tplvars['urlregister']=FN_RewriteLink("index.php?mod={$_FN['mod']}&amp;op=register");
+    $tplvars['urlpasswordrecovery']=FN_RewriteLink("index.php?mod=login&amp;op=recovery","&amp;",true);
+    
+    $mod = "login";
+    if ($_FN['sections'][$_FN['mod']]['type']=="login")
+    {
+        $mod=$_FN['mod'];
+    }
+    $tplvars['urlregister']=FN_RewriteLink("index.php?mod=$mod&amp;op=register","&amp;",true);
     if (empty($_FN['remember_login']))
     {
         $templateForm=FN_TPL_ReplaceHtmlPart("rememberlogin","",$templateForm);
@@ -172,11 +199,14 @@ function FN_HtmlLoginForm()
  *
  * @global array $_FN
  */
-function FN_HtmlLogoutForm()
+function FN_HtmlLogoutForm($templateForm=false)
 {
     global $_FN;
-    $templateForm=false;
-    if (file_exists("themes/{$_FN['theme']}/template.tp.html"))
+    if ($templateForm)
+    {
+        $tplbasepath="themes/{$_FN['theme']}";
+    }
+    elseif (file_exists("themes/{$_FN['theme']}/template.tp.html"))
     {
         $templateForm=FN_TPL_GetHtmlPart("include FN_HtmlLogoutForm",file_get_contents("themes/{$_FN['theme']}/template.tp.html"));
         $tplbasepath="themes/{$_FN['theme']}";
@@ -198,11 +228,10 @@ function FN_HtmlLogoutForm()
  *
  * @global array $_FN
  */
-function FN_LogoutForm()
+function FN_LogoutForm($templateForm=false)
 {
-    echo FN_HtmlLogoutForm();
+    echo FN_HtmlLogoutForm($templateForm);
 }
-
 /**
  *
  * @global  $_FN
@@ -400,6 +429,7 @@ function FN_DeleteUser($user)
  */
 function FN_UpdateUser($user,$newvalues,$password="")
 {
+
     if ($user!="")
     {
         if (!isset($newvalues['username']))

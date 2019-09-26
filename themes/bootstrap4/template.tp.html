@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="{lang}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" href="favicon.ico">
+
+        <title></title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="dist/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Custom styles for this template -->
+        <link href="custom.css" rel="stylesheet">
+
+        <link href="open-iconic/font/css/open-iconic-bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top navbar-custom"><a class="navbar-brand" href="#"><img style="max-height:30px" src="img/logo.png" /></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+                <ul class="navbar-nav mr-auto">
+                    <!-- include menu -->
+                    <!-- menuitems -->
+                    <!-- menuitem -->
+                    <li class="nav-item" ><a class="nav-link" href="">{title}</a></li>
+                    <!-- endmenuitem -->
+                    <!-- menuitemactive -->
+                    <li class="nav-item active"><a  class="nav-link" href="">{title}</a></li>
+                    <!-- endmenuitemactive -->
+
+                    <!-- menuitemdropdown -->
+                    <li class="nav-item dropdown"><a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">{title}&nbsp;<span class="caret"></span></a>
+                        <!-- submenu -->
+                        <ul class="dropdown-menu" role="menu">
+                            <!-- submenuitems -->
+                            <!-- submenuitem -->
+                            <li class="dropdown-submenu" >
+                                <a  class="dropdown-item" href="#">{title}</a>
+                                {submenu}
+                            </li>
+                            <!-- endsubmenuitem -->
+                            <!-- endsubmenuitems -->
+                        </ul>
+                        <!-- endsubmenu -->
+                    </li>
+                    <!-- endmenuitemdropdown -->
+                    
+                    <!-- menuitemdropdownactive -->
+                    <li class="nav-item dropdown"><a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">{title}</a>
+                        <!-- submenu -->
+                        <ul class="dropdown-menu">
+                            <!-- submenuitems -->
+                            <!-- submenuitem -->
+                            <li class="dropdown-item" >
+                                <a href="#">{title}</a>
+                                {submenu}
+                            </li>
+                            <!-- endsubmenuitem -->
+                            <!-- endsubmenuitems -->
+                        </ul>
+                        <!-- endsubmenu -->
+                    </li>
+                    <!-- endmenuitemdropdownactive -->
+                    <!-- endmenuitems -->
+                    <!-- end include menu -->
+                </ul>
+
+
+
+                <!--
+                                <form class="form-inline my-2 my-lg-0">
+                                    <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+                                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                                </form>
+                -->
+                <!-- include FN_HtmlLoginLogout -->                    
+                <!-- include FN_HtmlLoginForm -->
+                <form class="form-inline my-2 my-lg-0" role="form" enctype="multipart/form-data" action="{formaction}" method="post" name="login" >
+                    <input type="text" placeholder="{i18n:Username}" name="username" class="form-control mr-sm-2">
+                    <input type="password" placeholder="{i18n:Password}" name="password"  class="form-control mr-sm-2">
+                    <button type="submit" class="btn btn-outline-success my-2 my-sm-0">{i18n:Login}</button> 
+                    <!-- captcha -->
+                    {i18n:Enter this security code}:<br />
+                    {htmlcaptcha}
+                    <!-- end captcha -->
+                    <!-- passwordrecovery -->
+                    <a class="nav-link" href="{urlpasswordrecovery}" >{i18n:Password recovery}</a>
+                    <!-- end passwordrecovery -->
+                    <!-- loginerror --><div style="background-color:yellow;color:red" >{login_error}</div><!-- end loginerror -->
+                </form> 
+                <!-- end include FN_HtmlLoginForm -->
+                <!-- include FN_HtmlLogoutForm -->
+                <form class="form-inline my-2 my-lg-0" role="form" method="post" action="{formaction}" >
+                    <div  class="form-group"><a  class="nav-link" href="{siteurl}index.php?mod=login"><span class="oi oi-people" title="user" aria-hidden="true"></span>&nbsp;{user}</a> <button class="btn btn-outline-success" type="submit">{i18n:Logout}</button></div>
+                </form>
+                <!-- end include FN_HtmlLogoutForm -->
+                <!-- end include FN_HtmlLoginLogout -->                
+
+            </div>
+        </nav>
+
+        <main role="main" class="container">
+
+            <div class="starter-template">
+                <!-- include section -->
+                <h1>Bootstrap starter template</h1>
+                <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+                <!-- end include section -->
+            </div>
+
+        </main><!-- /.container -->
+
+        <!-- Bootstrap core JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="dist/js/jquery-3.2.1.slim.min.js"  ></script>
+        <script>window.jQuery || document.write('<script src="assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+        <script src="assets/js/vendor/popper.min.js"></script>
+        <script src="dist/js/bootstrap.min.js"></script>
+        <script src="page.js"></script>
+    </body>
+</html>

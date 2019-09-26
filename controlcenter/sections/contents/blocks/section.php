@@ -72,6 +72,7 @@ if ($modcont)
             FN_EditContent($modcont,"{$_FN['controlcenter']}?opt=$opt&edit=$modcont","?opt=$opt",$editor_params);
         }
     }
+    
 }
 //----------------------modify-------------------------------------------------<
 //----------------------modify-------------------------------------------------<
@@ -113,6 +114,10 @@ else
     echo html_BlocksEditor();
     echo $htmleditor;
     $pk___xdb_fn_blocks=FN_GetParam('pk___xdb_fn_blocks',$_GET);
+    if ($pk___xdb_fn_blocks)
+    {
+        echo "<fieldset><legend>PHP code</legend><input onfocus=\"this.select();\" style=\"width:100%\" value=\"<?php echo FN_HtmlBlock('$pk___xdb_fn_blocks'); ?>\" /></fieldset>";
+    }
     $block=false;
 
     if (!empty($_POST['id']))
@@ -146,6 +151,7 @@ else
                 echo "</fieldset>";
             }
         }
+        
         //---------------block settings----------------------------------------<
     }
 }

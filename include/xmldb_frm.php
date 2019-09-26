@@ -814,8 +814,10 @@ $frm_endgroupfooter
             $strhiddenfield.="<input type=\"hidden\" name=\"$primarykey\" value=\"".$oldvalues[$primarykey]."\" />";
         }
         $htmlitems="";
+
         foreach($this->formvals as $fieldform_valuesk=> $fieldform_values)
         {
+
             if (!isset($fieldform_values['name']))
             {
                 continue;
@@ -828,12 +830,41 @@ $frm_endgroupfooter
                 $tpobject=$this->templateobject;
             $fieldform_values['template']=$tpobject;
 
+            //----------------------filters------------------------------------>
             if (isset($fieldform_values['fk_filter_field']) && $fieldform_values['fk_filter_field']!= "")
+            {
+                if ($update== false)  //check default values
+                {
+                    $clausule=explode("=",$fieldform_values['fk_filter_field']);
+                    if (isset($clausule[1]))
+                    {
+                        $clausules=explode(",",$fieldform_values['fk_filter_field']);
+                        $restr=array();
+                        foreach($clausules as $claus_item)
+                        {
+                            $clausule=explode("=",$claus_item);
+                            if (isset($clausule[1]))
+                            {
+                                $cname2=$clausule[1];
+                                //if not xxx='yyy'
+                                if ($cname2[0]!= "'" && $cname2[strlen($cname2) - 1]!= "'")
+                                {
+                                    if (isset($this->formvals[$cname2]['frm_default']) && empty($oldvalues[$cname2]))
+                                    {
+                                        $oldvalues[$cname2]=$this->formvals[$cname2]['frm_default'];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 $fieldform_values['options']=$this->LoadOptions($fieldform_values,$oldvalues);
+            }
+            //----------------------filters------------------------------------<
             if (isset($fieldform_values['frm_group']) && $fieldform_values['frm_group']!= "")
             {
                 $gtitle=$fieldform_values['frm_group'];
-                $htmlitems.=str_replace("{groupname}",$gtitle,$tpobject->templateGroup);
+                $htmlitems.=str_replace("{groupname}",$gtitle,str_replace("{fieldname}",$fieldform_values['name'],$tpobject->templateGroup));
             }
             //--------multilanguage -------------->
             if (isset($fieldform_values['frm_multilanguage']) && $fieldform_values['frm_multilanguage']== 1)
@@ -898,7 +929,9 @@ $frm_endgroupfooter
                 if (isset($fieldform_values['frm_default']) && $update== false)
                 {
                     if (empty($oldvalues[$fieldform_valuesk]))
+                    {
                         $oldval=$fieldform_values['frm_default'];
+                    }
                 }
                 $fieldform_values['value']=$oldval;
                 $fieldform_values['is_update']=$update;
@@ -910,14 +943,7 @@ $frm_endgroupfooter
                 $fieldform_values['lang']=$this->lang;
                 $fieldform_values['languagesfield']=$languagesfield;
                 $fieldform_values['frm_help']=isset($fieldform_values['frm_help']) ? $fieldform_values['frm_help'] : "";
-
-
-
-
-
-
                 $htmlitem=(isset($errors[$fieldform_valuesk])) ? $tpobject->templateItemError : $tpobject->templateItem;
-
                 if (strpos($htmlitem,"inputattributes:")!== false)
                 {
                     $t=preg_match("/<!-- inputattributes:([^>]*)-->/is",$htmlitem,$matches);
@@ -1357,7 +1383,7 @@ $frm_endgroupfooter
     function UpdateRecord($newvalues,$pkvalue=false)
     {
 
-        //      dprint_r($newvalues);
+
         foreach($newvalues as $k=> $v)
         {
 
@@ -1372,7 +1398,6 @@ $frm_endgroupfooter
         }
         foreach($newvalues as $k=> $v)
             $newvalues[$k]=XMLDB_ConvertEncoding($newvalues[$k],$this->charset_page,$this->charset_storage);
-
         return $this->xmltable->UpdateRecord($newvalues,$pkvalue);
     }
 
@@ -1402,7 +1427,7 @@ $frm_endgroupfooter
      * @param array $newvalues
      * @return array
      */
-    function VerifyUpdate($newvalues,$pk)
+    function VerifyUpdate($newvalues,$pk=null)
     {
         return $this->Verify($newvalues,true,$pk);
     }
@@ -1448,7 +1473,10 @@ $frm_endgroupfooter
             }
             if (isset($value['frm_required']) && $value['frm_required']== 1 && (!isset($newvalues[$key]) || trim($newvalues[$key])== ""))
             {
-                $err.=$this->messages["_XMLDBREQUIRED"];
+                if (!empty($value['frm_error']))
+                    $err.=XMLDB_i18n($value['frm_error']);
+                else
+                    $err.=$this->messages["_XMLDBREQUIRED"];
             }
             if (isset($value['frm_required_condition']) && $value['frm_required_condition']!= "")
             {
@@ -1459,7 +1487,12 @@ $frm_endgroupfooter
                 $req=false;
                 eval("if ($cond_){\$req=true;}");
                 if ($req== true && (!isset($newvalues[$key]) || trim($newvalues[$key])== ""))
-                    $err.=$this->messages["_XMLDBREQUIRED"];
+                {
+                    if (!empty($value['frm_error']))
+                        $err.=XMLDB_i18n($value['frm_error']);
+                    else
+                        $err.=$this->messages["_XMLDBREQUIRED"];
+                }
             }
             $checkDuplicate=false;
             if ($update== false && !empty($newvalues[$key]) && (!empty($value['unique']) || !empty($value['primarykey'])))
@@ -1858,7 +1891,7 @@ class xmldbfrm_field_password
 
         $html="";
         $toltips=($params['frm_help']!= "") ? "title=\"".$params['frm_help']."\"" : "";
-        $html.="<input $attributes autocomplete=\"\" $toltips value=\"".str_replace('"','\\"',$params['value'])."\" autocomplete=\"off\" name=\"".$params['name']."\" type=\"password\" />\n";
+        $html.="<input autocomplete=\"off\"  $attributes  $toltips value=\"".str_replace('"','\\"',$params['value'])."\"  name=\"".$params['name']."\" type=\"password\" />\n";
         return $html;
     }
 
@@ -1899,10 +1932,10 @@ class xmldbfrm_field_select
             $scriptfirst="onfocus=\"document.getElementById('$divid').innerHTML = ''\"";
         }
         $html.="<select $attributes $toltips $script name=\"".$fieldform_values['name']."\" >";
-        
+
         $htmlfirst="\n<option $scriptfirst";
         $htmlfirst.=" label=\"\" value=\"\">----</option>";
-        
+
         $options=array();
         $optionselected=null;
         $oldvalimage="";
@@ -1913,11 +1946,11 @@ class xmldbfrm_field_select
             {
                 $options[$option['value']]['name']=ucfirst($option['title']);
                 $options[$option['value']]['value']=$option['value'];
-                if ($option['value']==="")
+                if ($option['value']=== "")
                 {
                     $htmlfirst="";
                 }
-                if ($option['value'] == $fieldform_values['value']) //gestire == e ===
+                if ($option['value']== $fieldform_values['value']) //gestire == e ===
                 {
                     $optionselected=$option['value'];
                 }
@@ -1954,7 +1987,7 @@ class xmldbfrm_field_select
                 $jj="onfocus=\"document.getElementById('$divid').innerHTML = '".addslashes($optionname)."';\"";
             $htmloptions.="\n\t<option $selected $jj value=\"".$option['value']."\" >".$option['name']."</option>";
         }
-        
+
 
         $html.="\n$htmlfirst$htmloptions</select>\n";
         $himg+=5;
@@ -2336,6 +2369,7 @@ class xmldbfrm_field_radio
 
     function show($params)
     {
+        static $id=0;
         $html="";
         $tooltip=$params['frm_help'];
         $name=$params['name'];
@@ -2389,7 +2423,8 @@ class xmldbfrm_field_radio
             $toption=$option['title'];
             if ($value=== $option['value'])
                 $sel="checked=\"checked\"";
-            $html.="<span style=\"white-space:nowrap\" ><input  $sel $jsonclick type=\"radio\" value=\"{$option['value']}\" title=\"$tooltip\" name=\"".$name."\"  />$toption</span>&nbsp; ";
+            $id++;
+            $html.="<label for=\"xmldbradio{$name}{$id}\" style=\"white-space:nowrap\" ><input $attributes  id=\"xmldbradio{$name}{$id}\"  $sel $jsonclick type=\"radio\" value=\"{$option['value']}\" title=\"$tooltip\" name=\"".$name."\"  /> $toption</label>&nbsp; ";
             $i++;
         }
         $html.="<script type=\"text/javascript\"  >setTimeout(\"$jexecute\",0);</script>";
@@ -2515,11 +2550,13 @@ function XMLDB_IsIso8859($str)
  */
 function XMLDB_ConvertEncoding($str,$charsetFrom,$charsetTo)
 {
-    if ($charsetFrom== $charsetTo || $charsetTo=="")
+    if ($charsetFrom== $charsetTo || $charsetTo== "" || $charsetFrom== "")
         return $str;
+
     if (function_exists("mb_convert_encoding"))
     {
-        $str=mb_convert_encoding($str,$charsetFrom,$charsetTo);
+        // dprint_r("$charsetTo,$charsetFrom");
+        $str=mb_convert_encoding($str,$charsetTo,$charsetFrom);
         return $str;
     }
     if (function_exists("iconv"))
