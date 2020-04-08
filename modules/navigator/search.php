@@ -8,7 +8,7 @@
  *
  */
 defined('_FNEXEC') or die('Restricted access');
-
+require_once "modules/navigator/section_functions.php";
 /**
  *
  * @global array $_FN
@@ -30,23 +30,24 @@ function FNSEARCH_module_navigator($tosearch_array,$method,$sectionvalues,$maxre
     //--search query ---------------------------------------------------------->
     $query="SELECT * FROM $tablename WHERE  ";
     $tmpmethod="";
+    $fieldDescription="";
     foreach($Table->fields as $fieldstoread=> $fieldvalues)
     {
-        if ($fieldstoread!="insert"&&$fieldstoread!="update"&&$fieldstoread!="unirecid"&&$fieldvalues->type!="check")
+        if ($fieldstoread!= "insert" && $fieldstoread!= "update" && $fieldstoread!= "unirecid" && $fieldvalues->type!= "check")
         {
             //dprint_r($fieldvalues);
-            if (isset($fieldvalues->frm_show)&&$fieldvalues->frm_show=="0")
+            if (isset($fieldvalues->frm_show) && $fieldvalues->frm_show== "0")
             {
                 continue;
             }
-            if (isset($fieldvalues->frm_show)&&$fieldvalues->frm_show=="0")
+            if (isset($fieldvalues->frm_show) && $fieldvalues->frm_show== "0")
             {
                 continue;
             }
-
+            
             foreach($tosearch_array as $f)
             {
-                if ($f!="")
+                if ($f!= "")
                 {
                     $query.=" $tmpmethod ".$fieldstoread." LIKE '%".addslashes($f)."%' ";
                     $tmpmethod=$method;
@@ -55,7 +56,7 @@ function FNSEARCH_module_navigator($tosearch_array,$method,$sectionvalues,$maxre
             $tmpmethod=" OR ";
         }
     }
-    if ((isset($viewonlycreator)&&$viewonlycreator==1)&&!FN_IsAdmin())
+    if ((isset($viewonlycreator) && $viewonlycreator== 1) && !FN_IsAdmin())
     {
         $query.=" AND username = '".$_FN['user']."'";
     }
@@ -63,16 +64,37 @@ function FNSEARCH_module_navigator($tosearch_array,$method,$sectionvalues,$maxre
     //--search query ----------------------------------------------------------<
     $records=$DB->Query("$query");
     $cont=0;
+    $titles=explode(",",$config['titlefield']);
+    //dprint_r($records);
     if (is_array($records))
     {
         foreach($records as $data)
         {
+            
+            if (!FNNAV_CanViewRecord($data[$Table->primarykey],$tablename))
+            {
+                continue;
+            }
             $link=FN_RewriteLink("index.php?mod=$section_to_search&amp;op=view&id={$data[$Table->primarykey]}");
             $results[$cont]['link']=$link;
-            $results[$cont]['title']=$sectionvalues['title'].(isset($data[$config['titlefield']]) ? ": ".$data[$config['titlefield']] : "");
+            $results[$cont]['title']="";
+            foreach($titles as $title)
+            {
+                $results[$cont]['title'].=isset($data[$title]) ? $data[$title]." " : "";
+            }
+            $results[$cont]['title']=trim(ltrim($results[$cont]['title']));
+            if ($results[$cont]['title']== "")
+            {
+                $results[$cont]['title']=$sectionvalues['title'];
+            }
             $results[$cont]['text']="";
-            if (!empty($data['description']))
-                $results[$cont]['text']=substr(strip_tags($data['description']),0,100);
+            if (!empty($data[$config['descriptionfield']]))
+            {
+                $results[$cont]['text']=substr(strip_tags($data[$config['descriptionfield']]),0,100);
+            }
+            else{
+                $results[$cont]['text']=$sectionvalues['title'];
+            }
             $cont++;
         }
     }

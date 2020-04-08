@@ -14,6 +14,8 @@
 define("_MAXTENTATIVIDIACCESSO","1000");
 define("_MAX_FILES_PER_FOLDER","10000");
 define("_MAX_LOCK_TIME","30"); // seconds
+//define("XMLDB_DEBUG_FILE_LOG","/tmp/xmldb.log"); // seconds
+
 
 /*
   $files=glob(dirname(__FILE__)."/xmldb_*.php");
@@ -1277,11 +1279,27 @@ class XMLTable
 
     function InsertRecord($values)
     {
+        if (defined("XMLDB_DEBUG_FILE_LOG") && XMLDB_DEBUG_FILE_LOG)
+        {
+            file_put_contents(XMLDB_DEBUG_FILE_LOG,FN_Now()." ".__METHOD__." {$this->tablename}"."\n",FILE_APPEND);
+            if ($this->tablename== "fn_settings")
+            {
+                file_put_contents(XMLDB_DEBUG_FILE_LOG,FN_Now()." ".__METHOD__." values: ".json_encode($values)."\n",FILE_APPEND);
+            }
+        }
         return $this->driverclass ? $this->driverclass->InsertRecord($values) : null;
     }
 
     function DelRecord($pkvalue)
     {
+        if (defined("XMLDB_DEBUG_FILE_LOG") && XMLDB_DEBUG_FILE_LOG)
+        {
+            file_put_contents(XMLDB_DEBUG_FILE_LOG,FN_Now()." ".__METHOD__." {$this->tablename}"."\n",FILE_APPEND);
+            if ($this->tablename== "fn_settings")
+            {
+                file_put_contents(XMLDB_DEBUG_FILE_LOG,FN_Now()." ".__METHOD__." value: $pkvalue\n",FILE_APPEND);
+            }
+        }
         return $this->driverclass ? $this->driverclass->DelRecord($pkvalue) : null;
     }
 
@@ -1302,6 +1320,14 @@ class XMLTable
 
     function UpdateRecordBypk($values,$pkey,$pvalue)
     {
+        if (defined("XMLDB_DEBUG_FILE_LOG") && XMLDB_DEBUG_FILE_LOG)
+        {
+            file_put_contents(XMLDB_DEBUG_FILE_LOG,FN_Now()." ".__METHOD__." {$this->tablename}"."\n",FILE_APPEND);
+            if ($this->tablename== "fn_settings")
+            {
+                file_put_contents(XMLDB_DEBUG_FILE_LOG,FN_Now()." ".__METHOD__." values: ".json_encode($values)."\n",FILE_APPEND);
+            }
+        }
         return $this->driverclass ? $this->driverclass->UpdateRecordBypk($values,$pkey,$pvalue) : null;
     }
 
@@ -2332,6 +2358,10 @@ class XMLTable_xmlphp
             $strnew="<{$this->xmlfieldname}>";
             foreach($newvalues as $key=> $value)
             {
+                if (is_array($value))
+                {
+                    error_log("$value is not array");
+                }
                 $strnew.="\n\t\t<$key>".xmlenc("$value")."</$key>";
             }
             $strnew.="\n\t</{$this->xmlfieldname}>";
@@ -2350,6 +2380,7 @@ class XMLTable_xmlphp
             $this->ClearCachefile();
             $newvalues=xmldb_readDatabase($old,$this->xmlfieldname,false,false); //aggiorna la cache
             $newvalues=$this->GetRecordByPk($values[$pkey]);
+
             if (!isset($newvalues[$pkey]))
                 return false;
             return $newvalues;

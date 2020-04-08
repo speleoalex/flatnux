@@ -1,9 +1,10 @@
 <?php
+
 global $_FN;
 ob_start();
 include "./include/flatnux.php";
 $usecache=$_FN['use_cache'];
-
+$usecache=false;
 $filename=FN_GetParam("f",$_GET,"flat");
 $maxh=FN_GetParam("h",$_GET,"flat");
 $maxw=FN_GetParam("w",$_GET,"flat");
@@ -11,7 +12,14 @@ $table=FN_GetParam("t",$_GET,"flat");
 $id=FN_GetParam("i",$_GET,"flat");
 $d=FN_GetParam("d",$_GET,"flat");
 $field=FN_GetParam("c",$_GET,"flat");
+$forceratio=true;
 $exists=true;
+$format=FN_GetParam("format",$_GET,"flat");
+if ($format!= "jpg")
+{
+    $format="png";
+}
+//-----------------------------files in xmldb---------------------------------->
 if ($d== "")
     $d="fndatabase";
 if ($table!= "" && $id!= "" && $field!= "")
@@ -20,10 +28,12 @@ if ($table!= "" && $id!= "" && $field!= "")
     $filename=$tb->get_file(array("{$tb->primarykey}"=>$id),"$field");
     $filename=str_replace($_FN['siteurl'],"",$filename);
 }
+//-----------------------------files in xmldb----------------------------------<
+//---------------fix max and min----------------------------------------------->
 if ($maxh== "" && $maxw== "")
 {
-    $maxh=24;
-    $maxw=24;
+    $maxh=32;
+    $maxw=32;
 }
 if ($maxh== "" && $maxw!= "")
 {
@@ -33,18 +43,26 @@ if ($maxw== "" && $maxh!= "")
 {
     $maxw=$maxh;
 }
+//---------------fix max and min-----------------------------------------------<
+//---------------fix filename   ----------------------------------------------->
 if ($filename== "" || !file_exists($filename))
 {
     $filename="images/mime/image.png";
     $exists=false;
 }
+//---------------fix filename   -----------------------------------------------<
+//-----------------------------cache------------------------------------------->
+$thumbcachefile="{$_FN['datadir']}/_THUMBS/{$maxw}x{$maxh}_".md5($filename).".".filemtime($filename).".$format";
+if ($forceratio)
+    $thumbcachefile="{$_FN['datadir']}/_THUMBS/{$maxw}x{$maxh}_ratio_".md5($filename).".".filemtime($filename).".$format";
 
-$thumbcachefile="{$_FN['datadir']}/_THUMBS/{$maxw}x{$maxh}_".md5($filename).".".filemtime($filename).".jpg";
 if ($usecache && $exists && file_exists("$thumbcachefile"))
 {
     header("Location:".$thumbcachefile);
     die();
 }
+//-----------------------------cache-------------------------------------------<
+//----------------------------read file---------------------------------------->
 list($width,$height,$type,$attr)=getimagesize($filename);
 if (!$width)
 {
@@ -52,7 +70,18 @@ if (!$width)
     $exists=false;
     list($width,$height,$type,$attr)=getimagesize($filename);
 }
-
+if (function_exists("exif_read_data"))
+{
+    $exif=exif_read_data($filename);
+    if (!empty($exif['Orientation']) && $exif['Orientation']== 6 || $exif['Orientation']== 8)
+    {
+        $tmp=$height;
+        $height=$width;
+        $width=$tmp;
+    }
+}
+//----------------------------read file----------------------------------------<
+//----------------------------new size ---------------------------------------->
 $new_height=$height;
 if ($maxw!= "" && $width>= $maxw)
 {
@@ -71,11 +100,9 @@ if ($maxw!= "" && $maxh!= "" && $width<= $maxw && $height<= $maxh)
     $new_width=$width;
     $new_height=$height;
 }
-// Load
-$thumb=imagecreatetruecolor($new_width,$new_height);
-$white=imagecolorallocate($thumb,255,255,255);
-$size=getimagesize($filename);
-switch($size[2])
+//----------------------------new size ----------------------------------------<
+//----------------------------load image resource------------------------------>
+switch($type)
 {
     case 1 :
         $source=ImageCreateFromGif($filename);
@@ -95,24 +122,46 @@ switch($size[2])
         ImageString($tmb,5,10,30,"GIF, JPEG or PNG",$rosso);
         ImageString($tmb,5,10,50,"image.",$rosso);
 }
-
-// Resize
-imagefilledrectangle($thumb,0,0,$width,$width,$white);
-imagecopyresampled($thumb,$source,0,0,0,0,$new_width,$new_height,$width,$height);
-image_fix_orientation($thumb,$filename);
-// Output
-if (!file_exists($thumbcachefile))
+image_fix_orientation($source,$filename);
+//----------------------------load image resource------------------------------<
+//----------------------------create thumb resource---------------------------->
+$thumb=imagecreatetruecolor($maxw,$maxh);
+$thumb_h=$maxh;
+$thumb_w=$maxw;
+$white=imagecolorallocate($thumb,255,255,255);
+$black=imagecolorallocate($thumb,0,0,0);
+imagecolortransparent($thumb,$white);
+imagefilledrectangle($thumb,0,0,$thumb_w,$thumb_h,$white);
+//----------------------------create thumb resource----------------------------<
+//-------------------------------   center image         ---------------------->
+$sx=0;
+$sy=0;
+if ($thumb_h > $new_height)
 {
-    if (!file_exists("{$_FN['datadir']}/_THUMBS/"))
-        mkdir("{$_FN['datadir']}/_THUMBS/");
+    $sy=round(($thumb_h - $new_height) / 2);
 }
-else
+if ($thumb_w > $new_width)
 {
-    $thumbcachefile=false;
+    $sx=round(($thumb_w - $new_width) / 2);
+}
+//-------------------------------   center image         ----------------------<
+//---------------------------------resize-------------------------------------->
+imagecopyresampled($thumb,$source,$sx,$sy,0,0,$new_width,$new_height,$width,$height);
+//---------------------------------resize--------------------------------------<
+// Output
+$fname="imagejpeg";
+if ($format== "png")
+{
+    $fname="imagepng";
 }
 if ($usecache)
 {
-    imagejpeg($thumb,$thumbcachefile);
+    if (!file_exists($thumbcachefile))
+    {
+        if (!file_exists("{$_FN['datadir']}/_THUMBS/"))
+            mkdir("{$_FN['datadir']}/_THUMBS/");
+    }
+    $fname($thumb,$thumbcachefile);
     imagedestroy($thumb);
     ob_get_clean();
     header("Location:".$thumbcachefile);
@@ -121,11 +170,22 @@ else
 {
     while(false!== ob_get_clean()
     );
-    header("Content-type: image/jpeg");
-    imagejpeg($thumb);
+    if ($format== "png")
+    {
+        header("Content-type: image/png");
+    }
+    else
+    {
+        header("Content-type: image/jpeg");
+    }
+    $fname($thumb);
     imagedestroy($thumb);
 }
-
+/**
+ * 
+ * @param type $image
+ * @param type $filename
+ */
 function image_fix_orientation(&$image,$filename)
 {
     if (function_exists("exif_read_data"))
@@ -150,6 +210,10 @@ function image_fix_orientation(&$image,$filename)
                     break;
             }
         }
+    }
+    else
+    {
+        
     }
 }
 

@@ -1,3 +1,20 @@
+4/2020
+ -spostato parametro datadir in file di configurazione statico
+ -inserito stile dei link in config.php (https://siteurl/folder/folder2/example.html,1=/folder/folder2/example.html)
+ -corretto bug fix in possibile corruzione del file di configurazione 
+3/2020
+ -migliorato modulo di ricerca
+ -implemenata personalizzazione modulo login
+ -aggiunto parametro di configurazione change_password_online
+ -aggiunto parametro di configurazione send_welwelcome_message
+ -migliorato tema bootstrap
+
+1/2020
+ -migliorato motore template
+ -supporto restrizione password
+ -aggiunto supporto temi bootstrap
+ -aggiunto supporto per metodi di autenticazione personalizzati
+
 11/2018
  -bug fix
  -aggiunte traduzioni in italiano

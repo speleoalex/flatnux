@@ -9,8 +9,6 @@
  */
 defined('_FNEXEC') or die('Restricted access');
 global $_FN,$_FN_default_database_driver,$xmldb_default_driver;
-
-
 $_FN_default_database_driver_old=$_FN_default_database_driver;
 $xmldb_default_driver_old=$xmldb_default_driver;
 $_FN_default_database_driver="";
@@ -401,7 +399,7 @@ function edit_struct_table($tablename,$path,$databasename)
     $params ['defaultorder']="position";
     $params ['bkheader']="#ffff00";
     $params ['bordercolor']="#ffaaaa";
-    $params ['fields']="position|MoveUpdown()|name|frm_i18n|frm_type|frm_show|frm_required|showinprofile";
+    $params ['fields']="position|MoveUpdown()|name|frm_i18n|frm_type|frm_show|frm_required|showinprofile|frm_title_insert_i18n";
     $params ['link']="op=edit&amp;opt=$opt&amp;t=$tablename";
     $params ['textnew']=FN_Translate("new field");
     FNCC_xmltableeditor(false,"tables",$params);

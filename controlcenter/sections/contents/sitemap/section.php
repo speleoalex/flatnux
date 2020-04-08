@@ -479,7 +479,8 @@ var syncdiv = function (id)
                         foreach($sectionstorenameparent as $sectiontorenameparent)
                         {
                             $sectiontorenameparent['parent']=$id;
-                            $table->UpdateRecord($sectiontorenameparent);
+                            $nv=$table->UpdateRecord($sectiontorenameparent);
+                            FNCC_UpdateDefaultXML($nv);
                         }
                     }
                     //rename parents -----<
@@ -569,7 +570,7 @@ var syncdiv = function (id)
             $forminsert=FN_XmlForm("fn_sections");
             if (file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/form.tp.html"))
                 $forminsert->SetlayoutTemplate(file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/form.tp.html"));
-                
+
             $newvalues=isset($_POST['newsection']) ? $forminsert->GetByPost() : false;
             $errors=array();
             $forminsert->formvals['id']['frm_show']="0";
@@ -631,11 +632,13 @@ var syncdiv = function (id)
                             if ($newsections[$k]['position']!= $sections[$k]['position'])
                             {
                                 // dprint_r("update {$newsections[$k]['position']} != {$sections[$k]['position']}");
-                                $forminsert->UpdateRecord(array("id"=>$newsections[$k]['id'],"position"=>$newsections[$k]['position']));
+                                $nv=$forminsert->UpdateRecord(array("id"=>$newsections[$k]['id'],"position"=>$newsections[$k]['position']));
+                                FNCC_UpdateDefaultXML($nv);
                             }
                         }
                         //fix position ---------<
-                        $forminsert->InsertRecord($newvalues);
+                        $nv=$forminsert->InsertRecord($newvalues);
+                        FNCC_UpdateDefaultXML($nv);
                         echo FN_i18n("the page has been created");
                         echo "<br />";
                         echo "<br /><a href=\"{$_FN['controlcenter']}?mod={$_FN['mod']}&amp;opt=$opt\">".FN_Translate("next")."</a> <img style=\"vertical-align:middle\" src=\"images/right.png\" alt=\"\"/>";
@@ -878,9 +881,13 @@ function FNCC_UpdateSections()
             if ($newvalues['hidden']!= $oldvalues['hidden'] || $newvalues['position']!= $oldvalues['position'] || $newvalues['parent']!= $oldvalues['parent'])
             {
                 //dprint_r($newvalues);
-                if (!$table->xmltable->UpdateRecord($newvalues))
+                if (!($nv=$table->xmltable->UpdateRecord($newvalues)))
                 {
                     $errors.=1;
+                }
+                else
+                {
+                    FNCC_UpdateDefaultXML($nv);
                 }
             }
         }
@@ -893,6 +900,21 @@ function FNCC_UpdateSections()
             FN_Log("sitemap changed");
             FN_OnSitemapChange();
         }
+    }
+}
+
+function FNCC_UpdateDefaultXML($newvalues)
+{
+    if (is_writable("sections/{$newvalues['id']}"))
+    {
+        $xml="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<fn_sections>\n";
+        foreach($newvalues as $k=> $v)
+        {
+            if ($k!== "id")
+                $xml.="\t<$k>".htmlentities($v)."</$k>\n";
+        }
+        $xml.="</fn_sections>";
+        file_put_contents("sections/{$newvalues['id']}/default.xml",$xml);
     }
 }
 

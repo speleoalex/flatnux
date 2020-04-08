@@ -21,7 +21,6 @@ FN_GetSections("",true);
 //--------------------------  auto scripts  ----------------------------------->
 include ("include/autoexec.php");
 //--------------------------  auto scripts  -----------------------------------<
-
 if (file_exists("themes/{$_FN['theme']}/structure.php"))
 {
     include "./themes/{$_FN['theme']}/structure.php";
@@ -49,6 +48,10 @@ if (file_exists("sections/{$_FN['mod']}/footer.php"))
 $str.="<!-- Page generated in ".FN_GetExecuteTimer()." seconds. -->";
 //FN_Debug_timer(__FILE__.":".__LINE__);
 //die("");
+if (function_exists("FN_BeforePrint"))
+{
+    $str=FN_BeforePrint($str);
+}
 if (@ob_end_clean())
 {
     header("Content-Type: text/html; charset={$_FN['charset_page']}");

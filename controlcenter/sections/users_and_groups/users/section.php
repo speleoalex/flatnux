@@ -130,6 +130,15 @@ $op=FN_GetParam("opt",$_GET,"html");
 //-----form----->
 $fv=array();
 $exlude=array("password","passwd","emailhidden","avatarimage","avatar","rnd","level","groups",$table->fieldname_active,"ip","registrationdate");
+$include=array();
+foreach($table->formvals as $k=> $v)
+{
+    if ($v['frm_type']=="varchar")
+    {
+        $include[]=$k;
+    }
+}
+//dprint_r($include);
 if (empty($_GET['op___xdb_fn_users']))
 {
     echo "<form action=\"?mod={$_FN['mod']}&amp;opt=$op\" method=\"post\" >";
@@ -137,11 +146,11 @@ if (empty($_GET['op___xdb_fn_users']))
     echo "<table>";
     foreach($table->formvals as $k=> $v)
     {
-        if (!in_array($k,$exlude))
+        if (in_array($k,$include) && !in_array($k,$exlude))
         {
-            if (isset($_POST[$k]))
+            if (isset($_POST["search_".$k]))
             {
-                $fv[$k]=FN_GetParam($k,$_POST,"html");
+                $fv[$k]=FN_GetParam("search_".$k,$_POST,"html");
             }
             elseif (isset($arrayfilter[$k]))
             {
@@ -165,11 +174,13 @@ if (empty($_GET['op___xdb_fn_users']))
             echo "\n<tr>";
             echo "<td>{$table->formvals[$k]['title']}</td>";
             $fv[$k]=isset($fv[$k]) ? $fv[$k] : "";
-            echo "<td><input name=\"$k\" value=\"{$fv[$k]}\"/></td>";
+            echo "<td><input name=\"search_$k\" value=\"{$fv[$k]}\"/></td>";
             echo "</tr>";
         }
     }
-    echo "<tr><td colspan=\"2\"><button type=\"submit\">".FN_Translate("search")."</button></td></tr>";
+    $opt=FN_GetParam("opt",$_GET);
+    echo "<tr><td colspan=\"2\"><br /><button type=\"submit\">".FN_Translate("search")."</button> ";
+    echo "<button type=\"button\" onclick=\"window.location='?mod={$_FN['mod']}&amp;opt=$opt'\">".FN_Translate("reset")."</button></td></tr>";
     echo "</table></fieldset></form>";
 //-----form----->
 }

@@ -909,8 +909,13 @@ function FN_TPL_tp_create_ccsubmenu_($str,$sections)
     $opt=FN_GetParam("opt",$_GET);
     if ($str== "")
         return "";
-    if (!$sections)
+    if (!$sections  )
         return "";
+    if (!is_array($sections))
+    {
+       // dprint_r($sections);
+        return "";
+    }
     preg_match('/<!-- submenuitems -->(.*)<!-- endsubmenuitems -->/is',$str,$out);
     $tp_menuitem_old=FN_TPL_GetHtmlPart("submenuitems",$str,"<li><a href=\"link\">title</a></li>");
 
@@ -989,6 +994,11 @@ function FNCC_XmltableEditor($tablename,$params=false,$params2=false)
         {
             $params2['html_template_grid']=file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/grid.tp.html");
         }
+        if (empty($params['html_template_view']) && file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/view.tp.html"))
+        {
+            $params2['html_template_view']=file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/view.tp.html");
+        }
+        
     }
     else
     {
@@ -999,6 +1009,10 @@ function FNCC_XmltableEditor($tablename,$params=false,$params2=false)
         if (empty($params['html_template_grid']) && file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/grid.tp.html"))
         {
             $params['html_template_grid']=file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/grid.tp.html");
+        }
+        if (empty($params['html_template_view']) && file_exists("controlcenter/themes/{$_FN['controlcenter_theme']}/view.tp.html"))
+        {
+            $params['html_template_view']=file_get_contents("controlcenter/themes/{$_FN['controlcenter_theme']}/view.tp.html");
         }
     }
     FN_XmltableEditor($tablename,$params,$params2);

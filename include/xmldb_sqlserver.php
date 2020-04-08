@@ -355,7 +355,7 @@ class XMLTable_sqlserver
      */
     function dbQuery($query)
     {
-        //dprint_r($query);
+        //dprint_r(htmlspecialchars($query));
         $db=array();
         $db['server']=$this->sqlhost;
         $db['dbname']=$this->sqldatabasename;
@@ -396,6 +396,11 @@ class XMLTable_sqlserver
               database. */
             $tsql=$query;
             $result=sqlsrv_query($this->conn,$tsql);
+            if (defined("DEBUG_TIME") && DEBUG_TIME== true)
+            {
+                dprint_r($tsql,"","magenta");
+                dprint_r(FN_GetPartialTimer());
+            }
             $error=sqlsrv_errors();
             if ($result=== false && $error!= "")
             {
@@ -432,9 +437,14 @@ class XMLTable_sqlserver
             // solo su select,update,delete
             mssql_select_db($db['dbname'],$this->conn);
             $result=mssql_query($query);
+            if (defined("DEBUG_TIME") && DEBUG_TIME== true)
+            {
+                dprint_r($query,"","magenta");
+                dprint_r(FN_GetPartialTimer());
+            }
             if (!$result)
             {
-                dprint_r($query);
+                dprint_r($query,"","red");
                 return false;
             }
             if (is_resource($result))
@@ -1009,11 +1019,12 @@ WHERE
     AND Col.Table_Name = '$tablename'";
     $resprimary=xmldb_sqlserver_dbQuery($qprimary);
     $primary=array();
-    foreach($resprimary as $v)
-    {
-        if (!empty($v["Column_Name"]))
-            $primary[]=$v["Column_Name"];
-    }
+    if (is_array($resprimary))
+        foreach($resprimary as $v)
+        {
+            if (!empty($v["Column_Name"]))
+                $primary[]=$v["Column_Name"];
+        }
     $xml="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <?php exit(0);?>
 <tables>";

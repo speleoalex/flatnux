@@ -65,16 +65,17 @@ function FN_HtmlHtmlArea($name,$cols,$rows,$text="",$defaultdir="",$editor_param
     if ($cols== "auto")
     {
         $w="99%";
+        $cols=80;
     }
     elseif (intval($cols)!= 0)
         $w=$cols * 10;
     if (intval($rows)!= 0)
         $h=$rows * 10 + 200;
-    if (strpos("%",$h)=== false && strpos("px",$h)=== false)
+    if (strpos("%",chr($h))=== false && strpos("px",chr($h))=== false)
     {
         $h.="px";
     }
-    if (strpos("%",$w)=== false && strpos("px",$w)=== false)
+    if (strpos("%",($w))=== false && strpos("px",($w))=== false)
     {
         $w.="px";
     }

@@ -63,8 +63,8 @@ function XMLDB_editor($tablename,$dbname,$params=false)
         ,"forcenewvalues"=>""       //force if not set
         ,"forceupdatevalues"=>""    //force if not set
         ,"recordsperpage"=>""
-        ,"textrequired"=>"*=required fields"
-        ,"textfields"=>""
+        ,"requiredfieldsymbol"=>"*"
+        ,"textrequiredfields"=> XMLDB_i18n("required fields")
         ,"textsave"=>XMLDB_i18n("save")
         ,"textnorecord"=>XMLDB_i18n("no records found")
         ,"textcancel"=>XMLDB_i18n("cancel")
@@ -222,9 +222,9 @@ Pages : <!-- start pages --><!-- start page --><a href=\"{pagelink}\">{pagetitle
     //force in form update
     $forceupdatevalues=isset($params['forceupdatevalues']) ? $params['forceupdatevalues'] : true;
     $recordsperpage=isset($params['recordsperpage']) ? $params['recordsperpage'] : false;
-    $textrequired=isset($params['textrequired']) ? $params['textrequired'] : "*";
-    $textfields=isset($params['textfields']) ? $params['textfields'] : "<legend>"."*=required fields"."</legend><br />";
-    $textfields=str_replace("*","",$textfields);
+    $requiredfieldsymbol=$params['requiredfieldsymbol'] ;
+    $textrequiredfields = $params['textrequiredfields'] ;
+    
     $textsave=isset($params['textsave']) ? $params['textsave'] : "save";
     $textnorecord=isset($params['textnorecord']) ? $params['textnorecord'] : "no records found";
     $optionsedit=array();
@@ -551,7 +551,7 @@ set_changed();
                         }
                     }
                 }
-                $html.="$textrequired $textfields";
+                $html.="$requiredfieldsymbol $textrequiredfields";
                 $html.="
 
 ";
@@ -640,9 +640,10 @@ set_changed();
                 {
                     $table->SetLayoutView($params['layout_view']);
                 }
-                if (isset($params['layout_template_view']))
+                if (isset($params['html_template_view']))
                 {
-                    $table->SetlayoutTemplateView($params['layout_template_view']);
+                   
+                    $table->SetlayoutTemplateView($params['html_template_view']);
                 }
                 $html.=$table->HtmlShowView($table->GetRecordTranslatedByPrimarykey($pk));
                 //$html .= xmldb_view($pk,$tablename,$dbname,$path,$lang,$languages);
@@ -1272,8 +1273,8 @@ function xmldb_view($unirecid,$tablename,$databasename,$path,$lang,$languages,$p
 function xmldb_go_download($file,$databasename,$tablename,$pathdatabase,$tablepath)
 {
     // evita di accedere a directory esterne
-    if (stristr($file,".."))
-        die(fn_i18n("operation is not permitted"));
+  //  if (stristr($file,".."))
+  //      die(fn_i18n("operation is not permitted"));
     // se il file non esiste lo crea
     if (!file_exists("$pathdatabase/$databasename/$tablename"."_download_stat.php"))
     {
@@ -1299,6 +1300,7 @@ function xmldb_go_download($file,$databasename,$tablename,$pathdatabase,$tablepa
         $r['numdownload']=$oldval['numdownload'] + 1;
         $stat->UpdateRecord($r);
     }
+
     $file="$pathdatabase/$databasename/$tablepath/$file";
 
     //First, see if the file exists

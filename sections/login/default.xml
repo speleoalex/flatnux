@@ -1,9 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <fn_sections>
-	<id>login</id>
 	<type>login</type>
+	<parent>news</parent>
 	<position>30</position>
+	<title>Login</title>
+	<description></description>
+	<startdate></startdate>
+	<enddate></enddate>
 	<status>1</status>
-    <blocksmode>hide</blocksmode>
-    <blocks>user</blocks>     
+	<hidden>0</hidden>
+	<accesskey></accesskey>
+	<keywords></keywords>
+	<sectionpath>sections</sectionpath>
+	<level></level>
+	<group_view></group_view>
+	<group_edit></group_edit>
+	<blocksmode>hide</blocksmode>
+	<blocks>user</blocks>
+	<title_it></title_it>
+	<title_en></title_en>
+	<description_it></description_it>
+	<description_en></description_en>
 </fn_sections>

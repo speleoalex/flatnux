@@ -11,13 +11,13 @@ require_once("modules/login/functions_login.php");
 global $_FN;
 $op=FN_GetParam("op",$_GET);
 $username=FN_GetParam("user",$_GET);
-if(!FN_IsAdmin())
+if (!FN_IsAdmin())
     $username=$_FN['user'];
 switch($op)
 {
     case "register":
     case "end_reg":
-        if(!empty($_FN['enable_registration']))
+        if (!empty($_FN['enable_registration']))
         {
             FNREG_ManageRegister();
         }
@@ -33,27 +33,34 @@ switch($op)
         break;
 
     default:
-        if(empty($op))
+        if (empty($op))
         {
             echo FN_HtmlContent("sections/{$_FN['mod']}");
         }
-        if($_FN['user']=="")
+        if ($_FN['user']== "")
         {
-            FN_LoginForm();
+            $templateForm=false;
+            $tppath=FN_FromTheme("modules/login/login.tp.html",false);
+            if (file_exists($tppath))
+            {
+                $templateForm=file_get_contents(FN_FromTheme("modules/login/login.tp.html",false));
+                
+            }
+            FN_LoginForm($templateForm);
         }
         else
         {
             $templateStr=file_get_contents(FN_FromTheme("modules/login/profile.tp.html",false));
             $tplbasepath=dirname(FN_FromTheme("modules/login/profile.tp.html",false))."/";
             $tplvars=FN_GetUser($_FN['user']);
-            $tplvars['urllogout']=FN_RewriteLink("index.php?mod={$_FN['mod']}&amp;fnlogin=logout");
             $tplvars['urleditprofile']=FN_RewriteLink("index.php?mod={$_FN['mod']}&amp;op=editreg");
             $tplvars['username']=$_FN['user'];
             $tplvars['urlimage']=FN_GetUserImage($_FN['user']);
             $tplvars['urllogout']=FN_RewriteLink("index.php?mod={$_FN['mod']}&amp;fnlogin=logout");
-            foreach ($tplvars as $k=>$var)
+            foreach($tplvars as $k=> $var)
             {
-                $_FN['result'][$k]=$var;
+                if ($k!="password")
+                    $_FN['return'][$k]=$var;
             }
             echo FN_TPL_ApplyTplString($templateStr,$tplvars,$tplbasepath);
         }

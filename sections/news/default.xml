@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <fn_sections>
 	<type>news</type>
-	<position>10</position>
+	<parent></parent>
+	<position>20</position>
+	<title>News</title>
+	<description></description>
+	<startdate></startdate>
+	<enddate></enddate>
 	<status>1</status>
 	<hidden>0</hidden>
+	<accesskey></accesskey>
+	<keywords></keywords>
+	<sectionpath>sections</sectionpath>
+	<level></level>
+	<group_view></group_view>
+	<group_edit></group_edit>
+	<blocksmode></blocksmode>
+	<blocks></blocks>
+	<title_it></title_it>
+	<title_en></title_en>
+	<description_it></description_it>
+	<description_en></description_en>
 </fn_sections>
-	

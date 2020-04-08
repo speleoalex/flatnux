@@ -50,6 +50,8 @@ $config['enable_comments_notify'] = 0;
 $config['search_min'] = "";
 #[i18n]field to be used as the title
 $config['titlefield'] = "title";
+#[i18n]field to be used as the description
+$config['descriptionfield'] = "description";
 #[i18n]fixed fields of research
 $config['search_options'] = "";
 #[i18n]fields to navigate as groups

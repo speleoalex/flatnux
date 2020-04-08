@@ -24,6 +24,32 @@ function FN_GetExecuteTimer()
 
 /**
  * 
+ * @global type $_FN
+ * @return type
+ */
+function FN_GetPartialTimer()
+{
+    global $_FN;
+    if (empty($_FN['timepartial']))
+    {
+        $_FN['timepartial']=$_FN['timestart'];
+    }
+
+    $mtime=microtime();
+    $mtime=explode(" ",$mtime);
+    $mtime=doubleval($mtime[1]) + doubleval($mtime[0]);
+    if (empty($_FN['timepartial']))
+    {
+        $_FN['timepartial']=$mtime;
+    }
+    $ret=sprintf("%.4f",abs($mtime - $_FN['timepartial']));
+    $_FN['timepartial']=$mtime;
+    $total=FN_GetExecuteTimer();
+    return "partial=$ret - total=$total";
+}
+
+/**
+ * 
  * @param string $key
  * @param array $var
  * @param string $type
@@ -63,6 +89,10 @@ function FN_GetParam($key,$var=false,$type="")
                 $ret=floatval($ret);
             break;
         default:
+            if (function_exists($type))
+            {
+                return $type($ret);
+            }
             break;
     }
     return FN_StripPostSlashes($ret);
@@ -642,7 +672,7 @@ function FN_IncludeJS()
     $listcss=glob("include/javascripts/*.js");
     foreach($listcss as $file)
     {
-        $html.="\n\t<script defer=\"defer\" type=\"text/javascript\" src=\"{$sitepath}$file\"></script>";
+        $html.="\n\t<script type=\"text/javascript\" src=\"{$sitepath}$file\"></script>";
     }
     return $html;
 }
@@ -1141,7 +1171,6 @@ function FN_InitTables($force=false)
 function FN_XmlTable($tablename,$params=false)
 {
     global $_FN;
-
     if (!isset($params['defaultdriver']))
         $params['defaultdriver']=$_FN['default_database_driver'];
     return xmldb_table("{$_FN['database']}",$tablename,$_FN['datadir'],$params);
@@ -1158,6 +1187,10 @@ function FN_XmlForm($tablename,$params=false)
     global $_FN;
     $params['siteurl']=$_FN['siteurl'];
     $params['charset_page']=$_FN['charset_page'];
+    $params['requiredtext']=isset($_FN['requiredfieldsymbol'])?$_FN['requiredfieldsymbol']:"*";
+    
+    
+    
     $t=xmldb_frm($_FN['database'],$tablename,$_FN['datadir'],$_FN['lang'],$_FN['languages'],$params);
     if (file_exists("themes/{$_FN['theme']}/form.tp.html"))
     {
@@ -1829,13 +1862,13 @@ function FN_SaveGetPostParam($param)
     {
         $retparam=$_COOKIE [$param];
     }
-    if (isset($_POST [$param]))
+    if (isset($_POST [$param]) && !is_array($_POST [$param]))
     {
         $_COOKIE [$param]=$_POST [$param];
         setcookie($param,$_POST [$param],time() + 999999999,$_FN ['urlcookie']);
         $retparam=FN_StripPostSlashes($_POST [$param]);
     }
-    elseif (isset($_GET [$param]))
+    elseif (isset($_GET [$param]) && !is_array($_GET [$param]))
     {
         $_COOKIE [$param]=$_GET [$param];
         setcookie($param,$_GET [$param],time() + 999999999,$_FN ['urlcookie']);
@@ -1926,6 +1959,38 @@ function FN_GetVarsFromTable($tablename)
  */
 function FN_LoadVarsFromTable(&$var,$tablename,$ignore=array())
 {
+
+    $configvars=array(
+        "sitename",
+        "site_title",
+        "site_subtitle",
+        "keywords",
+        "languages",
+        "theme",
+        "controlcenter_theme",
+        "switchtheme",
+        "siteurl",
+        "site_email_address",
+        "log_email_address",
+        "enable_compress_gzip",
+        "home_section",
+        "jet_lag",
+        "showaccesskey",
+        "enable_log_email",
+        "enable_mod_rewrite",
+        "links_mode",
+        "enable_registration",
+        "username_is_email",
+        "registration_by_email",
+        "remember_login",
+        "enable_captcha",
+        "htmleditor",
+        "enable_online_administration",
+        "credits",
+        "maintenance",
+        "url_update",
+        "use_cache",
+        "timezone"        );
     $Table=FN_XmlTable($tablename);
     if (!is_array($ignore))
         $ignore=array();
@@ -1936,7 +2001,7 @@ function FN_LoadVarsFromTable(&$var,$tablename,$ignore=array())
         //---clear obsolete vars----------------------------------------------->
         foreach($vars_in_table_assoc as $k=> $v)
         {
-            if (!isset($var[$k]))
+            if (!in_array($k,$configvars))
             {
                 $Table->DelRecord($k);
             }
@@ -1956,6 +2021,9 @@ function FN_LoadVarsFromTable(&$var,$tablename,$ignore=array())
         {
             if (in_array($k,$ignore))
                 continue;
+            if (!in_array($k,$configvars))
+                continue;
+            
             //$old = $Table->GetRecordByPrimaryKey($k);
             $old=isset($settingsByKey[$k]) ? $settingsByKey[$k] : array();
             if (!@array_key_exists('defaultvalue',$old))
@@ -1986,18 +2054,21 @@ function FN_GetMessagesFromFolder($folder)
 {
     global $_FN;
     $tmp=array();
+    $tmp_theme=false;
     if (file_exists("$folder/languages/{$_FN['lang']}/lang.csv"))
     {
+        $foldertheme =FN_FromTheme("$folder/languages/{$_FN['lang']}/lang.csv");
         $tmp=FN_GetMessagesFromCsv("$folder/languages/{$_FN['lang']}/lang.csv");
-    }/*
-      else
-      if (file_exists("$folder/languages/{$_FN['lang_default']}/lang.csv"))
-      {
-      $tmp=FN_GetMessagesFromCsv("$folder/languages/{$_FN['lang_default']}/lang.csv");
-      } */
+        
+    }
     elseif (file_exists("$folder/languages/en/lang.csv"))
     {
         $tmp=FN_GetMessagesFromCsv("$folder/languages/en/lang.csv");
+    }
+    if (file_exists("themes/{$_FN['theme']}/$folder/languages/{$_FN['lang']}/lang.csv"))
+    {
+        $tmp_theme=FN_GetMessagesFromCsv("themes/{$_FN['theme']}/$folder/languages/{$_FN['lang']}/lang.csv");
+        $tmp=array_merge($tmp,$tmp_theme);
     }
     return $tmp;
 }
@@ -2535,13 +2606,17 @@ function FN_GetSessionValue($varname)
 {
     global $_FN;
     //---------------get sid--------------------------------------------------->
-    $_FN['fnsid']=FN_GetParam("fnsid",$_COOKIE,"html");
+    $_FN['fnsid']=FN_GetParam("fnsid",$_REQUEST,"html");
+    if (empty($_FN['fnsid']))
+        $_FN['fnsid']=FN_GetParam("fnsid",$_COOKIE,"html");
     if (empty($_FN['fnsid']))
     {
-        $_FN['fnsid']=uniqid("_");
+        $_FN['fnsid']=uniqid("_").uniqid("x");
         setcookie("fnsid",$_FN['fnsid'],time() + 999999999,$_FN ['urlcookie']);
         $_COOKIE["fnsid"]=$_FN['fnsid'];
     }
+    $_FN['return']['fnsid']=$_FN['fnsid'];
+
     //---------------get sid---------------------------------------------------<
     if (empty($_FN['fnsid']))
     {
@@ -2570,10 +2645,12 @@ function FN_SetSessionValue($key,$value)
     $_FN['fnsid']=FN_GetParam("fnsid",$_COOKIE,"html");
     if (empty($_FN['fnsid']))
     {
-        $_FN['fnsid']=uniqid("_");
+        $_FN['fnsid']=uniqid("1").uniqid("0");
         setcookie("fnsid",$_FN['fnsid'],time() + 999999999,$_FN ['urlcookie']);
         $_COOKIE["fnsid"]=$_FN['fnsid'];
     }
+    $_FN['return']['fnsid']=$_FN['fnsid'];
+
     //---------------get sid---------------------------------------------------<
     if (!file_exists("{$_FN['datadir']}/_sessions/"))
     {
@@ -2711,8 +2788,6 @@ function FN_ClearCache()
     mkdir("misc/_cache");
 }
 
-
-
 /**
  * 
  * @staticvar int $level
@@ -2747,4 +2822,5 @@ function dprint_r_arrayxml($var)
     if ($level== 0)
         echo "</pre>";
 }
+
 ?>

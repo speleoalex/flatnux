@@ -170,6 +170,10 @@ else
                 break;
             case "edit" :
                 $html.=FNNAV_EditRecordForm($unirecid,$Table); // form edita record
+                if (file_exists("sections/{$_FN['mod']}/bottom_edit.php"))
+                {
+                    include ("sections/{$_FN['mod']}/bottom_edit.php");
+                }
 
                 break;
             case "new" :
@@ -724,7 +728,7 @@ function FNNAV_HtmlItem($tablename,$pk,$templateStringAll)
     $tplvars['item_urldelete']=FNNAV_MakeLink(array("op"=>"del","id"=>$pk),"&amp;");
     $tplvars['item_urlimage']=$img;
     $tplvars['item_urlimage_fullsize']=$photo_fullsize;
-    
+
     $dettlink=FNNAV_MakeLink(array("op"=>"view","id"=>$pk),"&amp;");
 
     //----title-------------------------------->
@@ -746,9 +750,9 @@ function FNNAV_HtmlItem($tablename,$pk,$templateStringAll)
             foreach($data as $tv)
             {
                 $titlename=$tv;
-                break;                
+                break;
             }
-            $titlename=isset($titlename[1])?$titlename[1]:"";
+            $titlename=isset($titlename[1]) ? $titlename[1] : "";
         }
     $tplvars['item_title']=FN_FixEncoding($titlename);
     //----title--------------------------------<

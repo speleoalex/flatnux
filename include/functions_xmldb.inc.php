@@ -177,9 +177,6 @@ function FN_XmltableEditor($tablename,$params=false,$params2=false)
     {
         $params['html_template_view']=file_get_contents("themes/{$_FN['theme']}/view.tp.html");
     }
-
-
-
     XMLDB_editor($tablename,$xmldatabase,$params);
 }
 
@@ -193,6 +190,8 @@ class xmldbfrm_field_datetime
         static $idcalendar=0;
         $idcalendar++;
         $html="";
+        $attributes=isset($params["htmlattributes"]) ? $params["htmlattributes"] : "";
+        
         if ($idcalendar== 1)
         {
             $html.="<script type=\"text/javascript\"  >
@@ -260,14 +259,17 @@ MonthName = new Array
 
 
         $jscal="DateSeparator='$DateSeparator';return NewCssCal('$idInput', '$dateformat_js','$Navigation_pattern',$Display_time_in_calendar,$Time_mode,$Show_Seconds)";
-        $html.="<input autocomplete=\"off\" onclick=\"$jscal\" $toltips name=\"".$params['name']."\" id=\"xmldb_bcalendar_".$params['name']."$idcalendar\" value=\"".$val."\" /><button onclick=\"$jscal\" type=\"button\" ><img style=\"border:0px;vertical-align:middle\" alt = \"\" src=\"".FN_FromTheme("images/calendar.png")."\" /></button>";
+        //closewin("$idInput"); stopSpin();
+        $html.="<input onblur=\"checkclosewin('$idInput');\" onchange=\"dropwin('$idInput');\" $attributes autocomplete=\"off\" onclick=\"$jscal\" $toltips name=\"".$params['name']."\" id=\"xmldb_bcalendar_".$params['name']."$idcalendar\" value=\"".$val."\" />";
+//        $html.="<button id=\"xmldb_bcalendar_btn_".$params['name']."$idcalendar\" onclick=\"$jscal\" type=\"button\" ><img style=\"border:0px;vertical-align:middle\" alt = \"\" src=\"".FN_FromTheme("images/calendar.png")."\" /></button>";
+//        $html.="<button id=\"xmldb_bcalendar_btn_".$params['name']."$idcalendar\" onclick=\"document.getElementById('$idInput').click();\" type=\"button\" ><img style=\"border:0px;vertical-align:middle\" alt = \"\" src=\"".FN_FromTheme("images/calendar.png")."\" /></button>";
+//        $html.="<img style=\"border:0px;vertical-align:middle\" alt = \"\" src=\"".FN_FromTheme("images/calendar.png")."\" />";
         return $html;
     }
 
     function view($params)
     {
         $dateformat="y-mm-dd 00:00:00";
-
         if (isset($params['frm_dateformat']) && $params['frm_dateformat']!= "")
             $dateformat=$params['frm_dateformat'];
         if (isset($params['view_dateformat']) && $params['view_dateformat']!= "")
@@ -345,15 +347,26 @@ MonthName = new Array
     {
         if ($strdate== "" || $strdate== "0000-00-00 00:00:00")
             return "";
-        $time=strtotime($strdate);
+//        $time=strtotime($strdate);
         $dateformat=str_replace("y","Y",$dateformat);
         $dateformat=str_replace("00:00:00","H:i:s",$dateformat);
         $dateformat=str_replace("00:00","H:i",$dateformat);
         $dateformat=str_replace("00","H",$dateformat);
         $dateformat=str_replace("mm","m",$dateformat);
-        $dateformat=str_replace("dd","d",$dateformat);
-        $strformdate=date($dateformat,$time);
-        //dprint_r("valuetoform $strdate-> $time -> $dateformat -> $strformdate");
+        $dateformat=str_replace("dd","d",$dateformat);      
+        $dateObj=$date=DateTime::createFromFormat($dateformat,$strdate);
+        if ($dateObj)
+        {
+            $time=$dateObj->getTimestamp();
+            $strformdate=date($dateformat,$time);
+        }
+        else
+        {
+            $time=strtotime($strdate);
+            $strformdate=date($dateformat,$time);
+//            $strformdate=$strdate;
+        }
+       // dprint_r("valuetoform $strdate-> $time -> $dateformat -> $strformdate");
         return $strformdate;
     }
 

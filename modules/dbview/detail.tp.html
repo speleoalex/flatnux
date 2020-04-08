@@ -1,0 +1,51 @@
+<div class="viewrecordpage">
+    {header}
+
+    <!-- if {navigationbar} -->
+    {txt_rsults}
+    <ul class="nav">
+        <!-- if {viewlist} -->
+        <li class="nav-item">
+            <a class="nav-link" href="{link}">{title}</a>
+        </li>
+        <!-- end if {viewlist} -->
+        <!-- if {viewprev} -->
+        <li class="nav-item">
+            <a class="nav-link" href="{link}">{title}</a>
+        </li>
+        <!-- end if {viewprev} -->
+        <!-- if {viewnext} -->
+        <li class="nav-item">
+            <a class="nav-link" href="{link}">{title}</a>
+        </li>
+        <!-- end if {viewnext} -->
+        <!-- foreach {user_options} -->
+        <li class="nav-item">
+            <!-- if {active} -->
+            <a class="nav-link active" href="{link}">{title}</a>
+            <!-- end if {active} -->
+            <!-- if not {active} -->
+            <a class="nav-link" href="{link}">{title}</a>
+            <!-- end if not {active} -->
+
+        </li>
+        <!-- end foreach {user_options} -->
+    </ul>
+    <!-- end if {navigationbar} -->
+    <!-- contents -->
+    <!-- group -->
+    <div class="xmldbgroup{groupname}">
+        <!-- end_group -->
+        <!-- item -->
+        <span class="xmldbcontent xmldbcontent{fieldtype} xmldbcontent{fieldname} ">
+            <span class="xmldbtitle xmldbtitletype{fieldtype} xmldbtitle{fieldname} ">{title}</span>
+            <span class="xmldbvaluetype xmldbvaluetype{fieldtype} xmldbvalue{fieldname} ">
+                {input}</span></span>
+        <!-- end_item -->
+        <!-- endgroup -->
+    </div>
+    <!-- end_endgroup -->
+    <!-- end_contents -->
+    {footer}
+    {innertables}
+</div>

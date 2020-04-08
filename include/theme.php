@@ -101,14 +101,14 @@ if (!function_exists("FN_HtmlHeader"))
             $html.=$_FN['section_header'];
         }
         $html.=trim(ltrim(ob_get_clean()));
-        $html.="\n\t<title>{$_FN['site_title']}</title>";
+
+        //$html.="\n\t<title>{$_FN['site_title']}</title>";
         $html.=FN_IncludeCSS($include_theme_css,$include_section_css);
         $html.=FN_IncludeJS();
         $html.="\n\t<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$_FN['charset_page']."\" />";
         $html.="\n\t<meta name=\"KEYWORDS\" content=\"{$_FN['keywords']}\"  />";
         $html.="\n\t<meta http-equiv=\"EXPIRES\" content=\"0\" />";
         $html.="\t<meta name=\"REVISIT-AFTER\" content=\"1 DAYS\" />\n";
-        $html.="\t<meta name=\"RATING\" content=\"GENERAL\" />\n";
         $html.="\t<script type=\"text/javascript\">
 \t//<!--
 \tcheck = function (url)
@@ -415,14 +415,28 @@ function FN_TPL_html_MakeThemeFromTemplate($templatefile)
     $vars['rss_link']=isset($_FN['rss_link']) ? $_FN['rss_link'] : "#";
     $vars['hmenu']=FN_TPL_tp_create_hmenu();
     $vars['languages']=FN_HtmlLanguages();
-    $html=FN_TPL_include_tpl(FN_TPL_ApplyTplFile($templatefile,$vars),$vars);
+
+    
+    //---------import generic html file---------------------------------------->
+    $tplstring=file_get_contents($templatefile);
+    $tplstring=preg_replace('/<title>[^<]*<\/title>/is',"<title>{site_title}</title>",$tplstring);
+    $tplstring=preg_replace('/href="index.html"/is','href="{siteurl}"',$tplstring);
+    $tplstring=preg_replace('/href=\'index.html\'/is','href=\'{siteurl}\'',$tplstring);
+    $tplstring=preg_replace('/href="([A-Z0-9_]+).html"/is','href="{siteurl}index.php?mod=$1"',$tplstring);
+    $tplstring=preg_replace('/ charset="UTF-8"/is',' charset="{charset_page}"',$tplstring);
+    //---------import generic html file----------------------------------------<
+
+   
+    
+
+    $html=FN_TPL_include_tpl(FN_TPL_ApplyTplString($tplstring,$vars, dirname($templatefile)."/" ),$vars);
 
     foreach($vars as $key=> $value)
     {
         $html=str_replace("{".$key."}",htmlspecialchars("{".$key."}"),$html);
         $html=str_replace("{".$key."}",FN_TPL_encode($value),$html);
     }
-    $html=preg_replace('/<title>[^<]*<\/title>/is',"",$html);
+    $html=preg_replace('/<title>[^<]*<\/title>/is',"<title>{$_FN['site_title']}</title>",$html);
     $html=str_replace("</head>",$header."</head>",$html);
 
     return FN_TPL_decode($html);
@@ -545,6 +559,7 @@ function FN_TPL_ApplyTplString($str,$vars,$basepath=false)
     global $_FN;
     $sharedParams=$_FN;
     $section=FN_GetSectionValues($_FN['mod']);
+
     if (is_array($section))
         foreach($section as $key=> $value)
         {
@@ -609,28 +624,84 @@ function FN_TPL_ApplyTplString($str,$vars,$basepath=false)
     $str=str_replace("ferh='","href='",$str);
     $str=str_replace("rcs=\"","src=\"",$str);
     $str=str_replace("rcs='","src='",$str);
-
-
     $strout=$str;
     $listparams="<pre>";
     foreach($sharedParams as $key=> $value)
     {
         if (is_array($value))
         {
-            $html_array="";
             //array   --->
-            $html_template_array=FN_TPL_GetHtmlPart("foreach {".$key."}",$strout);
-            if ($html_template_array)
+            $html_template_array_items=FN_TPL_GetHtmlParts("foreach {".$key."}",$strout);
+            foreach($html_template_array_items as $html_template_array)
             {
-                foreach($value as $item)
+                if ($html_template_array)
                 {
-                    $html_array.=FN_TPL_ApplyTplString($html_template_array,$item,$basepath);
+                    $html_array="";
+                    if (is_array($value))
+                    {
+                        foreach($value as $item)
+                        {
+                            $html_array.=FN_TPL_ApplyTplString($html_template_array,$item,$basepath);
+                        }
+                    }
+                    $strout=str_replace($html_template_array,$html_array,$strout);
+                    //$strout=FN_TPL_ReplaceHtmlPart("foreach {".$key."}",$html_array,$strout);
                 }
-                $strout=FN_TPL_ReplaceHtmlPart("foreach {".$key."}",$html_array,$strout);
             }
             //array   ---<
         }
+    }
+    foreach($sharedParams as $key=> $value)
+    {
+        //if----
 
+        $html_template_if_items=FN_TPL_GetHtmlParts("if {".$key."}",$strout);
+        if ($html_template_if_items)
+        {
+            //dprint_r("xx $key");
+            foreach($html_template_if_items as $html_template_if)
+            {
+                //dprint_xml($html_template_if);
+                $html_array="";
+                $html_template_if=str_replace("<!-- if {".$key."}","<!-- if |".$key."|",$html_template_if);
+                if ($value)
+                {
+                    if (is_array($value))
+                    {
+
+//                        dprint_xml($html_template_if);
+                        $html_array=FN_TPL_ApplyTplString($html_template_if,$value,$basepath);
+//                        dprint_xml($html_array);
+
+                    }
+                    else
+                    {
+                        $g=array("$key"=>$value);
+                        $html_array=FN_TPL_ApplyTplString($html_template_if,$g,$basepath);
+                    }
+                }
+                $html_array=str_replace("<!-- if |".$key."|","<!-- if {".$key."}",$html_array);
+                //dprint_xml($html_template_if);
+                //$strout=str_replace($html_template_if,$html_array,$strout);
+                
+                $strout=FN_TPL_ReplaceHtmlPart("if {".$key."}",$html_array,$strout);
+            }
+        }
+        //end if---
+        //if not----
+        $html_template_if=FN_TPL_GetHtmlPart("if not {".$key."}",$strout);
+        if ($html_template_if)
+        {
+            $html_array="";
+            if ($value)
+            {
+                $strout=FN_TPL_ReplaceHtmlPart("if not {".$key."}",$html_array,$strout);
+            }
+        }
+        //end if not---        
+    }
+    foreach($sharedParams as $key=> $value)
+    {
         if (is_string($value) || is_numeric($value) || $value== "")
         {
 
@@ -647,16 +718,17 @@ function FN_TPL_ApplyTplString($str,$vars,$basepath=false)
     {
         foreach($i18n[1] as $i18n_item)
         {
-            $mode="AA";
-            if (preg_match("/^[A-Z]/s",$i18n_item) && preg_match("/[a-z]$/s",$i18n_item))
+            $mode="";
+            $i18n_item_tmp =str_replace("?","",$i18n_item);
+            if (preg_match("/^[A-Z]/s",$i18n_item) && preg_match("/[a-z]$/s",$i18n_item_tmp))
             {
                 $mode="Aa";
             }
-            elseif (preg_match("/^[a-z]/s",$i18n_item) && preg_match("/[a-z]$/s",$i18n_item))
+            elseif (preg_match("/^[a-z]/s",$i18n_item) && preg_match("/[a-z]$/s",$i18n_item_tmp))
             {
                 $mode="aa";
             }
-            elseif (preg_match("/^[A-A]/s",$i18n_item) && preg_match("/[A-Z]$/s",$i18n_item))
+            elseif (preg_match("/^[A-A]/s",$i18n_item) && preg_match("/[A-Z]$/s",$i18n_item_tmp))
             {
                 $mode="AA";
             }
@@ -693,26 +765,55 @@ function FN_TPL_GetHtmlPart($partname,$tp_str,$default="")
     if (preg_match("/<!-- $partname -->.*<!-- $partname -->/s",$tp_str))//se il nome del nodo contiene un elemento con lo stesso nome
     {
         $tmp=explode("<!-- $partname -->",$tp_str);
-        //dprin_r_arrayxml($tmp);
-        $tmp = $tmp[1];
-        if (false !== strpos($tmp,"<!-- end $partname -->"))
-            $tmp = explode("<!-- end $partname -->",$tmp);
-        elseif (false !== strpos($tmp,"<!-- end$partname -->"))
-            $tmp = explode("<!-- end$partname -->",$tmp);
+        //dprint_xml($tmp);
+        $tmp=$tmp[1];
+        if (false!== strpos($tmp,"<!-- end $partname -->"))
+            $tmp=explode("<!-- end $partname -->",$tmp);
+        elseif (false!== strpos($tmp,"<!-- end$partname -->"))
+            $tmp=explode("<!-- end$partname -->",$tmp);
         if (is_array($tmp))
         {
-            $tmp =$tmp[0];
+            $tmp=$tmp[0];
             $tp_str="<!-- $partname -->".$tmp."<!-- end $partname -->";
             return $tp_str;
         }
-        //dprint_r($partname);
-        //dprint_xml($tp_str);
-    }    
+    }
     preg_match("/<!-- $partname -->(.*)<!-- end$partname -->/is",$tp_str,$out) || preg_match("/<!-- $partname -->(.*)<!-- end $partname -->/is",$tp_str,$out);
     $tp_str=empty($out[0]) ? $default : $out[0];
     return $tp_str;
 }
 
+function FN_TPL_GetHtmlParts($partname,$tp_str,$default="")
+{
+    $out=array();
+    if (preg_match("/<!-- $partname -->.*<!-- $partname -->/s",$tp_str))//se il nome del nodo contiene un elemento con lo stesso nome
+    {
+        $tmp=explode("<!-- $partname -->",$tp_str);
+        //dprint_xml($tmp);
+        $i=1;
+        while(isset($tmp[$i]))
+        {
+            $tmp2=$tmp[$i];
+            if (false!== strpos($tmp2,"<!-- end $partname -->"))
+                $tmp2=explode("<!-- end $partname -->",$tmp2);
+            elseif (false!== strpos($tmp,"<!-- end$partname -->"))
+                $tmp2=explode("<!-- end$partname -->",$tmp2);
+            if (is_array($tmp2))
+            {
+                $tmp2=$tmp2[0];
+                $tp_str="<!-- $partname -->".$tmp2."<!-- end $partname -->";
+                $ret[]=$tp_str;
+            }
+            $i++;
+        }
+        return $ret;
+    }
+    preg_match("/<!-- $partname -->(.*)<!-- end$partname -->/is",$tp_str,$out) || preg_match("/<!-- $partname -->(.*)<!-- end $partname -->/is",$tp_str,$out);
+    $tp_str=empty($out[0]) ? $default : $out[0];
+    if ($tp_str)
+        return array(0=>$tp_str);
+    return array();
+}
 
 /**
  * 

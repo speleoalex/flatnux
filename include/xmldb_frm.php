@@ -158,7 +158,7 @@ class FieldFrm
         $this->messages["_XMLDBNOTVALIDFIED"]=$this->I18N("the value is not valid");
         $this->messages["_XMLDBNOTVALIDIMAGE"]=$this->I18N("the value is not valid image");
         $this->messages["_XMLDBTOOBIG"]=$this->I18N("the image must be smaller than");
-        $this->messages["_XMLDBEXISTS"]=$this->I18N("this value already exist");
+        $this->messages["_XMLDBEXISTS"]=$this->I18N("this value already exists");
         $this->messages["_XMLDBERRORRETYPE"]=$this->I18N("the values are not equal");
         $this->messages["_XMLDBRETYPE"]=$this->I18N("retype");
         $this->messages["_XMLDBDELETE"]=$this->I18N("delete");
@@ -170,31 +170,71 @@ class FieldFrm
      * @param string $str
      * @param string $fieldname 
      */
-    function SetlayoutTemplateView($str="",$fieldname="")
+    function SetlayoutTemplateView($str="",$fieldname="",$suffix="")
     {
+
         $tmp=(object)array();
         $tmp->templateview="$str";
-        //dprint_r(htmlspecialchars($this->template ));
-        preg_match('/(<!-- item -->)(.*)(<!-- end_item -->)/is',$tmp->templateview,$out);
-        $tmp->templateviewItem=empty($out[2]) ? "{title}<br />{input}" : $out[2];
-        preg_match('/(<!-- group -->)(.*)(<!-- end_group -->)/is',$tmp->templateview,$out);
-        $tmp->templateviewGroup=empty($out[2]) ? "<div class=\"xmldbgroup{groupname}\">{groupname}</div>" : $out[2];
-        preg_match('/(<!-- endgroup -->)(.*)(<!-- end_endgroup -->)/is',$tmp->templateview,$out);
-        $tmp->templateviewEndGroup=empty($out[2]) ? "<hr />" : $out[2];
-        preg_match('/(<!-- error -->)(.*)(<!-- end_error -->)/is',$tmp->templateview,$out);
-        $tmp->templateviewError=empty($out[2]) ? "{error}" : $out[2];
-        $tp_out=preg_replace('/<!-- contents -->(.*)<!-- end_contents -->/is','{formcontents}',$tmp->templateview);
-        $tmp->templateviewContents=$tp_out;
-        $tmp->templateviewItemError=$tmp->templateviewItem;
-        $tp_item=preg_replace('/<!-- error -->(.*)<!-- end_error -->/is','',$tmp->templateviewItem);
-        $tmp->templateviewItem=$tp_item;
         if ($fieldname== "")
         {
-            $this->templateviewobject=$tmp;
+            foreach($this->formvals as $k=> $v)
+            {
+                if (!isset($v['name']))
+                    continue;
+                $type=$v['frm_type'];
+                $__fieldname=$v['name'];
+                $this->SetlayoutTemplateView($str,$__fieldname);
+                $this->SetlayoutTemplateView($str,$__fieldname,"_type_$type");
+                $this->SetlayoutTemplateView($str,$__fieldname,"_$__fieldname");
+            }
         }
         else
         {
-            $this->templateviewobjects[$fieldname]=$tmp;
+            $type=$this->formvals[$fieldname]['frm_type'] ? $this->formvals[$fieldname]['frm_type'] : $this->formvals[$fieldname]['type'];
+            if (preg_match('/(<!-- item'.$suffix.' -->)(.*)(<!-- end_item'.$suffix.' -->)/is',$tmp->templateview,$out))
+            {
+                $tmp->templateviewItem=empty($out[2]) ? "{title}<br />{input}" : $out[2];
+
+                preg_match('/(<!-- group -->)(.*)(<!-- end_group -->)/is',$tmp->templateview,$out);
+                $tmp->templateviewGroup=empty($out[2]) ? "<div class=\"xmldbgroup{groupname}\">{groupname}</div>" : $out[2];
+                preg_match('/(<!-- endgroup -->)(.*)(<!-- end_endgroup -->)/is',$tmp->templateview,$out);
+                $tmp->templateviewEndGroup=empty($out[2]) ? "<hr />" : $out[2];
+
+                if (!empty($this->formvals[$fieldname]['view_group']))
+                {
+                    $groupname=$this->formvals[$fieldname]['view_group'];
+                    preg_match('/(<!-- group_'.$groupname.' -->)(.*)(<!-- end_group_'.$groupname.' -->)/is',$tmp->templateview,$out);
+                    if (!empty($out[2]))
+                    {
+                        $this->templateviewGroups[$groupname]=empty($out[2]) ? $tmp->templateviewGroup : $out[2];
+                        //dprint_xml($this->templateviewGroups);
+                    }
+                }
+
+                if (!empty($this->formvals[$fieldname]['view_endgroup']))
+                {
+                    //dprint_r($fieldname);
+                    $groupname=$this->formvals[$fieldname]['view_endgroup'];
+                    $out="";
+                    preg_match('/(<!-- endgroup_'.$groupname.' -->)(.*)(<!-- end_endgroup_'.$groupname.' -->)/is',$tmp->templateview,$out);
+                    if (!empty($out[2]))
+                    {
+                        $this->templateviewEndGroups[$groupname]=empty($out[2]) ? $tmp->templateviewEndGroup : $out[2];
+                        //dprint_xml($this->templateviewEndGroups);
+                    }
+                }
+
+
+                preg_match('/(<!-- error -->)(.*)(<!-- end_error -->)/is',$tmp->templateview,$out);
+                $tmp->templateviewError=empty($out[2]) ? "{error}" : $out[2];
+                $tp_out=preg_replace('/<!-- contents -->(.*)<!-- end_contents -->/is','{formcontents}',$tmp->templateview);
+                $tmp->templateviewContents=$tp_out;
+                $tmp->templateviewItemError=$tmp->templateviewItem;
+                $tp_item=preg_replace('/<!-- error -->(.*)<!-- end_error -->/is','',$tmp->templateviewItem);
+                $tmp->templateviewItem=$tp_item;
+                $tmp->templateItem=$tp_item;
+                $this->templateviewobjects[$fieldname]=$tmp;
+            }
         }
     }
 
@@ -509,6 +549,16 @@ $frm_endgroupfooter
             elseif (!empty($record['en']))
                 $tmp['title']=$this->i18n(strtolower($record['frm_en']));
 
+
+            if (!empty($record['frm_title_insert_'.$lang]))
+                $tmp['title_insert']=$record['frm_title_insert_'.$lang];
+            elseif (!empty($record['frm_title_insert_i18n']))
+                $tmp['title_insert']=$this->i18n($record['frm_title_insert_i18n']);
+            elseif (!empty($record['en']))
+                $tmp['title_insert']=$this->i18n(strtolower($record['frm_title_insert_en']));
+            else
+                $tmp['title_insert']=$tmp['title'];
+
             //--set field title----<
             if (!empty($record['frm_help_'.$lang]))
                 $tmp['frm_help']=$record['frm_help_'.$lang];
@@ -799,6 +849,7 @@ $frm_endgroupfooter
         }
         //if primarykey is missing I force viewing
         $strhiddenfield="";
+        
         if ($update== true)
             $strhiddenfield="<input readonly=\"readonly\" type=\"hidden\" name=\"_xmldbform_pk_$primarykey\" value=\"".$oldvalues[$primarykey]."\" />";
         if ($update== true && isset($this->formvals[$primarykey]['frm_show']) && ($this->formvals[$primarykey]['frm_show']=== "0" || $this->formvals[$primarykey]['frm_show']=== 0))
@@ -824,6 +875,7 @@ $frm_endgroupfooter
                 dprint_r("$fieldform_valuesk is incomplete:");
                 dprint_r($fieldform_values);
             }
+            $fieldform_values['title']=$fieldform_values['title_insert'];
             if (isset($this->templateobjects[$fieldform_valuesk]))
                 $tpobject=$this->templateobjects[$fieldform_valuesk];
             else
@@ -860,6 +912,7 @@ $frm_endgroupfooter
                 }
                 $fieldform_values['options']=$this->LoadOptions($fieldform_values,$oldvalues);
             }
+            
             //----------------------filters------------------------------------<
             if (isset($fieldform_values['frm_group']) && $fieldform_values['frm_group']!= "")
             {
@@ -961,8 +1014,10 @@ $frm_endgroupfooter
                     }
                 }
                 if (!empty($fieldform_values['htmlattributes']))
+                {
                     $fieldform_values['htmlattributes']=$this->ApplyTplString($fieldform_values['htmlattributes'],$fieldform_values);
-
+                    $fieldform_values['htmlattributes']=str_replace("{fieldname}","{$fieldform_values['name']}",$fieldform_values['htmlattributes']);
+                }
                 $skeepsimbol=uniqid("s");
                 if ($multilanguage)
                 {
@@ -1110,21 +1165,40 @@ $frm_endgroupfooter
                 $primarykey=$k;
         }
         //if primarykey is missing I force viewing
+        // dprint_r($this->templateviewobjects);
         $htmlitems="";
+        $gtitle="";
         foreach($this->formvals as $fieldform_valuesk=> $fieldform_values)
         {
             $oldval=isset($values[$fieldform_valuesk]) ? $values[$fieldform_valuesk] : "";
+
             if (isset($this->templateviewobjects[$fieldform_valuesk]))
+            {
                 $tpobject=$this->templateviewobjects[$fieldform_valuesk];
+            }
             else
+            {
                 $tpobject=$this->templateviewobject;
+            }
+            //$fieldform_values['template']=$tpobject;
             //if ( isset($fieldform_values['fk_filter_field']) && $fieldform_values['fk_filter_field'] != "" )
             //	$fieldform_values['options'] = $this->LoadOptions($fieldform_values, $values);
             if (isset($fieldform_values['view_group']) && $fieldform_values['view_group']!= "")
             {
                 $gtitle=$fieldform_values['view_group'];
-                $htmlitems.=str_replace("{groupname}",$gtitle,$tpobject->templateviewGroup);
+                $gtitle_i18n=XMLDB_i18n($fieldform_values['view_group']);
+                if (isset($fieldform_values['view_group_i18n']) && $fieldform_values['view_group_i18n']!= "")
+                {
+                    $gtitle_i18n=XMLDB_i18n($fieldform_values['view_group_i18n']);
+                }
+                if (!empty($this->templateviewGroups[$gtitle]))
+                    $_name_group=str_replace("{groupname}",$gtitle,$this->templateviewGroups[$gtitle]);
+                else
+                    $_name_group=str_replace("{groupname}",$gtitle,$tpobject->templateviewGroup);
+                $_tile_group=str_replace("{grouptitle}",$gtitle_i18n,$_name_group);
+                $htmlitems.=$_tile_group;
             }
+
             //----foreignkey---->>
             if ($oldval!= "" && is_array($fieldform_values['options']) && count($fieldform_values['options']) > 0 /* && empty($fieldform_values['foreignkey']) */)
             {
@@ -1248,7 +1322,16 @@ $frm_endgroupfooter
             }
             if (isset($fieldform_values['view_endgroup']))
             {
-                $htmlitem.=$tpobject->templateviewEndGroup;
+//                dprint_r($gtitle);
+                if (!empty($this->templateviewEndGroups[$gtitle]))
+                {
+                    //        dprint_xml($this->templateviewEndGroups[$gtitle]);
+                    $htmlitem.=$this->templateviewEndGroups[$gtitle];
+                }
+                else
+                {
+                    $htmlitem.=$tpobject->templateviewEndGroup;
+                }
             }
             $htmlitems.=$htmlitem;
         }
@@ -1441,11 +1524,17 @@ $frm_endgroupfooter
     function Verify($newvalues,$update=false,$pk=null)
     {
         $ret=array();
+
+        $allerrors="";
+        $allerrors_sep="";
+
         foreach($this->formvals as $key=> $value)
         {
             if (empty($value['name']))
                 continue;
             $err="";
+            $errsep="";
+
             if (!empty($_FILES[$key]['error']) && $_FILES[$key]['error']!= 4)
             {
                 $errorMsg=array(
@@ -1456,7 +1545,8 @@ $frm_endgroupfooter
                     4=>"No file was uploaded",
                     6=>"Missing a temporary folder"
                 );
-                $err.=isset($errorMsg[$_FILES[$key]['error']]) ? XMLDB_i18n($errorMsg[$_FILES[$key]['error']]) : XMLDB_i18n("error");
+                $err.=$errsep.isset($errorMsg[$_FILES[$key]['error']]) ? XMLDB_i18n($errorMsg[$_FILES[$key]['error']]) : XMLDB_i18n("error");
+                $errsep=" - ";
             }
             if ($value['type']== 'image' && isset($_FILES[$key]['tmp_name']) && $_FILES[$key]['tmp_name']!= "")
             {
@@ -1468,15 +1558,29 @@ $frm_endgroupfooter
                 {
                     list($width,$height)=getimagesize($_FILES[$key]['tmp_name']);
                     if ($width > $value['frm_maximagesize'] || $height > $value['frm_maximagesize'])
-                        $err.=$this->messages["_XMLDBTOOBIG"]." ".$value['frm_maximagesize']." pixels";
+                    {
+                        $err.=$errsep.$this->messages["_XMLDBTOOBIG"]." ".$value['frm_maximagesize']." pixels";
+                        $errsep=" - ";
+                    }
                 }
             }
-            if (isset($value['frm_required']) && $value['frm_required']== 1 && (!isset($newvalues[$key]) || trim($newvalues[$key])== ""))
+            $skip_required_check=false;
+            if ($value['type']== 'image' || $value['type']== 'file')
             {
+                if ($update== true)
+                {
+                    $skip_required_check=true;
+                }
+            }
+            if (!$skip_required_check && isset($value['frm_required']) && $value['frm_required']== 1 && (!isset($newvalues[$key]) || trim($newvalues[$key])== ""))
+            {
+
+
                 if (!empty($value['frm_error']))
-                    $err.=XMLDB_i18n($value['frm_error']);
+                    $err.=$errsep.XMLDB_i18n($value['frm_error']);
                 else
-                    $err.=$this->messages["_XMLDBREQUIRED"];
+                    $err.=$errsep.$this->messages["_XMLDBREQUIRED"];
+                $errsep=" - ";
             }
             if (isset($value['frm_required_condition']) && $value['frm_required_condition']!= "")
             {
@@ -1489,9 +1593,10 @@ $frm_endgroupfooter
                 if ($req== true && (!isset($newvalues[$key]) || trim($newvalues[$key])== ""))
                 {
                     if (!empty($value['frm_error']))
-                        $err.=XMLDB_i18n($value['frm_error']);
+                        $err.=$errsep.XMLDB_i18n($value['frm_error']);
                     else
-                        $err.=$this->messages["_XMLDBREQUIRED"];
+                        $err.=$errsep.$this->messages["_XMLDBREQUIRED"];
+                    $errsep=" - ";
                 }
             }
             $checkDuplicate=false;
@@ -1517,17 +1622,59 @@ $frm_endgroupfooter
                 }
                 else
                     $t=$this->xmltable->GetRecords($restr);
-
                 if (is_array($t) && count($t) > 0)
                 {
-                    $err.=$this->messages["_XMLDBEXISTS"];
+
+                    if ($update!= true)
+                    {
+                        $err.=$errsep.$this->messages["_XMLDBEXISTS"];
+                        $errsep=" - ";
+                    }
+                    //check duplicate in update -------->
+                    else
+                    {
+                        $duplicate=false;
+                        if (count($t) > 1)
+                        {
+                            $duplicate=true;
+                        }
+                        else
+                        {
+                            if (!is_array($this->xmltable->primarykey))
+                            {
+                                if ($t[0][$this->xmltable->primarykey]!= $newvalues[$this->xmltable->primarykey])
+                                {
+                                    $duplicate=true;
+                                }
+                            }
+                            else
+                            {
+                                foreach($this->xmltable->primarykey as $pkk)
+                                {
+                                    if ($t[0][$pkk]!= $newvalues[$pkk])
+                                    {
+                                        $duplicate=true;
+                                    }
+                                }
+                            }
+                        }
+                        if ($duplicate)
+                        {
+                            $err.=$errsep.$this->messages["_XMLDBEXISTS"];
+                            $errsep=" - ";
+                        }
+                        //check duplicate in update --------<
+                    }
                 }
             }
             if (isset($value['frm_retype']) && $value['frm_retype']== 1)
             {
                 if (isset($_POST[$key."_retype"]) && isset($_POST[$key]))
                     if (($_POST[$key]!= "" && $_POST[$key]!= $_POST[$key."_retype"]) || ($_POST[$key."_retype"]!= "" && $_POST[$key."_retype"]!= $_POST[$key]))
-                        $err.=$this->messages["_XMLDBERRORRETYPE"];
+                    {
+                        $err.=$errsep.$this->messages["_XMLDBERRORRETYPE"];
+                        $errsep=" - ";
+                    }
             }
             if (isset($value['frm_validator']) && $value['frm_validator']!= "")
             {
@@ -1535,13 +1682,15 @@ $frm_endgroupfooter
                     if (function_exists($value['frm_validator']))
                         if (($retvalidator=$value['frm_validator']($newvalues[$key],$update,$newvalues))== false)
                         {
-                            $err.=$this->messages["_XMLDBNOTVALIDFIED"];
+                            $err.=$errsep.$this->messages["_XMLDBNOTVALIDFIED"];
+                            $errsep=" - ";
                         }
                         else
                         {
                             if (is_string($retvalidator))
                             {
-                                $err.=$retvalidator;
+                                $err.=$errsep.$retvalidator;
+                                $errsep=" - ";
                             }
                         }
             }
@@ -1551,7 +1700,8 @@ $frm_endgroupfooter
                 {
                     if (($retvalidator=preg_match($value['frm_preg_match_validator'],$newvalues[$key]))!= true)
                     {
-                        $err.=$this->messages["_XMLDBNOTVALIDFIED"];
+                        $err.=$errsep.$this->messages["_XMLDBNOTVALIDFIED"];
+                        $errsep=" - ";
                     }
                     else
                     {
@@ -1565,7 +1715,8 @@ $frm_endgroupfooter
                 {
                     if (false=== strpos($value['frm_validchars'],$newvalues[$key][$i]))
                     {
-                        $err.=$this->messages["_XMLDNOTVALIDCHARS"];
+                        $err.=$errsep.$this->messages["_XMLDNOTVALIDCHARS"];
+                        $errsep=" - ";
                         break;
                     }
                 }
@@ -1575,7 +1726,16 @@ $frm_endgroupfooter
                 $ret[$key]['title']=$value['title'];
                 $ret[$key]['field']=$key;
                 $ret[$key]['error']=$err;
+                $allerrors.="$allerrors_sep{$value['title']}: ".$err;
+                $allerrors_sep=" - ";
             }
+        }
+        if ($err)
+        {
+
+            $ret['_errors']['title']="error";
+            $ret['_errors']['field']="_errors";
+            $ret['_errors']['error']=trim(ltrim($allerrors));
         }
         //dprint_r($ret);
         return $ret;
@@ -1814,6 +1974,7 @@ class xmldbfrm_field_varchar
     function show($params)
     {
         //dprint_r($params['template']);
+        $required=(isset($params['frm_required']) && $params['frm_required']== 1 ) ? "required=\"required\"" : "";
 
         $html="";
         $toltips=($params['frm_help']!= "") ? "title=\"".$params['frm_help']."\"" : "";
@@ -1823,7 +1984,7 @@ class xmldbfrm_field_varchar
         $l=(!empty($params['size'])) ? "maxlength=\"{$params['size']}\"" : "";
         $frm_prefix=isset($params['frm_prefix']) ? $params['frm_prefix'] : "";
         $attributes=isset($params["htmlattributes"]) ? $params["htmlattributes"] : "";
-        $html.="$frm_prefix<input $attributes  $l title=\"{$params['frm_help']}\" size=\"".$size."\" name=\"{$params['name']}\"  value=\"".str_replace('"','&quot;',$params['value'])."\" />";
+        $html.="$frm_prefix<input $required $attributes  $l title=\"{$params['frm_help']}\" size=\"".$size."\" name=\"{$params['name']}\"  value=\"".str_replace('"','&quot;',$params['value'])."\" />";
         $frm_suffix=isset($params['frm_suffix']) ? $params['frm_suffix'] : "";
         $html.=$frm_suffix;
         //$html=str_replace("{input}",$html,$tp_str);
@@ -1888,10 +2049,11 @@ class xmldbfrm_field_password
             $params['value']="";
         $params['value']="";
         $attributes=isset($params["htmlattributes"]) ? $params["htmlattributes"] : "";
+        $required=(isset($params['frm_required']) && $params['frm_required']== 1 ) ? "required=\"required\"" : "";
 
         $html="";
         $toltips=($params['frm_help']!= "") ? "title=\"".$params['frm_help']."\"" : "";
-        $html.="<input autocomplete=\"off\"  $attributes  $toltips value=\"".str_replace('"','\\"',$params['value'])."\"  name=\"".$params['name']."\" type=\"password\" />\n";
+        $html.="<input $required autocomplete=\"off\"  $attributes  $toltips value=\"".str_replace('"','\\"',$params['value'])."\"  name=\"".$params['name']."\" type=\"password\" />\n";
         return $html;
     }
 
@@ -2025,7 +2187,7 @@ el{$fieldform_values['name']}.onchange=function()
 {
 	var inp;
 	inp = document.createElement('input');
-	inp.type='submit';
+	inp.type='text';
 	inp.name='__NOSAVE';
 	inp.value='__NOSAVE';
 	var div;
@@ -2052,8 +2214,8 @@ el{$fieldform_values['name']}.onchange=function()
        // alert(e);
 	}
 	el{$fieldform_values['name']}.parentNode.appendChild(inp);
-	inp.click();
 	document.getElementsByTagName('body')[0].appendChild(div);
+	inp.form.submit();
 }
 }catch (e){
     // alert(e);
@@ -2082,6 +2244,7 @@ class xmldbfrm_field_file
 
     function show($params)
     {
+
         $html="";
         $toltips="";
         $size=isset($params['frm_size']) ? $params['frm_size'] : 20;
@@ -2089,7 +2252,13 @@ class xmldbfrm_field_file
         $tablepath=$params['fieldform']->xmltable->FindFolderTable($oldvalues);
         $oldval=$params['value'];
         $primarykey=$params['oldvalues_primarikey'];
-        $html.="<input $toltips size=\"$size\" name=\"".$params['name']."\" type=\"file\" />\n";
+        $attributes=isset($params["htmlattributes"]) ? $params["htmlattributes"] : "";
+        $required="";
+        if ($oldval== "")
+        {
+            $required=(isset($params['frm_required']) && $params['frm_required']== 1 ) ? "required=\"required\"" : "";
+        }
+        $html.="<input $required  $attributes $toltips size=\"$size\" name=\"".$params['name']."\" type=\"file\" />\n";
         $html.="<br />";
         if ($oldval!= "" && isset($oldvalues[$primarykey]))
         {
@@ -2271,7 +2440,9 @@ class xmldbfrm_field_text
             $rows=3;
         }
         $html="";
-        $html.="<textarea $attributes style=\"$style\" $onkeyup title=\"$tooltip\" cols=\"".$cols."\"  rows=\"".$rows."\"  name=\"{$params['name']}\"  >";
+        $required=(isset($params['frm_required']) && $params['frm_required']== 1 ) ? "required=\"required\"" : "";
+
+        $html.="<textarea $required $attributes style=\"$style\" $onkeyup title=\"$tooltip\" cols=\"".$cols."\"  rows=\"".$rows."\"  name=\"{$params['name']}\"  >";
         $html.=htmlspecialchars($params['value']);
         $html.="</textarea>";
         return $html;
@@ -2300,7 +2471,7 @@ class xmldbfrm_field_html
     {
         $html="";
         $rows=isset($params['frm_rows']) ? $params['frm_rows'] : 4;
-        $cols=isset($params['frm_cols']) ? $params['frm_cols'] : 20;
+        $cols=isset($params['frm_cols']) ? $params['frm_cols'] : "auto";
         $languagesfield=$params['languagesfield'];
         $oldvalues=$params['oldvalues'];
         $tooltip=$params['frm_help'];
@@ -2424,7 +2595,7 @@ class xmldbfrm_field_radio
             if ($value=== $option['value'])
                 $sel="checked=\"checked\"";
             $id++;
-            $html.="<label for=\"xmldbradio{$name}{$id}\" style=\"white-space:nowrap\" ><input $attributes  id=\"xmldbradio{$name}{$id}\"  $sel $jsonclick type=\"radio\" value=\"{$option['value']}\" title=\"$tooltip\" name=\"".$name."\"  /> $toption</label>&nbsp; ";
+            $html.="<input $attributes  id=\"xmldbradio{$name}{$id}\"  $sel $jsonclick type=\"radio\" value=\"{$option['value']}\" title=\"$tooltip\" name=\"".$name."\"  /><label for=\"xmldbradio{$name}{$id}\" style=\"white-space:nowrap\" >$toption</label>&nbsp; ";
             $i++;
         }
         $html.="<script type=\"text/javascript\"  >setTimeout(\"$jexecute\",0);</script>";

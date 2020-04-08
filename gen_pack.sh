@@ -156,3 +156,8 @@ chmod 777 -R  ./flatnux_minimal/
 echo creato: $namezip
 chmod 777 -R ../.svn/
 
+
+
+#git add *
+#git commit
+#git push
