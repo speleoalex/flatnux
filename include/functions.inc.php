@@ -1990,7 +1990,9 @@ function FN_LoadVarsFromTable(&$var,$tablename,$ignore=array())
         "maintenance",
         "url_update",
         "use_cache",
-        "timezone"        );
+        "timezone",
+        "use_urlserverpath"
+        );
     $Table=FN_XmlTable($tablename);
     if (!is_array($ignore))
         $ignore=array();
