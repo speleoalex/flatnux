@@ -6,7 +6,7 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License
  */
 #[i18n]page{__submenu__=submenu,=view all,./sections}
-$config['parent']="";
+$config['parent']="__submenu__";
 #[i18n]method{=default,ul=ul}
 $config['method']="ul";
 #[i18n]recursive {0=no,1=yes}

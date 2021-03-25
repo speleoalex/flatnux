@@ -845,7 +845,7 @@ RenderCssCal = function (bNewCal)
         cssStr = "span.xmldbcalendar,span.xmldbcalendar * {font-family: Arial;font-size: 12px;line-height: 14px;padding:1px;margin:0px;border:0px;text-align:center}\n";
         cssStr += ".calTD {text-align: center; border:1px; }\n";
         cssStr += ".calR {font-family: verdana; font-size: 12px; text-align: center; font-weight: bold;border:0px;}\n";
-        cssStr += ".xmldbcalendar td{padding:3px;}";
+        cssStr += ".xmldbcalendar td{padding:3px;white-space:nowrap}";
         cssStr += ".xmldbcalendar input,.xmldbcalendar select{border:0px solid #080808;margin:1px;padding:5px;background-color:#ffffff;color:#000000}";
         cssStr += ".xmldbcalendar input[type=button]{border:1px solid #080808;margin:1px;padding:5px;background-color:#dddddd;color:#000000}";
         

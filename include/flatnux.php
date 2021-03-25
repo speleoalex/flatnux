@@ -57,6 +57,7 @@ $_FN['filesystempath']=".";
 $_FN['consolemode']=false;
 $_FN['datadir']=$_FN_datadir;
 $_FN['charset_lang']="UTF-8";  //default
+$_FN['charset_page']="UTF-8";
 $_FN['database']="fndatabase";
 $_FN['use_urlserverpath']=false; //use url path in link to generate the html 
 //false:href="http://example/include/css/style.css"
@@ -109,7 +110,41 @@ if ($_FN['consolemode'] || $_FN['frameworkmode'])
 {
     $_FN['datadir']=realpath($_FN['datadir']);
 }
-FN_LoadVarsFromTable($_FN,"fn_settings",array("script_path","datadir","return","timestart","consolemode","filesystempath","charset_lang","default_database_driver","section_header_footer","FN_SendMail","frameworkmode","selfscript"));
+$configvars=array(
+    "sitename",
+    "site_title",
+    "site_subtitle",
+    "keywords",
+    "languages",
+    "theme",
+    "controlcenter_theme",
+    "switchtheme",
+    "siteurl",
+    "site_email_address",
+    "log_email_address",
+    "enable_compress_gzip",
+    "home_section",
+    "jet_lag",
+    "showaccesskey",
+    "enable_log_email",
+    "enable_mod_rewrite",
+    "links_mode",
+    "enable_registration",
+    "username_is_email",
+    "registration_by_email",
+    "remember_login",
+    "enable_captcha",
+    "htmleditor",
+    "enable_online_administration",
+    "credits",
+    "maintenance",
+    "url_update",
+    "use_cache",
+    "timezone",
+    "use_urlserverpath"
+);
+$ignore=array("script_path","datadir","return","timestart","consolemode","filesystempath","charset_lang","default_database_driver","section_header_footer","FN_SendMail","frameworkmode","selfscript");
+FN_LoadVarsFromTable($_FN,"fn_settings",$configvars,$ignore);
 //----------------------------------timezone----------------------------------->
 if (function_exists("date_default_timezone_get"))
 {
@@ -140,13 +175,16 @@ if ($mod== "")
 $_FN['block']="";
 $_FN['mod']=$mod;
 $php_self=FN_GetParam("PHP_SELF",$_SERVER);
+$SCRIPT_NAME=FN_GetParam("SCRIPT_NAME",$_SERVER);
+
+
 $_FN ['self']=$php_self;
 //--------------------------site url ------------------------------------------>
 if ($_FN['siteurl']== "")
 {
     if (!$_FN['consolemode'] && !$_FN['frameworkmode']) //consolemode need explicit siteurl
     {
-        $dirname=dirname($php_self);
+        $dirname=dirname($SCRIPT_NAME);
         if (isset($_SERVER ['SCRIPT_FILENAME']))
         {
             $serverpath=dirname($_SERVER ['SCRIPT_FILENAME']);
@@ -207,6 +245,23 @@ if (empty($_FN['sitepath']))
 //--------------------------languages------------------------------------------>
 $_FN['listlanguages']=explode(",",$_FN['languages']);
 $_FN['lang']=$_FN['listlanguages'][0];
+$_FN['multilanguage']=false;
+if (count($_FN['listlanguages'])>1)
+{
+    $_FN['multilanguage']=true;
+}
+if (empty($_FN['sitelanguages']))
+{
+    $_FN['sitelanguages']=array();
+    foreach($_FN['listlanguages'] as $l)
+    {
+        $params=array();
+        $params['langname']=$l;
+        $params['langtitle']=FN_Translate("_LANGUAGE","",$l);
+        $params['langimg']=$_FN['siteurl']."/images/flags/$l.png";
+        $_FN['sitelanguages'][]=$params;
+    }
+}
 $_FN['lang_default']=$_FN['lang'];
 //--------------------------languages------------------------------------------<
 //--------------------------  set theme ---- ---------------------------------->
@@ -214,13 +269,13 @@ if (!empty($_FN_TMP['theme']))
 {
     $_FN['theme']=$_FN_TMP['theme'];
 }
-/*
-  global $FN_THEME;
-  if (!empty($FN_THEME))
-  {
-  $_FN['theme']=$FN_THEME;
-  }
- */
+
+global $FN_THEME;
+if (!empty($FN_THEME))
+{
+    $_FN['theme']=$FN_THEME;
+}
+
 $_FN['theme_default']=$_FN['theme'];
 if ($_FN['theme']== "" || !file_exists("themes/{$_FN['theme']}"))
     $_FN['theme']="base";
@@ -291,6 +346,8 @@ if (file_exists($_FN['filesystempath']."/themes/{$_FN['theme']}/theme.php"))
 include_once($_FN['filesystempath']."/include/theme.php");
 //----------------------------include theme------------------------------------<
 FN_LoadMessagesFolder($_FN['filesystempath']."/");
+FN_LoadMessagesFolder($_FN['filesystempath']."/themes/{$_FN['theme']}/");
+
 if (isset($_FN_TMP['maintenance']))
 {
     $_FN['maintenance']=$_FN_TMP['maintenance'];
@@ -309,6 +366,11 @@ if (!empty($_FN['sectionvalues']['type']))
 }
 //--language from section
 FN_LoadMessagesFolder($_FN['filesystempath']."/sections/{$_FN['mod']}");
+if (!empty($_FN['languages_path']) && is_array($_FN['languages_path']))
+    foreach($_FN['languages_path'] as $lp)
+    {
+        FN_LoadMessagesFolder($lp);
+    }
 $_FN['days']=array(FN_i18n("sunday"),FN_i18n("monday"),FN_i18n("tuesday"),FN_i18n("wednesday"),FN_i18n("thursday"),FN_i18n("friday"),FN_i18n("saturday"));
 $_FN['months']=array(FN_i18n("january"),FN_i18n("february"),FN_i18n("march"),FN_i18n("april"),FN_i18n("may"),FN_i18n("june"),FN_i18n("july"),FN_i18n("august"),FN_i18n("september"),FN_i18n("october"),FN_i18n("november"),FN_i18n("december"));
 $_FN['site_title']=FN_i18n($_FN['site_title']);
@@ -316,6 +378,19 @@ $_FN['site_subtitle']=FN_i18n($_FN['site_subtitle']);
 $_FN['site_title']=FN_i18n($_FN['site_title']);
 $_FN['site_subtitle']=FN_i18n($_FN['site_subtitle']);
 $_FN['formlogin']=FN_HtmlLoginForm();
+$_FN['section_title']=$_FN['sectionvalues']['title'];
+
+if (!empty($_FN['include']))
+{
+    foreach($_FN['include'] as $value)
+    {
+        if (file_exists($value))
+        {
+            include($value);
+        }
+    }
+}
+
 //include language----<
 if (!$_FN['consolemode'] && !file_exists("sections/".$_FN['mod']))
 {
@@ -348,12 +423,12 @@ function dprint_r($var,$str="",$color="green")
  * @param string $var
  * @param string $str 
  */
-function dprint_xml($var,$str="")
+function dprint_xml($var,$str="",$color="magenta")
 {
     global $_FN;
     if (empty($_FN['consolemode']))
     {
-        echo "<pre style=\"font-size:10px;line-height:12px;border:1px solid magenta\">";
+        echo "<pre style=\"font-size:10px;line-height:12px;border:1px solid $color\">";
         echo "$str\n";
         if (is_object($var))
         {
@@ -376,6 +451,7 @@ function dprint_xml($var,$str="")
         echo "\n---$str--->\n$var\n<---$str---\n";
     }
 }
+
 /**
  * 
  * @param type $var
@@ -408,4 +484,25 @@ function FN_Debug_timer($str)
     echo("<pre style=\"border:1px solid red\">$str</pre>");
 }
 
+
+function FN_AddLanguagePath($path)
+{
+    global $_FN;
+    $_FN['languages_path'][]=$path;
+    
+}
+
+/**
+ * 
+ * @param type $file_to_Include
+ */
+function FN_IncludeScript($file_to_Include)
+{
+    global $_FN;
+    if (empty($_FN['include']))
+    {
+        $_FN['include']=array();
+    }
+    $_FN['include'][]=$file_to_Include;
+}
 ?>

@@ -33,6 +33,6 @@ $config['max_rows'] = 20;
 $config['antispam'] = 1;
 #[it]TRACCIA UTENTI ONLINE {1=SI,0=NO}
 #[en]TRACK USERS ONLINE {1=YES,0=NO}
-$config['track_usersonline'] = 1;
+$config['track_usersonline'] = 0;
 
 ?>

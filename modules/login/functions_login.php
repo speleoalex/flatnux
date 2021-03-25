@@ -60,7 +60,7 @@ function FNREG_ManageRecovery()
             }
             //send mail
             $email=trim(ltrim($uservalues['email']));
-            if ($email== "" && FN_CheckMail($uservalues[$username_field]))
+            if ($email == "" && FN_CheckMail($uservalues[$username_field]))
             {
                 $email=$uservalues[$username_field];
             }
@@ -69,7 +69,6 @@ function FNREG_ManageRecovery()
                 FN_SendMail($email,$subject,$body,false!== stristr($body,"<html"));
                 FN_Log("User $postuser recover password step 1.");
                 $tplvars['txtresults']=FN_Translate("an email has been sent to your email address with instructions to recover your password");
-              
             }
             else
             {
@@ -96,7 +95,7 @@ function FNREG_ManageRecovery()
         $txtresults="";
         $uservalues=FN_GetUser($getuser);
         $email=trim(ltrim($uservalues['email']));
-        if ($email== "" && FN_CheckMail($uservalues[$username_field]))
+        if ($email == "" && FN_CheckMail($uservalues[$username_field]))
         {
             $email=$uservalues[$username_field];
         }
@@ -104,7 +103,7 @@ function FNREG_ManageRecovery()
         {
             $errors=FN_i18n("user does not exist");
         }
-        if ($uservalues['rnd']== "")
+        if ($uservalues['rnd'] == "")
         {
             $errors=FN_Translate("the password has been sent to your email address, if you have not yet received it occurs in spam or repeat the procedure password recovery");
         }
@@ -112,7 +111,7 @@ function FNREG_ManageRecovery()
         {
             $errors=FN_i18n("authentication failure");
         }
-        if ($errors== "")
+        if ($errors == "")
         {
             if (empty($config['change_password_online']))
             {
@@ -156,6 +155,8 @@ function FNREG_ManageRecovery()
                     $form=FN_GetUserForm();
                     $username_field=empty($form->fieldname_user) ? "username" : $form->fieldname_user;
                     $active_field=empty($form->fieldname_active) ? "username" : $form->fieldname_active;
+                    $password_field=empty($form->fieldname_password) ? "passwd" : $form->fieldname_password;
+
                     $newvalues=$uservalues;
                     $passwd=FN_GetParam("newpassword",$_POST,"html");
                     $passwd2=FN_GetParam("newpassword_retype",$_POST,"html");
@@ -254,28 +255,26 @@ function FNREG_ManageEditRegister($user="")
     $form=FN_GetUserForm();
     $username_field=empty($form->fieldname_user) ? "username" : $form->fieldname_user;
     $active_field=empty($form->fieldname_active) ? "username" : $form->fieldname_active;
-
     if (isset($_FN['return']['uservalues']['password']))
     {
         unset($_FN['return']['uservalues']['password']);
     }
     $form->SetLayout("table");
-    if ($user== "")
+    if ($user == "")
         $user=$_FN['user'];
-    $newvalues=FN_GetUser($user);
+    $oldvalues=FN_GetUser($user);
+    $newvalues=$oldvalues;
     $_FN['return']['fields']=$form->formvals;
     $_FN['return']['uservalues']=$newvalues;
-    $uservalues=$newvalues;
-    $oldvalues=$newvalues;
     $reg_ok=false;
     $postvar=$_POST;
     if ($oldvalues)
     {
         if (isset($postvar['updateuser']))
         {
-            foreach($form->formvals as $key=> $value)
+            foreach($form->formvals as $key=> $fieldvalue)
             {
-                if (isset($value['type']) && ($value['type']== 'image' || $value['type']== 'file'))
+                if (isset($fieldvalue['type']) && ($fieldvalue['type'] == 'image' || $fieldvalue['type'] == 'file'))
                 {
                     if (isset($_FILES[$key]['name']))
                     {
@@ -292,7 +291,9 @@ function FNREG_ManageEditRegister($user="")
                 else
                 {
                     if (isset($postvar[$key]))
+                    {
                         $newvalues[$key]=FN_GetParam($key,$postvar,"html");
+                    }
                 }
             }
         }
@@ -322,13 +323,12 @@ function FNREG_ManageEditRegister($user="")
             }
             $newvalues['group']=implode(",",$insgroup);
         }
-
         array_merge($_FN['return'],$newvalues);
         if (empty($_REQUEST['__NOSAVE']) && empty($_REQUEST['fnlogin']))
             if (isset($_POST['updateuser']))
             {
                 $errors=$form->Verify($newvalues,true);
-                if (count($errors)== 0)
+                if (count($errors) == 0)
                 {
                     $reg_ok=true;
                 }
@@ -422,8 +422,13 @@ function FNREG_ConfirmUser($uservalues,$sendwelcomemessage=1)
     $username_field=empty($form->fieldname_user) ? "username" : $form->fieldname_user;
     $active_field=empty($form->fieldname_active) ? "username" : $form->fieldname_active;
     $user=$uservalues[$username_field];
+    $oldvalues=FN_GetUser($user,false);
+    if ($oldvalues["$active_field"] == 1)
+    {
+        $sendwelcomemessage=false;
+    }
     FN_UpdateUser($user,array("$active_field"=>1));
-    if ($sendwelcomemessage== false)
+    if ($sendwelcomemessage == false)
     {
         return;
     }
@@ -481,24 +486,57 @@ function FNREG_ManageRegister($actionform="")
     $form=FN_GetUserForm();
     $username_field=empty($form->fieldname_user) ? "username" : $form->fieldname_user;
     $active_field=empty($form->fieldname_active) ? "username" : $form->fieldname_active;
+    $password_field=empty($form->fieldname_password) ? "passwd" : $form->fieldname_password;
+
     $tplvalues=array("message"=>"");
     $tplfile=FN_FromTheme("modules/login/manageregister.tp.html",false);
-    //dprint_r($tplfile);
     $op=FN_GetParam("op",$_GET);
     $conditions=FN_XMLQuery("SELECT * FROM fn_conditions WHERE enabled LIKE '1' ORDER BY position");
+    $sendRegistrationCode=false;
+
     if (!is_array($conditions))
     {
         $conditions=array();
     }
-    if ($op== "end_reg")
+    //-----resend registration code-------------------------------------------->
+    if ($op == "send_code")
+    {
+        $tplfileresend=FN_FromTheme("modules/login/resend.tp.html",false);
+        $tplvalues['error']=false;
+        $tplvalues['formaction']=FN_RewriteLink("index.php?mod={$_FN['mod']}&op=send_code");
+        $user=trim(ltrim(FN_GetParam("username",$_REQUEST,"html")));
+        if ($user)
+        {
+            $uservalues=FN_GetUser($user);
+            $email=$uservalues['email'];
+            if ($uservalues)
+            {
+                $sendRegistrationCode=true;
+            }
+            else
+            {
+                $tplvalues['error']=FN_Translate("the email address entered does not match any user");
+            }
+        }
+        if (!$sendRegistrationCode)
+        {
+
+            $tplvalues['txtusername']=$_FN['username_is_email'] ? FN_Translate("email") : FN_Translate("username");
+            echo FN_TPL_ApplyTplFile($tplfileresend,$tplvalues);
+            $_FN['return']=$tplvalues;
+            return true;
+        }
+    }
+    //-----resend registration code--------------------------------------------<
+    if ($op == "end_reg")
     {
         $user=trim(ltrim(FN_GetParam("user",$_GET,"html")));
         $id=trim(ltrim(FN_GetParam("id",$_GET,"html")));
 
-        if ($user== "" && $id!= "")
+        if ($user == "" && $id!= "")
         {
             $users=FN_GetUsers(array("rnd"=>$id));
-            if (is_array($users) && count($users)== 1)
+            if (is_array($users) && count($users) == 1)
             {
                 $uservalues=$users[0];
                 $user=$uservalues[$username_field];
@@ -509,7 +547,7 @@ function FNREG_ManageRegister($actionform="")
             $uservalues=FN_GetUser($user);
         }
         $message="";
-        if ($user!= "" && $id!= "" && isset($uservalues['rnd']) && $uservalues['rnd']== $id)
+        if ($user!= "" && $id!= "" && isset($uservalues['rnd']) && $uservalues['rnd'] == $id)
         {
             FNREG_ConfirmUser($uservalues,$config['send_welwelcome_message']);
             //complete registration-------------------------------------------->
@@ -518,6 +556,10 @@ function FNREG_ManageRegister($actionform="")
                 if (!$uservalues[$active_field])
                     FN_OnConfirmUser($uservalues);
             }
+            if (file_exists("modules/login/manageregister_completed.tp.html"))
+                $tplfile="modules/login/manageregister_completed.tp.html";
+            if (file_exists("themes/{$_FN['theme']}/modules/login/manageregister_completed.tp.html"))
+                $tplfile="themes/{$_FN['theme']}/modules/login/manageregister_completed.tp.html";
             $tplvalues['message']=FN_Translate("registration has been completed");
             echo FN_TPL_ApplyTplFile($tplfile,$tplvalues);
             $_FN['return']=$tplvalues;
@@ -533,10 +575,10 @@ function FNREG_ManageRegister($actionform="")
         return false;
     }
     $newvalues=$form->getbypost();
-    
+
     foreach($form->formvals as $key=> $value)
     {
-        if (isset($value['type']) && ($value['type']== 'image' || $value['type']== 'file') && isset($_FILES[$key]['name']))
+        if (isset($value['type']) && ($value['type'] == 'image' || $value['type'] == 'file') && isset($_FILES[$key]['name']))
         {
             if ($_FILES[$key]['name']!= "")
             {
@@ -589,7 +631,7 @@ function FNREG_ManageRegister($actionform="")
     }
     else
     {
-        $newvalues[$active_field]=( $_FN['registration_by_email']== 1 ) ? 0 : 1;
+        $newvalues[$active_field]=( $_FN['registration_by_email'] == 1 ) ? 0 : 1;
     }
     $newvalues['group']=implode(",",$insgroup);
     $errors=array();
@@ -597,7 +639,17 @@ function FNREG_ManageRegister($actionform="")
     if (empty($_REQUEST['__NOSAVE']) && empty($_REQUEST['fnlogin']))
         if (isset($_POST['email']) || isset($_POST[$username_field]))
         {
+
             $errors=$form->Verify($newvalues);
+            if (function_exists("FN_PasswordVerifyConstraints"))
+            {
+                $passwd=FN_GetParam("$password_field",$_REQUEST,"flat");
+                $error_password=FN_PasswordVerifyConstraints($passwd);
+                if ($error_password)
+                {
+                    $errors[$password_field]=array("title"=>FN_Translate("password"),"field"=>$password_field,"error"=>FN_Translate("$error_password"));
+                }
+            }
             $conditions_ok=true;
             foreach($conditions as $condition)
             {
@@ -607,6 +659,9 @@ function FNREG_ManageRegister($actionform="")
                     $conditions_ok=false;
                 }
             }
+
+
+
             //---check captcha----------------------------------------------------->
             $captcha_ok=true;
             if (!empty($config['enable_captcha']))
@@ -620,66 +675,16 @@ function FNREG_ManageRegister($actionform="")
                 }
             }
             //---check captcha-----------------------------------------------------<
-            if (count($errors)== 0 && $conditions_ok== true && $captcha_ok== true)
+            if (count($errors) == 0 && $conditions_ok == true && $captcha_ok == true)
             {
                 $email=$newvalues['email'];
                 $name=$newvalues[$username_field];
                 if (!empty($_FN['registration_by_email']) && $newvalues[$active_field]!= 1)
                 {
-                    $subject=FN_Translate("confirm registration site")." ".$_FN['sitename'];
-                    $link=FN_RewriteLink("index.php?mod=".$_FN['mod']."&op=end_reg&id=$rnd","&",true);
-                    $tpl_filemail=FN_FromTheme("modules/login/mailconfirm.{$_FN['lang']}.tp.html",false);
-                    $ishtml=true;
-                    if (!file_exists($tpl_filemail))
-                        $tpl_filemail=FN_FromTheme("modules/login/mailconfirm.tp.html",false);
-                    if (file_exists("{$_FN['datadir']}/messages/mailconfirm.{$_FN['lang']}.txt")) //obsolete
-                    {
-                        $tpl_filemail="{$_FN['datadir']}/messages/mailconfirm.{$_FN['lang']}.txt";
-                        $ishtml=false;
-                    }
-                    if (file_exists("{$_FN['datadir']}/messages/mailwelcome.{$_FN['lang']}.tp.html"))
-                    {
-                        $tpl_filemail="{$_FN['datadir']}/messages/mailwelcome.{$_FN['lang']}.tp.html";
-                        $ishtml=true;
-                    }
-
-                    $tplvalues=$newvalues;
-                    $tplvalues['message']="";
-                    $tplvalues['username']=$newvalues[$username_field];
-                    $tplvalues['sitename']=$_FN['sitename'];
-                    $tplvalues['siteurl']=$_FN['siteurl'];
-                    $tplvalues['url']=$link;
-                    $mailbody=FN_TPL_ApplyTplFile($tpl_filemail,$tplvalues);
-                    $mailbody=str_replace("!CONFIRMREGISTRATIONADDRESS!",$link,$mailbody);
-                    $mailbody=str_replace("!USERNAME!",$name,$mailbody);
-                    $mailbody=str_replace("!SITENAME!",$_FN['sitename'],$mailbody);
-                    $mailbody=str_replace("!SITEURL!",$_FN['sitename'],$mailbody);
-                    if (!strstr($mailbody,$link))
-                        $mailbody.="\n$link";
-                    $mailbody=FN_FixNewline($mailbody);
-                    $tmpsubject=get_xml_single_element("title",$mailbody);
-                    if ($tmpsubject)
-                    {
-                        $subject=$tmpsubject;
-                    }
                     if ($ret=FN_AddUser($newvalues))
                     {
-                        if (function_exists("FN_SendRegistrationCode"))
-                        {
-                            return FN_SendRegistrationCode($newvalues,$link);
-                        }
-                        if (!FN_SendMail($email,$subject,$mailbody,$ishtml))
-                        {
-                            $tplvalues['message'].=FN_Translate("the system failed to send the confirmation email");
-                        }
-                        else
-                        {
-                            $tplvalues['message'].="<br /><br />".FN_Translate("it has been sended one email to you to the address")." ".htmlentities($newvalues['email'])." ".FN_i18n("with the instructions to complete the registration")."<br />";
-                            $tplvalues['message'].=FN_Translate("check your inbox");
-                            $tplvalues['message'].="<br /><br /><div ><a href=\"".FN_RewriteLink("index.php")."\" >".FN_Translate("next")." &gt;&gt;&gt;</a></div>";
-                        }
-                        echo FN_TPL_ApplyTplFile($tplfile,$tplvalues);
-                        return false;
+                        $sendRegistrationCode=true;
+                        $user=$newvalues[$username_field];
                     }
                     else
                     {
@@ -691,15 +696,77 @@ function FNREG_ManageRegister($actionform="")
                     $tplvalues['message'].="<br />".FN_Translate("registration has been completed")."<br />";
                     FN_AddUser($newvalues);
                     FNREG_ConfirmUser($newvalues,$config['send_welwelcome_message']);
-                    FN_Login($newvalues[$username_field]);
-                    echo FN_TPL_ApplyTplFile($tplfile,$tplvalues);
+                    if (function_exists("FN_OnConfirmUser"))
+                    {
+                        FN_OnConfirmUser($newvalues);
+                    }
+                    else
+                    {
+                        FN_Login($newvalues[$username_field]);
+                        echo FN_TPL_ApplyTplFile($tplfile,$tplvalues);
+                    }
                     return true;
                 }
             }
         }
     //-----------------registration (post values)------------------------------<
+
+
+    if ($sendRegistrationCode)
+    {
+        $newvalues=FN_GetUser($user);
+        $name=$newvalues[$username_field];
+        $rnd=$newvalues['rnd'];
+        if ($rnd == "")
+        {
+            $rnd=substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',mt_rand(1,5))),1,5);
+            FN_UpdateUser($name,array("rnd"=>$rnd));
+        }
+        $subject=FN_Translate("confirm registration site")." ".$_FN['sitename'];
+        $link=FN_RewriteLink("index.php?mod=".$_FN['mod']."&op=end_reg&id=$rnd","&",true);
+        $tpl_filemail=FN_FromTheme("modules/login/mailconfirm.{$_FN['lang']}.tp.html",false);
+        $ishtml=true;
+        if (!file_exists($tpl_filemail))
+            $tpl_filemail=FN_FromTheme("modules/login/mailconfirm.tp.html",false);
+        $tplvalues=$newvalues;
+        $tplvalues['message']="";
+        $tplvalues['username']=$newvalues[$username_field];
+        $tplvalues['sitename']=$_FN['sitename'];
+        $tplvalues['siteurl']=$_FN['siteurl'];
+        $tplvalues['url']=$link;
+        $mailbody=FN_TPL_ApplyTplFile($tpl_filemail,$tplvalues);
+        $mailbody=str_replace("!CONFIRMREGISTRATIONADDRESS!",$link,$mailbody);
+        $mailbody=str_replace("!USERNAME!",$name,$mailbody);
+        $mailbody=str_replace("!SITENAME!",$_FN['sitename'],$mailbody);
+        $mailbody=str_replace("!SITEURL!",$_FN['sitename'],$mailbody);
+        if (!strstr($mailbody,$link))
+            $mailbody.="\n$link";
+        $mailbody=FN_FixNewline($mailbody);
+        $tmpsubject=get_xml_single_element("title",$mailbody);
+        if ($tmpsubject)
+        {
+            $subject=$tmpsubject;
+        }
+        if (function_exists("FN_SendRegistrationCode"))
+        {
+            return FN_SendRegistrationCode($newvalues,$link);
+        }
+        if (!FN_SendMail($email,$subject,$mailbody,$ishtml))
+        {
+
+            $tplvalues['message'].=FN_Translate("the system failed to send the confirmation email");
+        }
+        else
+        {
+            $tplvalues['message'].="<br /><br />".FN_Translate("it has been sended one email to you to the address")." ".htmlentities($newvalues['email'])." ".FN_i18n("with the instructions to complete the registration")."<br />";
+            $tplvalues['message'].=FN_Translate("check your inbox");
+//            $tplvalues['message'].="<br /><br /><div ><a href=\"".FN_RewriteLink("index.php")."\" >".FN_Translate("next")." &gt;&gt;&gt;</a></div>";
+        }
+        echo FN_TPL_ApplyTplFile($tplfile,$tplvalues);
+        return false;
+    }
 //--------------------registration form---------------------------------------->
-    if ($actionform== "")
+    if ($actionform == "")
     {
         $actionform=FN_RewriteLink("index.php?mod=".$_FN['mod']."&amp;op=register");
     }
@@ -783,7 +850,7 @@ function FNREG_ManageRegister($actionform="")
             $condition=$tcond->GetRecordTranslatedByPrimarykey($condition['id']);
             if (!empty($condition['title']))
                 $htmlconditions.="<b>".$condition['title']."</b><br />";
-            $htmlconditions.="<div style=\"height:100px;overflow:auto;border:1px inset\" >";
+            $htmlconditions.="<div style=\"\" >";
             $htmlconditions.=$condition['text'];
             $htmlconditions.="</div>";
             $ck="";
@@ -791,7 +858,7 @@ function FNREG_ManageRegister($actionform="")
             {
                 $ck="checked=\"checked\"";
             }
-            $htmlconditions.="<input name=\"conditions_{$condition['id']}\" type=\"checkbox\" $ck/>".FN_Translate("accept");
+            $htmlconditions.="<label><input name=\"conditions_{$condition['id']}\" type=\"checkbox\" $ck/> ".FN_Translate("accept")."</label>";
             if (!empty($_POST[$username_field]) && empty($condition['optional']) && empty($_POST['conditions_'.$condition['id']]))
                 $htmlconditions.=" <span style=\"background-color:#ffffff;color:red\">".FN_Translate("to register is required to accept")."</span>";
             $htmlconditions.="</div>";
@@ -804,6 +871,7 @@ function FNREG_ManageRegister($actionform="")
     }
 
     //----------------conditions------------<
+    //dprint_r($errors);
     $templateForm=FN_TPL_ApplyTplString($templateForm,$tplvars,$tplbasepath);
     $templateForm=str_replace("{json}",json_encode(array("errors"=>$errors,"fields"=>$form->formvals),JSON_FORCE_OBJECT),$templateForm);
     $form->SetlayoutTemplate($templateForm);

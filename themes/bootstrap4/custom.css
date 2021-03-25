@@ -1,33 +1,21 @@
-body {
-    padding-top: 5rem;
-}
-.custom-template {
-    padding: 3rem 1.5rem;
-    text-align: justify;
+/* put your own styles to customize and override the theme */
+.page{
+    background-color:#ffffff;
 }
 
-
-.navbar-custom {
-    background-color: #71cfff !important;
-}
-/* change the brand and text color */
-.navbar-custom .navbar-brand,
-.navbar-custom .navbar-text {
-/*    color: rgba(255,255,255,.8); */
-}
-/* change the link color */
-.navbar-custom .navbar-nav .nav-link {
-    /* color: rgba(255,255,255,.5); */
-}
-/* change the color of active or hovered links */
-.navbar-custom .nav-item.active .nav-link,
-.navbar-custom .nav-item:hover .nav-link {
-  /*  color: #ffffff; */
+.app-header-dark {
+    background-color: #d67e36;
+    color: hsla(0,0%,100%,.8);
 }
 
-
-.navbar-custom a{
-    /*color:#ffffff;*/
+.btn-primary {
+    color: #fff;
+    background-color: #ea8109;
+    border-color: #d67e36;
 }
 
-
+a {
+    color: #d67e36;
+    text-decoration: none;
+    background-color: transparent;
+}

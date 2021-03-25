@@ -1,43 +1,42 @@
 <script type="text/javascript">
-trh = function (over,elem){
-	var old;
-	if (over){
-		this.old = elem.style.backgroundColor ;
-		elem.style.backgroundColor='#dadada';
-	}
-	else{
-		elem.style.backgroundColor=this.old;
-	}
-}
+    trh = function (over, elem) {
+        var old;
+        if (over) {
+            this.old = elem.style.backgroundColor;
+            elem.style.backgroundColor = '#dadada';
+        } else {
+            elem.style.backgroundColor = this.old;
+        }
+    }
 </script>            
 <!-- start grid --><ul class="pagination"><!-- start pages --><!-- start page --><li><a href="{pagelink}">{pagetitle}</a></li> <!-- end page --> <!-- start currentpage --><li class="active" ><a href="{pagelink}">{pagetitle}</a></li> <!-- end currentpage --> <!-- end pages --></ul>
 <!-- start table -->
-<div class="table-responsive">
-
-<table id="keywords" class="table table-striped table-hover table-responsive col-sm-12 text-left">
-            <thead>
+<div class="no-more-tables" >
+    <table id="keywords"  class="table col-sm-12 table-bordered table-striped table-condensed cf">
+        <thead class="cf bg-primary">
             <!-- start gridheader -->
-            <!-- start gridrow --><tr>
-            
-            <!-- start gridfields -->
-            <!-- start gridfield --><th>{fieldvalue}</th><!-- end gridfield -->
-            <!-- end gridfields -->
-            <th colspan="{numactions}"> </th>
+            <!-- start gridrow -->
+            <tr>
+
+                <!-- start gridfields -->
+                <!-- start gridfield --><th><a style="color:#ffffff" href="{link}">{fieldvalue} {arrow}</a></th><!-- end gridfield -->
+                <!-- end gridfields -->
+                <th colspan="{numactions}"> </th>
             </tr><!-- end gridrow -->
             <!-- end gridheader -->
-            </thead>
-            <tbody>
+        </thead>
+        <tbody>
             <!-- start gridbody -->
             <!-- start gridrow -->
             <tr>
-            <!-- start gridfields -->
-            <!-- start gridfield --><td>{fieldvalue}</td><!-- end gridfield -->
-            <!-- end gridfields --></tr>
+                <!-- start gridfields -->
+                <!-- start gridfield --><td data-title="{fieldtitle}">{fieldvalue}</td><!-- end gridfield -->
+                <!-- end gridfields --></tr>
             <!-- end gridrow --> 
             <!-- end gridbody -->
-            </tbody>           
-</table>
+        </tbody>           
+    </table>
 </div><br />
 <!-- end table --><!-- end grid --><!-- start insertnew -->
-<p> <button type="button" onclick="window.location='{urlnewrecord}'" class="btn btn-default">{textnew}</button></p>
+<p> <button type="button" onclick="window.location = '{urlnewrecord}'" class="btn btn-default">{textnew}</button></p>
 <!-- end insertnew -->

@@ -1,4 +1,7 @@
 <?php
+global $_FN;
+$config = FN_LoadConfig("themes/{$_FN['theme']}/config.php");
+$_FN['show_search_form']=$config['show_search_form'];
 
 /**
  * 

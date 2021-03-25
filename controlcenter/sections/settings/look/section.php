@@ -64,7 +64,7 @@ else
             $image="images/px_transparent.png";
             if (file_exists("themes/$theme/screenshot.png"))
                 $image="themes/$theme/screenshot.png";
-            echo "<button onclick=\"document.getElementById('thumb').src='index.php?theme=$theme';\" style=\"text-shadow:1px 1px 1px #ffffff;color:#000000;overflow:hidden;text-align:center;background-color:#ffffff;padding:0px;margin:2px;border:1px solid #dddddd;height:100px;width:150px;float:left;background-image:url($image)\">$theme</button>";
+            echo "<button onclick=\"document.getElementById('thumb').src='{$_FN['siteurl']}index.php?theme=$theme';\" style=\"text-shadow:1px 1px 1px #ffffff;color:#000000;overflow:hidden;text-align:center;background-color:#ffffff;padding:0px;margin:2px;border:1px solid #dddddd;height:100px;width:150px;float:left;background-image:url($image)\">$theme</button>";
         }
         echo "<br style=\"clear:both\" />";
     }

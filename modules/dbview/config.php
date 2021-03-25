@@ -87,4 +87,9 @@ $config['default_show_groups'] = 0;
 $config['enable_statistics'] = 0;
 #[i18n]uses native mysql functions to perform a search {1=yes,0=no}
 $config['search_query_native_mysql'] = 0;
+#[i18n]enable offline form {1=yes,0=no}
+$config['enable_offlineform'] = 1;
+
+
+
 ?>

@@ -127,7 +127,7 @@ function FNFILES_view_download()
 		if (FN_IsAdmin() && $_FN['fneditmode'] != 0)
 		{
 			if (count($modlist_down) == 0)
-				echo " [<a href=\"javascript:check('index.php?mod={$_FN['mod']}&amp;filename=".$_FN['datadir']."/Download/".htmlentities(addslashes($downloadsection),ENT_QUOTES)."&amp;deldir=1')\">".FN_i18n("delete")."</a>]";
+				echo " [<a href=\"javascript:check('{$_FN['siteurl']}index.php?mod={$_FN['mod']}&amp;filename=".$_FN['datadir']."/Download/".htmlentities(addslashes($downloadsection),ENT_QUOTES)."&amp;deldir=1')\">".FN_i18n("delete")."</a>]";
 
 			echo "
 
@@ -170,7 +170,7 @@ function FNFILES_view_download()
 			}
 			echo "&nbsp;($fsize $suff$st) ";
 			if (FN_IsAdmin())
-				echo "[<a href=\"javascript:check('index.php?mod={$_FN['mod']}&amp;delfile=".htmlentities(($downloadsection),ENT_QUOTES)."/".htmlentities(($downloadfile),ENT_QUOTES)."')\" >".FN_i18n("delete")."</a>]";
+				echo "[<a href=\"javascript:check('{$_FN['siteurl']}index.php?mod={$_FN['mod']}&amp;delfile=".htmlentities(($downloadsection),ENT_QUOTES)."/".htmlentities(($downloadfile),ENT_QUOTES)."')\" >".FN_i18n("delete")."</a>]";
 			echo "<br />";
 		}
 		echo "<br />";

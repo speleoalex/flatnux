@@ -4,7 +4,6 @@ if (!defined("FN_AUTH_COST"))
 {
     define("FN_AUTH_COST",10);
 }
-
 if (!defined("FN_AUTH_METHOD"))
 {
     //PASSWORD_DEFAULT OR PASSWORD_BCRYPT
@@ -40,6 +39,10 @@ function FN_LoginInitUrl()
     $_FN['urllogin']=FN_RewriteLink("index.php?mod=$loginmod","&amp;",true);
     $_FN['urllogout']=FN_RewriteLink("index.php?fnlogin=logout","&amp;",true);
     $_FN['urlpasswordrecovery']=FN_RewriteLink("index.php?mod=$loginmod&op=recovery","&amp;",true);
+    $_FN['urlresendcode']=false;
+    if ($_FN['registration_by_email'])
+        $_FN['urlresendcode']=FN_RewriteLink("index.php?mod=$loginmod&op=send_code","&amp;",true);
+    
 }
 
 /**
@@ -69,6 +72,7 @@ function FN_GetUserForm()
     $form->LoadFieldsClasses();
     $form->fieldname_active="active";
     $form->fieldname_user="username";
+    $form->fieldname_password="passwd";
     return $form;
 }
 
@@ -711,8 +715,10 @@ class xmldbfrm_field_cryptpasswd
  */
 function FN_PasswordVerifyConstraints($password)
 {
+
     if (function_exists("FN_PasswordVerifyConstraints_overwrite"))
     {
+           
         return FN_PasswordVerifyConstraints_overwrite($password);
     }
 //    if (!preg_match('/^[0-9A-Za-z!@#$%]{3,12}$/',$password))

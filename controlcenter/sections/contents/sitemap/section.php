@@ -902,20 +902,13 @@ function FNCC_UpdateSections()
         }
     }
 }
-
+/**
+ * 
+ * @param type $newvalues
+ */
 function FNCC_UpdateDefaultXML($newvalues)
 {
-    if (is_writable("sections/{$newvalues['id']}"))
-    {
-        $xml="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<fn_sections>\n";
-        foreach($newvalues as $k=> $v)
-        {
-            if ($k!== "id")
-                $xml.="\t<$k>".htmlentities($v)."</$k>\n";
-        }
-        $xml.="</fn_sections>";
-        file_put_contents("sections/{$newvalues['id']}/default.xml",$xml);
-    }
+    FN_UpdateDefaultXML($newvalues);
 }
 
 /**

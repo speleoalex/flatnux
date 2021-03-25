@@ -82,7 +82,7 @@ if (count($tosearch_array) > 0)
         }
         if ($found)
         {
-                $text_result="";
+            $text_result="";
             if (!isset($array_result_tp[$sectionvalues['id']]))
             {
                 $array_result_tp[$sectionvalues['id']]=$sectionvalues;
@@ -190,7 +190,7 @@ if (count($tosearch_array) > 0)
             }
         }
     }
-    if ($contares>0 &&$q!= "")
+    if ($contares > 0 && $q!= "")
     {
         $text_result="$contares ".FN_Translate("results have been found","aa");
     }
@@ -219,6 +219,7 @@ if (count($tosearch_array) > 0)
         $htmlresults.=FN_i18n("no result");
     }
     //print results -----------------------------------------------------------<	
+
 }
 //---------------------perform search------------------------------------------>
 //----------------------------print search form-------------------------------->

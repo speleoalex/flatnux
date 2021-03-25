@@ -8,7 +8,7 @@
  *
  */
 defined('_FNEXEC') or die('Restricted access');
-require_once "modules/dbview/functions_section.php";
+require_once "modules/dbview/FNDBVIEW.php";
 /**
  *
  * @global array $_FN
@@ -24,6 +24,8 @@ function FNSEARCH_module_dbview($tosearch_array,$method,$sectionvalues,$maxres)
     $results=array();
     $section_to_search=$sectionvalues['id']; // current section 
     $config=FN_LoadConfig("modules/dbview/config.php",$sectionvalues['id']); //load config in section
+   
+    $dbview = new FNDBVIEW($config);
     $tablename=$config['tables'];
     $Table=FN_XmlTable($tablename);
     $DB=new XMLDatabase($_FN['database'],$_FN['datadir']);
@@ -68,11 +70,12 @@ function FNSEARCH_module_dbview($tosearch_array,$method,$sectionvalues,$maxres)
     {
         foreach($records as $data)
         {
-            if (!FNDBVIEW_CanViewRecord($data[$Table->primarykey],$tablename))
+            if (!$dbview->CanViewRecord($data[$Table->primarykey],$tablename))
             {
                 continue;
             }            
             $link=FN_RewriteLink("index.php?mod=$section_to_search&amp;op=view&id={$data[$Table->primarykey]}");
+            
             $results[$cont]['link']=$link;
             $results[$cont]['title']="";
             foreach($titles as $title)

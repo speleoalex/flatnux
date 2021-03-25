@@ -18,12 +18,12 @@ function FN_HtmlAdminOnOff()
     global $_FN;
     $stout="";
     //tasto editmode ON/OFF---------------------------------------------------->
-    if (FN_IsAdmin()||FN_CanModify($_FN['user'],"sections/{$_FN['mod']}"))
+    if (FN_IsAdmin() || FN_CanModify($_FN['user'],"sections/{$_FN['mod']}"))
     {
         $img=FN_GetUserImage($_FN['user']);
         $stout.="<div id=\"fn_adminonoff\" style=\"\" class=\"fn_admin\"><span class=\"fn_admin_username\"><img src=\"$img\"  /> "." {$_FN['user']}";
         $stout.=" <a href=\"{$_FN['siteurl']}?fnlogin=logout\">".FN_Translate("logout")."</a></span>";
-        
+
         //$stout .= "<a href=\"javascript:document.getElementById('fn_adminonoff').style.display='none';\" >x</a>";
         if (!empty($_FN['maintenance']))
         {
@@ -38,9 +38,9 @@ function FN_HtmlAdminOnOff()
 
         $stout.="<select  title=\"".FN_Translate("edit mode")."\" style=\"vertical-align:middle\" onchange=\"window.location=this.options[this.selectedIndex].value\" >";
         //$stout .=FN_i18n("edit mode")."<select >";
-        $s=$_FN['fneditmode']==0 ? "selected=\"selected\"" : "";
+        $s=$_FN['fneditmode']== 0 ? "selected=\"selected\"" : "";
         $stout.="<option title=\"".FN_Translate("edit mode off")."\" $s value=\"index.php?mod={$_FN['mod']}&amp;fneditmode=0\" >".FN_Translate("edit mode").":".FN_Translate("off")."</option>";
-        $s=$_FN['fneditmode']!=0 ? "selected=\"selected\"" : "";
+        $s=$_FN['fneditmode']!= 0 ? "selected=\"selected\"" : "";
         $stout.="<option title=\"".FN_Translate("edit mode on")."\"  $s value=\"index.php?mod={$_FN['mod']}&amp;fneditmode=1\" >".FN_Translate("edit mode").":".FN_Translate("on")."</option>";
         $stout.="</select>";
         $stout.="<img title=\"".FN_Translate("close")."\" onclick=\"document.getElementById('fn_adminonoff').style.display='none';return false;\" alt=\"close\" style=\"border:0px;vertical-align:middle;cursor:pointer\" src=\"".FN_FromTheme("images/fn_close.png")."\" />";
@@ -74,6 +74,10 @@ function FN_HtmlAdminOptions()
     global $_FN;
     if (!$_FN['enable_online_administration'])
         return "";
+
+
+
+
     $html="";
     $html.=FN_HtmlAdminOnOff();
     if (FN_IsAdmin())
@@ -92,7 +96,7 @@ function FN_HtmlAdminOptions()
             }
         }
     }
-    if ($_FN['fneditmode']&&FN_CanModify($_FN['user'],"sections/{$_FN['mod']}"))
+    if ($_FN['fneditmode'] && FN_CanModify($_FN['user'],"sections/{$_FN['mod']}"))
     {
         //check if section is empty --->
         $SectionIsEmpty=true;
@@ -132,21 +136,21 @@ function FN_HtmlAdminOptions()
             $html.=FN_OpenAdminSection(FN_Translate("page contents"),true);
             if (file_exists("sections/{$_FN['mod']}/section.php"))
             {
-                $html.="<button onclick=\"window.location='index.php?mod={$_FN['mod']}&opt=sections/{$_FN['mod']}/section.php'\">".FN_Translate("modify")."</button><br />";
+                $html.="<button onclick=\"window.location='{$_FN['siteurl']}index.php?mod={$_FN['mod']}&opt=sections/{$_FN['mod']}/section.php'\">".FN_Translate("modify")."</button><br />";
             }
             //----------------section.xx.html------------------------------>
             //----------------settings button---------------------------------->
             $html.="<table>";
             $title_admin=$_FN['sectionvalues']['title']." (".FN_Translate("page like","Aa")." ".FN_GetFolderTitle("modules/{$_FN['sectionvalues']['type']}").")";
-            if (!empty($_FN['sectionvalues']['type'])&&file_exists("modules/{$_FN['sectionvalues']['type']}/controlcenter/settings.php"))
+            if (!empty($_FN['sectionvalues']['type']) && file_exists("modules/{$_FN['sectionvalues']['type']}/controlcenter/settings.php"))
             {
-                $html.="<tr><td><img src=\"{$_FN['siteurl']}images/modify.png\" alt=\"\"/></td><td><button onclick=\"window.location='index.php?mod={$_FN['mod']}&opt=fnc_ccnf_section_{$_FN['mod']}'\">".
+                $html.="<tr><td><img src=\"{$_FN['siteurl']}images/modify.png\" alt=\"\"/></td><td><button onclick=\"window.location='{$_FN['siteurl']}index.php?mod={$_FN['mod']}&opt=fnc_ccnf_section_{$_FN['mod']}'\">".
                         FN_Translate("administration tools")." $title_admin".
                         "</button></td></tr>";
             }
-            if (empty($_FN['sectionvalues']['type'])&&file_exists("sections/{$_FN['mod']}/controlcenter/settings.php"))
+            if (empty($_FN['sectionvalues']['type']) && file_exists("sections/{$_FN['mod']}/controlcenter/settings.php"))
             {
-                $html.="<tr><td><img src=\"{$_FN['siteurl']}images/modify.png\" alt=\"\"/></td><td><button onclick=\"window.location='index.php?mod={$_FN['mod']}&opt=fnc_ccnf_section_{$_FN['mod']}'\">".
+                $html.="<tr><td><img src=\"{$_FN['siteurl']}images/modify.png\" alt=\"\"/></td><td><button onclick=\"window.location='{$_FN['siteurl']}index.php?mod={$_FN['mod']}&opt=fnc_ccnf_section_{$_FN['mod']}'\">".
                         FN_Translate("administration tools").$title_admin.
                         "</button></td></tr>";
             }
@@ -154,15 +158,15 @@ function FN_HtmlAdminOptions()
             //------------------config button---------------------------------->
             if (FN_IsAdmin())
             {
-                if (!empty($_FN['sectionvalues']['type'])&&file_exists("modules/{$_FN['sectionvalues']['type']}/config.php"))
+                if (!empty($_FN['sectionvalues']['type']) && file_exists("modules/{$_FN['sectionvalues']['type']}/config.php"))
                 {
-                    $html.="<tr><td><img src=\"{$_FN['siteurl']}images/configure.png\" alt=\"\"/></td><td><button onclick=\"window.location='index.php?mod={$_FN['mod']}&opt=modules/{$_FN['sectionvalues']['type']}/config.php'\">".
+                    $html.="<tr><td><img src=\"{$_FN['siteurl']}images/configure.png\" alt=\"\"/></td><td><button onclick=\"window.location='{$_FN['siteurl']}index.php?mod={$_FN['mod']}&opt=modules/{$_FN['sectionvalues']['type']}/config.php'\">".
                             FN_Translate("advanced settings")." $title_admin".
                             "</button></td></tr>";
                 }
-                if (empty($_FN['sectionvalues']['type'])&&file_exists("sections/{$_FN['mod']}/config.php"))
+                if (empty($_FN['sectionvalues']['type']) && file_exists("sections/{$_FN['mod']}/config.php"))
                 {
-                    $html.="<tr><td><button onclick=\"window.location='index.php?mod={$_FN['mod']}&opt=sections/{$_FN['mod']}/config.php'\">".
+                    $html.="<tr><td><button onclick=\"window.location='{$_FN['siteurl']}{$_FN['siteurl']}index.php?mod={$_FN['mod']}&opt=sections/{$_FN['mod']}/config.php'\">".
                             FN_Translate("advanced settings")." ".$_FN['sectionvalues']['title'].
                             "</button></td></tr>";
                 }
@@ -222,11 +226,12 @@ function FN_HtmlAdminOptions()
             if (isset($_POST['updatesection']))
             {
                 $errors=$form->VerifyUpdate($newvalues);
-                if (count($errors)==0)
+                if (count($errors)== 0)
                 {
                     $form->UpdateRecord($newvalues);
                     $html.=FN_HtmlAlert("the data were successfully updated");
-                    $html.="<script language=\"javascript\">\nwindow.location='index.php?mod={$_FN['mod']}&updatesection=1'\n</script>";
+                    $html.="<script language=\"javascript\">\nwindow.location='{$_FN['siteurl']}index.php?mod={$_FN['mod']}&updatesection=1'\n</script>";
+                    FN_UpdateDefaultXML($newvalues);
                     FN_Log("updated section:{$newvalues['id']}");
                     FN_OnSitemapChange();
                 }
@@ -302,9 +307,9 @@ function FN_HtmlAdminOptions()
                     //dprint_r($_POST);
                     //dprint_r($newvalues);
                     $errors=$forminsert->VerifyInsert($newvalues);
-                    if (count($errors)==0)
+                    if (count($errors)== 0)
                     {
-                        if ($newvalues['type']!=""&&file_exists("modules/{$newvalues['type']}/section_template"))
+                        if ($newvalues['type']!= "" && file_exists("modules/{$newvalues['type']}/section_template"))
                         {
                             $r=FN_CopyDir("modules/{$newvalues['type']}/section_template","sections/{$newvalues['id']}",false);
                         }
@@ -321,9 +326,9 @@ function FN_HtmlAdminOptions()
                             {
                                 $newsections[$k]=$section;
                                 $newsections[$k]['position']=$i;
-                                if ($k==$before_after_section)
+                                if ($k== $before_after_section)
                                 {
-                                    if ($before_after=="before")
+                                    if ($before_after== "before")
                                     {
                                         $newvalues['position']=$i;
                                         $i++;
@@ -337,11 +342,11 @@ function FN_HtmlAdminOptions()
                                 }
                                 $i++;
                             }
-                            if ($before_after=="inside")
+                            if ($before_after== "inside")
                                 $newvalues['parent']=$before_after_section;
                             foreach($newsections as $k=> $newsection)
                             {
-                                if ($newsections[$k]['position']!=$sections[$k]['position'])
+                                if ($newsections[$k]['position']!= $sections[$k]['position'])
                                 {
                                     $forminsert->UpdateRecord(array("id"=>$newsections[$k]['id'],"position"=>$newsections[$k]['position']));
                                 }
@@ -384,6 +389,7 @@ function FN_HtmlAdminOptions()
         }
         $html.="</div>";
     }
+
     return $html;
 }
 
@@ -399,14 +405,14 @@ function FNCC_SortSectionsByTree($parent,$sections)
 {
     static $list=array();
     static $retval=array();
-    if ($parent=="")
+    if ($parent== "")
     {
         $list=array();
         $retval=array();
     }
     foreach($sections as $section)
     {
-        if ($section['parent']==$parent)
+        if ($section['parent']== $parent)
         {
             if (in_array($section['id'],$list))
                 return;
@@ -425,11 +431,11 @@ function FNCC_SortSectionsByTree($parent,$sections)
 function FNADMIN_HtmlSectionsTree()
 {
     $html="<div>".FN_Translate("create new page").": <select name=\"before_after\" >";
-    $s=isset($_POST['before_after'])&&$_POST['before_after']=="after" ? "selected=\"selected\"" : "";
+    $s=isset($_POST['before_after']) && $_POST['before_after']== "after" ? "selected=\"selected\"" : "";
     $html.="<option $s value=\"after\">".FN_Translate("after")."</option>";
-    $s=isset($_POST['before_after'])&&$_POST['before_after']=="before" ? "selected=\"selected\"" : "";
+    $s=isset($_POST['before_after']) && $_POST['before_after']== "before" ? "selected=\"selected\"" : "";
     $html.="<option $s value=\"before\">".FN_Translate("before")."</option>";
-    $s=isset($_POST['before_after'])&&$_POST['before_after']=="inside" ? "selected=\"selected\"" : "";
+    $s=isset($_POST['before_after']) && $_POST['before_after']== "inside" ? "selected=\"selected\"" : "";
     $html.="<option $s value=\"inside\">".FN_Translate("inside")."</option>";
 
     $html.="</select>";
@@ -441,7 +447,7 @@ function FNADMIN_HtmlSectionsTree()
 //sort sections ---------------------------------------------------------------<
     foreach($sections as $section)
     {
-        $s=isset($_POST['before_after_section'])&&$_POST['before_after_section']==$section['id'] ? "selected=\"selected\"" : "";
+        $s=isset($_POST['before_after_section']) && $_POST['before_after_section']== $section['id'] ? "selected=\"selected\"" : "";
         $style="";
         if ($section['hidden'])
         {
@@ -449,7 +455,7 @@ function FNADMIN_HtmlSectionsTree()
         }
         $padding="";
         $margin=count($section['path']);
-        for($i=0; $i<$margin; $i++)
+        for($i=0; $i < $margin; $i++)
         {
             $padding.="&nbsp;&nbsp;";
         }
@@ -492,12 +498,12 @@ function FN_CloseAdminSection()
  */
 function FN_OnSitemapChange()
 {
-    if (file_exists("include/on_site_change.d/")&&false!=($handle=opendir("include/on_site_change.d/")))
+    if (file_exists("include/on_site_change.d/") && false!= ($handle=opendir("include/on_site_change.d/")))
     {
         $filestorun=array();
-        while(false!==($file=readdir($handle)))
+        while(false!== ($file=readdir($handle)))
         {
-            if (FN_GetFileExtension($file)=="php"&&!preg_match("/^none_/si",$file))
+            if (FN_GetFileExtension($file)== "php" && !preg_match("/^none_/si",$file))
                 $filestorun[]=$file;
         }
         closedir($handle);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Flatnux_controlcenter
  * @author Alessandro Vernassa <speleoalex@gmail.com>
@@ -37,7 +38,7 @@ function EnableDisable($primarykey,$TableUsers)
         $page="&amp;page___xdb_{$TableUsers->tablename}=$page";
     }
     $htmlsendmail="";
-    if (function_exists("FN_SendMailWelcome"))        
+    if (function_exists("FN_SendMailWelcome"))
         $htmlsendmail="<input type=\"checkbox\" name=\"sendwelcomemessage\" value=\"1\"/>".FN_Translate("send welcome message");
     if ($values["{$TableUsers->fieldname_active}"]!= 1)
         return "<form action=\"".("?mod={$_FN['mod']}&amp;filter=$filter$page$gopt")."\" method=\"post\"><img src=\"images/useronline/level_n.gif\" alt=\"\"/><input name=\"{$TableUsers->fieldname_active}\" value=\"1\" type=\"hidden\"/><input name=\"userid\" value=\"$primarykey\" type=\"hidden\"/><button type=\"submit\">".FN_Translate("enable")."</button>$htmlsendmail</form>";
@@ -61,13 +62,15 @@ if ($userid)
     $active=FN_GetParam("{$table->fieldname_active}",$_POST);
     $sendwelcomemessage=FN_GetParam("sendwelcomemessage",$_POST);
 
-    if ($_FN['user']== $userid)
-        FN_Alert("operation is not permitted");
+    if ($_FN['user'] == $userid || (!FN_IsAdmin() && FN_IsAdmin($userid)))
+    {
+        FN_Alert(FN_Translate("operation is not permitted"));
+    }
     else
     {
         require_once 'modules/login/functions_login.php';
         $uservalues=FN_UpdateUser($userid,array("{$table->fieldname_active}"=>$active));
-        if ($uservalues&&$active && $sendwelcomemessage)
+        if ($uservalues && $active && $sendwelcomemessage)
         {
             if (function_exists("FN_SendMailWelcome"))
             {
@@ -80,7 +83,7 @@ if ($userid)
 
 if (isset($table->formvals['passwd']))
 {
-    if (isset($_POST['passwd']) && $_POST['passwd']== "")
+    if (isset($_POST['passwd']) && $_POST['passwd'] == "")
     {
         unset($_POST['passwd']);
     }
@@ -91,7 +94,7 @@ if (isset($table->formvals['passwd']))
 }
 if (isset($table->formvals['password']))
 {
-    if (isset($_POST['password']) && $_POST['password']== "")
+    if (isset($_POST['password']) && $_POST['password'] == "")
     {
         unset($_POST['password']);
     }
@@ -133,7 +136,7 @@ $exlude=array("password","passwd","emailhidden","avatarimage","avatar","rnd","le
 $include=array();
 foreach($table->formvals as $k=> $v)
 {
-    if ($v['frm_type']=="varchar")
+    if ($v['frm_type'] == "varchar")
     {
         $include[]=$k;
     }
@@ -203,12 +206,27 @@ $params['textmodify']="<img alt=\"".FN_Translate("modify")."\" title=\"".FN_Tran
 $params['textdelete']="<img alt=\"".FN_Translate("delete")."\" title=\"".FN_Translate("delete")."\" style=\"vertical-align:middle;border:0px;\" alt=\"\"  src=\"".FN_FromTheme("images/delete.png")."\" />";
 $params['function_update']="FN_UpdateUserXmldbEditor";
 $params['function_insert']="FN_InsertUserXmldbEditor";
-echo "<a ".($getfilters== "" ? " style=\"font-weight:bold\" " : "")."href=\"?mod={$_FN['mod']}&amp;opt=$op&amp;filter=\">".FN_Translate("view all")."</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
-echo "<a ".($getfilters== "{$table->fieldname_active}:1" ? " style=\"font-weight:bold\" " : "")."href=\"?mod={$_FN['mod']}&amp;opt=$op&amp;filter={$table->fieldname_active}:1\"><img src=\"images/useronline/level_y.gif\" alt=\"\"/> ".FN_Translate("view only enabled")."</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
-echo "<a ".($getfilters== "{$table->fieldname_active}:0" ? " style=\"font-weight:bold\" " : "")."href=\"?mod={$_FN['mod']}&amp;opt=$op&amp;filter={$table->fieldname_active}:0\"><img src=\"images/useronline/level_n.gif\" alt=\"\"/> ".FN_Translate("view only disabled")."</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
-echo "<a ".($getfilters== "level:10" ? " style=\"font-weight:bold\" " : "")."href=\"?mod={$_FN['mod']}&amp;opt=$op&amp;filter=level:10\">".FN_Translate("view only administrators")."</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
+$params['function_delete']="FN_DeleteUserXmldbEditor";
+
+echo "<a ".($getfilters == "" ? " style=\"font-weight:bold\" " : "")."href=\"?mod={$_FN['mod']}&amp;opt=$op&amp;filter=\">".FN_Translate("view all")."</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
+echo "<a ".($getfilters == "{$table->fieldname_active}:1" ? " style=\"font-weight:bold\" " : "")."href=\"?mod={$_FN['mod']}&amp;opt=$op&amp;filter={$table->fieldname_active}:1\"><img src=\"images/useronline/level_y.gif\" alt=\"\"/> ".FN_Translate("show only enabled")."</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
+echo "<a ".($getfilters == "{$table->fieldname_active}:0" ? " style=\"font-weight:bold\" " : "")."href=\"?mod={$_FN['mod']}&amp;opt=$op&amp;filter={$table->fieldname_active}:0\"><img src=\"images/useronline/level_n.gif\" alt=\"\"/> ".FN_Translate("show only disabled")."</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
+echo "<a ".($getfilters == "level:10" ? " style=\"font-weight:bold\" " : "")."href=\"?mod={$_FN['mod']}&amp;opt=$op&amp;filter=level:10\">".FN_Translate("show administrators")."</a>&nbsp;&nbsp;|&nbsp;&nbsp;";
 echo "<br />";
 FNCC_xmltableeditor($table,$params);
+
+function FN_DeleteUserXmldbEditor($user)
+{
+    if (!FN_IsAdmin() && (FN_IsAdmin($user) || $_FN['user'] == $user))
+    {
+        echo FN_Translate("operation is not permitted");
+    }
+    else
+    {
+        FN_DeleteUser($user);
+    }
+//    FN_DeleteUser($user);
+}
 
 function FN_UpdateUserXmldbEditor($newvalues,$pk)
 {

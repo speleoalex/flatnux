@@ -55,22 +55,23 @@ function FN_EditConfFile($file,$formaction="",$exit="",$allow=false,$write_to_fi
 function FN_HtmlEditConfFile($file,$formaction="",$exit="",$allow=false,$write_to_file=false,$mod="",$block="",$tableHtmlattibutes="")
 {
     global $_FN;
+   
     $opt=FN_GetParam("opt",$_GET);
     $filecontents=file_get_contents($file);
     $htmlsaved="";
-    if ($mod=="")
+    if ($mod== "")
         $mod=$_FN['mod'];
-    if ($block=="")
+    if ($block== "")
         $block=$_FN['block'];
-    if ($tableHtmlattibutes=="")
+    if ($tableHtmlattibutes== "")
         $tableHtmlattibutes="border=\"0\" cellpadding=\"1\" cellspacing=\"0\"";
-    if (!strpos($filecontents,'$_FN')&&!strpos($filecontents,'$config'))
+    if (!strpos($filecontents,'$_FN') && !strpos($filecontents,'$config'))
     {
         $write_to_file=true;
     }
 //die($tableHtmlattibutes);
     $html="";
-    if ($file=="config.php")
+    if ($file== "config.php")
     {
         $tableconf="fn_settings";
     }
@@ -81,7 +82,7 @@ function FN_HtmlEditConfFile($file,$formaction="",$exit="",$allow=false,$write_t
         $file=str_replace($thispath,"",$path.$_FN['slash'].basename($file));
         if (FN_erg("^modules/",$file))
         {
-            if ($block!="")
+            if ($block!= "")
                 $tableconf="fncf_block_{$block}";
             else
                 $tableconf="fncf_{$mod}";
@@ -99,9 +100,11 @@ function FN_HtmlEditConfFile($file,$formaction="",$exit="",$allow=false,$write_t
         }
     }
 
-
+ //dprint_r($file);
+ //dprint_r($tableconf);
+ 
     echo "<!-- splx $tableconf -->";
-    if ($formaction=="")
+    if ($formaction== "")
     {
         $formaction="?mod={$_FN['mod']}&amp;opt=$opt";
     }
@@ -136,7 +139,7 @@ function FN_HtmlEditConfFile($file,$formaction="",$exit="",$allow=false,$write_t
     }
     $table=FN_XmlTable($tableconf);
     $exitflat=str_replace("&amp;","&",$exit);
-    if ($exitflat=="")
+    if ($exitflat== "")
     {
         $exitjs="history.back()";
     }
@@ -144,7 +147,7 @@ function FN_HtmlEditConfFile($file,$formaction="",$exit="",$allow=false,$write_t
     {
         $exitjs="window.location='$exitflat'";
     }
-    if (isset($_POST)&&is_array($_POST)&&count($_POST)>0)
+    if (isset($_POST) && is_array($_POST) && count($_POST) > 0)
     {
         $res=false;
 //---------------------------------write to file ------------------------------>
@@ -152,7 +155,7 @@ function FN_HtmlEditConfFile($file,$formaction="",$exit="",$allow=false,$write_t
         {
             $fd=file($file);
             $new_file="";
-            for($i=0; $i<count($fd); $i++)
+            for($i=0; $i < count($fd); $i++)
             {
                 $new_line=$fd[$i];
                 if (isset($_POST["conf_value_old".$i]))
@@ -160,7 +163,7 @@ function FN_HtmlEditConfFile($file,$formaction="",$exit="",$allow=false,$write_t
                     $new_value=FN_GetParam("conf_value_new".$i,$_POST);
                     $old_value=FN_GetParam("conf_value_old".$i,$_POST);
                     $old_value=xmldb_encode_preg($old_value);
-                    if ($old_value=="")
+                    if ($old_value== "")
                         $new_line=preg_replace('/=(.*?)("")/s','=${1}"'.$new_value.'"',$fd[$i]);
                     else
                         $new_line=preg_replace('/=(.*?)('.$old_value.')/s','=${1}'.$new_value,$fd[$i]);
@@ -169,14 +172,16 @@ function FN_HtmlEditConfFile($file,$formaction="",$exit="",$allow=false,$write_t
             }
             FN_Write($new_file,$file);
             FN_Log("file has been modified:{$file}");
+            
         }
+       
 //---------------------------------write to file ------------------------------<		
         else
         {
             foreach($_POST as $key=> $value)
             {
                 $value=FN_GetParam($key,$_POST);
-                if (preg_match("/^conf_/s",$key)&&!preg_match("/^conf_value_old/s",$key))
+                if (preg_match("/^conf_/s",$key) && !preg_match("/^conf_value_old/s",$key))
                 {
                     $varkey=preg_replace("/^conf_/s","",$key);
                     if (!@array_key_exists($varkey,$databasevalues))
@@ -187,18 +192,22 @@ function FN_HtmlEditConfFile($file,$formaction="",$exit="",$allow=false,$write_t
                     {
                         $res=$table->UpdateRecord(array("varname"=>$varkey,"varvalue"=>$value));
                     }
+                    
                 }
             }
             FN_Log("config has been modified: $file");
-            $values=FN_LoadConfig($file,"",false);
+            //die ($file);
+            $values=FN_LoadConfig($file,$mod,false);
         }
-        if ($res&&count($_POST)>1)
+        
+         
+        if ($res && count($_POST) > 1)
         {
-
             $htmlsaved.="<div style=\"float:right;color:green\">".FN_i18n("the data were successfully updated")."</div>";
-            if ($exit!="")
+            if ($exit!= "")
             {
                 $html.="$htmlsaved&nbsp;&nbsp;<button onclick=\"$exitjs\">".FN_i18n("continue")."</button>";
+                  
                 return $html;
             }
         }
@@ -267,9 +276,9 @@ var movedown = function (node)
     $ffile=$file;
     $fg=file($file);
     // scansione file alla ricerca delle variabili
-    for($i=0; $i<count($fg); $i++)
+    for($i=0; $i < count($fg); $i++)
     {
-        if (preg_match('/^\$./s',$fg[$i])&&strpos($fg[$i],"Array();")===false) // prende solo le righe che iniziano col carattere "$"
+        if (preg_match('/^\$./s',$fg[$i]) && strpos($fg[$i],"Array();")=== false) // prende solo le righe che iniziano col carattere "$"
         {
             $line_tmp1=explode("=",$fg[$i]);
             //find array key--->
@@ -291,15 +300,15 @@ var movedown = function (node)
             $line_tmp1=trim(ltrim(implode("=",$line_tmp1)));
             //dprint_r($line_tmp1);
             $varvalue="";
-            if ($varkey=="")
+            if ($varkey== "")
                 continue;
-            if (is_array($allow)&&!in_array($varkey,$allow))
+            if (is_array($allow) && !in_array($varkey,$allow))
                 continue;
             //dprint_r($_POST);
             $j=$varkey;
             if ($write_to_file)
                 $j="value_new".$i;
-            if ($line_tmp1[0]=='$')
+            if ($line_tmp1[0]== '$')
             {
                 continue;
             }
@@ -337,11 +346,11 @@ var movedown = function (node)
             $find=1;
             $exists=false;
             $i18n_find=false;
-            while(preg_match('/^#./s',$fg[$i-$find])&&!($exists=preg_match('/^#\['.$lang.'\]./s',$fg[$i-$find])))
+            while(preg_match('/^#./s',$fg[$i - $find]) && !($exists=preg_match('/^#\['.$lang.'\]./s',$fg[$i - $find])))
             {
-                if (preg_match('/^#\[i18n\]./s',$fg[$i-$find]))
+                if (preg_match('/^#\[i18n\]./s',$fg[$i - $find]))
                 {
-                    $i18n_find=preg_match('/^#\[i18n\]./s',$fg[$i-$find]);
+                    $i18n_find=preg_match('/^#\[i18n\]./s',$fg[$i - $find]);
                 }
                 $find++;
             }
@@ -349,16 +358,16 @@ var movedown = function (node)
             {
 
                 $find=1;
-                if (false!==$i18n_find)
+                if (false!== $i18n_find)
                 {
 
                     $find=$i18n_find;
                 }
             }
             //check options---------------------------------------------------->
-            if (preg_match('/^#./s',$fg[$i-$find]))
+            if (preg_match('/^#./s',$fg[$i - $find]))
             {
-                $title=preg_replace('/^#/s',"",$fg[$i-$find]);
+                $title=preg_replace('/^#/s',"",$fg[$i - $find]);
                 $t="";
                 preg_match('/[\{].+[\}]/i',$title,$t);
                 if (isset($t[0]))
@@ -395,11 +404,11 @@ var movedown = function (node)
                 }
             }
             //check options----------------------------------------------------<
-            if (preg_match('/^\\/\\/./s',$fg[$i-1]))
+            if (preg_match('/^\\/\\/./s',$fg[$i - 1]))
             {
-                $title=preg_replace('/^\\/\\//s',"",$fg[$i-1]);
+                $title=preg_replace('/^\\/\\//s',"",$fg[$i - 1]);
             }
-            if (false!==$i18n_find)
+            if (false!== $i18n_find)
             {
                 $title=preg_replace('/\{.+\}/s','',$title);
                 $title=preg_replace('/\[i18n]/s','',$title);
@@ -412,26 +421,26 @@ var movedown = function (node)
             }
             $title=preg_replace('/^\[.+\]/s','',$title);
             $varname=htmlentities(ucfirst(str_replace("_"," ",trim(preg_replace('/^\$/s','',$varkey_ori)))));
-            if ($title=="")
+            if ($title== "")
                 $title=$varname;
 
             $html.="<tr><td style=\"border-bottom:1px dotted #dadada;text-align:left;\">";
             $html.="\n<label for=\"conf_$varkey\">$title:</label>";
             $html.="</td><td style=\"border-bottom:1px dotted #dadada;text-align:left;\">";
-            if ($type=="{color}")
+            if ($type== "{color}")
             {
 
                 $html.="<input onchange='try{document.getElementById(\"cc_conf_$i\").style.backgroundColor=\"#\"+this.value}catch(e){}' class=\"color {hash:true,caps:false,adjust:false,styleElement:'cc_conf_$i'}\" title=\"$varname (".FN_i18n("default value").": $defaultvalue)\" type=\"text\" name=\"conf_$varkey\" size=\"15\" maxlength=\"1200\" value=\"".htmlentities($varvalue)."\" />";
                 $html.="<span id=\"cc_conf_$i\" style=\"border:#000000 1px solid;background-color:#$varvalue\">&nbsp;&nbsp;&nbsp;&nbsp;</span>";
             }
-            elseif ($type=="{password}")
+            elseif ($type== "{password}")
             {
                 $html.="<input title=\"$varname (".FN_Translate("default value").": $defaultvalue)\" $onchange type=\"password\" name=\"conf_$varkey\" size=\"30\" maxlength=\"1200\" value=\"".htmlentities($varvalue)."\" />";
             }
-            elseif ($type=="{required}")
+            elseif ($type== "{required}")
             {
                 $st="";
-                if (count($_POST)&&$varvalue=="")
+                if (count($_POST) && $varvalue== "")
                     $st="style=\"border:1px solid red\"";
                 $html.="<input $st title=\"$varname (".FN_Translate("default value").": $defaultvalue)\" $onchange type=\"text\" name=\"conf_$varkey\" size=\"40\" maxlength=\"1200\" value=\"".htmlentities($varvalue)."\" />";
             }
@@ -442,7 +451,7 @@ var movedown = function (node)
             else
             {
                 //---------checkbox----------------------->
-                if ($options[0][0]=="+")
+                if ($options[0][0]== "+")
                 {
 
                     $html.="<div>";
@@ -476,7 +485,7 @@ var movedown = function (node)
                     {
                         $dirtoopenpath=$dirtoopen;
                     }
-                    if (!empty($dirtoopenpath)&&is_dir($dirtoopenpath))
+                    if (!empty($dirtoopenpath) && is_dir($dirtoopenpath))
                     {
 
                         $allopt=FN_ListDir($dirtoopenpath);
@@ -487,7 +496,7 @@ var movedown = function (node)
                     foreach($enabledopt as $opt)
                     {
                         $imgopt=( file_exists("$dirtoopenpath/$opt/icon.png") ) ? "<img style=\"vertical-align:middle;border:0px;\" src=\"$dirtoopenpath/$opt/icon.png\" alt=\"\"/>" : "";
-                        if ($opt=="")
+                        if ($opt== "")
                             continue;
                         //dprint_r($dirtoopenpath . "/$opt");
                         $title=FN_GetFolderTitle($dirtoopenpath."/".$opt);
@@ -532,16 +541,16 @@ var movedown = function (node)
                             $t=explode("=",$valdesc);
                             $val=trim($t[0]);
                             $valdesc=trim($t[1]);
-                            $s=($val==$varvalue) ? "selected=\"selected\"" : "";
+                            $s=($val== $varvalue) ? "selected=\"selected\"" : "";
                             //font--->
-                            if ($type=="{fonts}")
+                            if ($type== "{fonts}")
                             {
                                 $thumbimgselected="<div style=\"height:20px;line-height:16px;margin:0px;patting:0px;border:0px;font-size:16px;font-family:$varvalue\">".FN_i18n("sample text")."";
                                 $thumbimgselected.="</div>";
                                 $script="document.getElementById('$divid').innerHTML = ' <div style=\\'height:20px;line-height:16px;margin:0px;patting:0px;border:0px;font-size:16px;font-family:$val\\' >".FN_i18n("sample text")."</div>'";
                             }
                             //font--->
-                            if (false!==$i18n_find)
+                            if (false!== $i18n_find)
                             {
                                 $valdesc=FN_Translate(trim(ltrim(strtolower($valdesc))));
                             }
@@ -553,13 +562,13 @@ var movedown = function (node)
                         {
                             $t=FN_XmlTable($options[0]);
                             $items=$t->GetRecords();
-                            $s=($varvalue=="") ? "selected=\"selected\"" : "";
+                            $s=($varvalue== "") ? "selected=\"selected\"" : "";
                             $html.="\n\t<option $s value=\"\">-----</option>";
                             foreach($items as $item)
                             {
-                                $s=($item[$t->primarykey]==$varvalue) ? "selected=\"selected\"" : "";
+                                $s=($item[$t->primarykey]== $varvalue) ? "selected=\"selected\"" : "";
                                 $html.="\n\t<option $s value=\"{$item[$t->primarykey]}\">";
-                                $html.=(!empty($item['title']))?$item[$t->primarykey]."-".$item['title']:$item[$t->primarykey];
+                                $html.=(!empty($item['title'])) ? $item[$t->primarykey]."-".$item['title'] : $item[$t->primarykey];
                                 $html.="</option>";
                             }
                         }
@@ -576,7 +585,7 @@ var movedown = function (node)
                                     //----images ---->
                                     $thumbimg="";
                                     $thumb="$cf";
-                                    if (file_exists($thumb)&&(false!==strpos("jpg,png,jpeg,gif",strtolower(FN_GetFileExtension($thumb)))))
+                                    if (file_exists($thumb) && (false!== strpos("jpg,png,jpeg,gif",strtolower(FN_GetFileExtension($thumb)))))
                                     {
                                         $thumbimg=" <img style='height:64px;vertical-align:middle' src='$thumb' />";
                                         $script="document.getElementById('$divid').innerHTML = '".addslashes(htmlspecialchars($thumbimg))."'";
@@ -589,12 +598,12 @@ var movedown = function (node)
                                     //----images ----<
                                     $ticf=FN_GetFolderTitle($cf);
 
-                                    $s=($sv==$varvalue) ? "selected=\"selected\"" : "";
+                                    $s=($sv== $varvalue) ? "selected=\"selected\"" : "";
                                     if ($s)
                                         $thumbimgselected=$thumbimg;
 
                                     $html.="\n\t<option onkeyup=\"$script\" $s value=\"$sv\">";
-                                    if ($ticf!="")
+                                    if ($ticf!= "")
                                         $html.="$ticf";
                                     else
                                         $html.="$sv";
@@ -622,11 +631,11 @@ var movedown = function (node)
                                     }
                                     //----images ----<
                                     $ticf=FN_GetFolderTitle($cf);
-                                    $s=($sv==$varvalue) ? "selected=\"selected\"" : "";
+                                    $s=($sv== $varvalue) ? "selected=\"selected\"" : "";
                                     if ($s)
                                         $thumbimgselected=$thumbimg;
                                     $html.="\n\t<option onkeyup=\"$script\" $s value=\"$sv\">";
-                                    if ($ticf!="")
+                                    if ($ticf!= "")
                                         $html.="$ticf [$sv]";
                                     else
                                         $html.="$sv";
@@ -637,10 +646,10 @@ var movedown = function (node)
                             {
                                 $handle=opendir($cdir);
                                 $options=array();
-                                while(false!==$file=readdir($handle))
+                                while(false!== $file=readdir($handle))
                                 {
                                     $val1="";
-                                    if ($file!="."&&$file!=".."&&is_dir($cdir."/".$file))
+                                    if ($file!= "." && $file!= ".." && is_dir($cdir."/".$file))
                                     {
                                         //----images ---->
                                         $thumbimg="";
@@ -664,14 +673,14 @@ var movedown = function (node)
                                         $valdesc=FN_GetFolderTitle($cdir."/".$file);
 
                                         $s="";
-                                        if ($val==$varvalue)
+                                        if ($val== $varvalue)
                                         {
                                             $thumbimgselected=$thumbimg;
                                             $s="selected=\"selected\"";
                                         }
-                                        if ($val1!=""&&$s=="")
+                                        if ($val1!= "" && $s== "")
                                         {
-                                            if ($val1==trim($line[1],"\" "))
+                                            if ($val1== trim($line[1],"\" "))
                                             {
                                                 $s="selected=\"selected\"";
                                                 $thumbimgselected=$thumbimg;
@@ -714,7 +723,7 @@ var movedown = function (node)
     $html.="<br /><button type=\"submit\">";
     $html.=FN_Translate("save");
     $html.="</button>";
-    if ($exit!="")
+    if ($exit!= "")
     {
         $html.="&nbsp;<button onclick=\"window.location='$exitflat'\" type=\"button\">";
         $html.=FN_Translate("cancel");
@@ -725,6 +734,8 @@ var movedown = function (node)
 </tbody>
 </table>
 </form><!-- Table:$tableconf -->";
+              
+
     return $html;
 }
 
@@ -810,7 +821,7 @@ function FN_HtmlEditContent($file,$formaction="",$exit="",$editor_params=false)
                 FN_Log("file has been modified:{$file}");
             }
             $html.=FN_i18n("the file was successfully saved");
-            if ($exit!="")
+            if ($exit!= "")
                 $html.="<br /><br /><button onclick=\"$exitjs\">".FN_i18n("next")." &gt;&gt;</button>";
             return $html;
             ;
@@ -837,7 +848,7 @@ function FN_HtmlEditContent($file,$formaction="",$exit="",$editor_params=false)
             switch($file_extension)
             {
                 case "php":
-                    if (basename($file)=="config.php")
+                    if (basename($file)== "config.php")
                     {
                         return FN_HtmlEditConfFile($file,$formaction,$exit);
                     }
@@ -859,11 +870,11 @@ function FN_HtmlEditContent($file,$formaction="",$exit="",$editor_params=false)
                     $html.="<input type=\"hidden\" name=\"fn_rewrite_links\" value=\"1\" />";
                     $value=FN_RewriteLinksLocalToAbsolute($value,dirname($file));
                     $editor=$_FN['htmleditor'];
-                    if (isset($_FN['force_htmleditor'])&&$_FN['force_htmleditor']!="")
+                    if (isset($_FN['force_htmleditor']) && $_FN['force_htmleditor']!= "")
                     {
                         $editor=$_FN['force_htmleditor'];
                     }
-                    if ($editor!="0"&&file_exists("include/htmleditors/".$editor."/htmlarea.php"))
+                    if ($editor!= "0" && file_exists("include/htmleditors/".$editor."/htmlarea.php"))
                     {
                         require_once ("include/htmleditors/".$editor."/htmlarea.php");
                         $defaultdir=false;
@@ -886,10 +897,10 @@ function FN_HtmlEditContent($file,$formaction="",$exit="",$editor_params=false)
                     $html.="<textarea style=\"width:100%;height:90%\" id=\"fn_modcont\" name=\"body\" $readonly cols=\"80\" rows=\"28\" >".htmlspecialchars($value)."</textarea>";
                     break;
             }
-            $ck=($isdraft==true) ? "checked=\"checked\"" : "";
+            $ck=($isdraft== true) ? "checked=\"checked\"" : "";
             $text_save=!empty($editor_params['text_save']) ? $editor_params['text_save'] : FN_i18n("save");
             $html.="<div class=\"fn_editorfooter\">\n<input value=\"1\" $ck type=\"checkbox\" name=\"savedraft\" />&nbsp;".FN_i18n("save as draft")."&nbsp;<button type=\"submit\">".$text_save."</button>";
-            if ($exit!="")
+            if ($exit!= "")
                 $html.="<button type=\"button\" class=\"button\" onclick=\"$exitjs\" > ".FN_i18n("cancel")."</button>";
             $html.="</div></form>";
             $html.="</div>";
@@ -907,11 +918,11 @@ function FN_HtmlEditor($value,$rewritelinkfolder=false)
 {
     $html="";
     $editor=$_FN['htmleditor'];
-    if (isset($_FN['force_htmleditor'])&&$_FN['force_htmleditor']!="")
+    if (isset($_FN['force_htmleditor']) && $_FN['force_htmleditor']!= "")
     {
         $editor=$_FN['force_htmleditor'];
     }
-    if ($editor!="0"&&file_exists("include/htmleditors/".$editor."/htmlarea.php"))
+    if ($editor!= "0" && file_exists("include/htmleditors/".$editor."/htmlarea.php"))
     {
         require_once ("include/htmleditors/".$editor."/htmlarea.php");
         $defaultdir=false;

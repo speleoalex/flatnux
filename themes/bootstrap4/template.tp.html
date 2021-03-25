@@ -2,7 +2,7 @@
 <html lang="{lang}">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no shrink-to-fit=no">
         <meta name="description" content="">
         <meta name="author" content="">
         <link rel="icon" href="favicon.ico">
@@ -11,18 +11,21 @@
 
         <!-- Bootstrap core CSS -->
         <link href="dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="assets/css/docs.min.css" rel="stylesheet">
+        <link href="assets/css/theme.min.css" rel="stylesheet">
+
 
         <!-- Custom styles for this template -->
         <link href="custom.css" rel="stylesheet">
 
         <link href="open-iconic/font/css/open-iconic-bootstrap.min.css" rel="stylesheet">
     </head>
-    <body>
-        <nav class="navbar navbar-dark bg-dark navbar-expand-md navbar-expand-md fixed-top"><a class="navbar-brand" href="#"><img style="max-height:30px" src="img/logo.png" /></a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <body><nav class="navbar navbar-dark bg-dark navbar-expand-md navbar-expand-md "><a class="navbar-brand" href="#"><img alt="logo" style="max-height:30px" src="img/logo.png" /></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#MainNavBar" aria-controls="MainNavBar" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <div class="collapse navbar-collapse" id="MainNavBar">
+
                 <ul class="navbar-nav mr-auto">
                     <!-- include menu -->
                     <!-- menuitems -->
@@ -34,12 +37,12 @@
                     <!-- endmenuitemactive -->
 
                     <!-- menuitemdropdown -->
-                    <li class="nav-item dropdown"><a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">{title}&nbsp;<span class="caret"></span></a>
+                    <li class="nav-item dropdown"><a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">{title}&nbsp;</a>
                         <!-- submenu -->
                         <ul class="dropdown-menu" role="menu">
                             <!-- submenuitems -->
                             <!-- submenuitem -->
-                            <li class="dropdown-submenu" >
+                            <li class="" >
                                 <a  class="dropdown-item" href="#">{title}</a>
                                 {submenu}
                             </li>
@@ -49,15 +52,15 @@
                         <!-- endsubmenu -->
                     </li>
                     <!-- endmenuitemdropdown -->
-                    
+
                     <!-- menuitemdropdownactive -->
-                    <li class="nav-item dropdown"><a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">{title}</a>
+                    <li class="nav-item dropdown active"><a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">{title}</a>
                         <!-- submenu -->
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu" role="menu">
                             <!-- submenuitems -->
                             <!-- submenuitem -->
-                            <li class="dropdown-item" >
-                                <a href="#">{title}</a>
+                            <li class="" >
+                                <a class="dropdown-item" href="#">{title}</a>
                                 {submenu}
                             </li>
                             <!-- endsubmenuitem -->
@@ -72,41 +75,83 @@
 
 
 
-                <!--
-                                <form class="form-inline my-2 my-lg-0">
-                                    <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-                                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                                </form>
-                -->
-                <!-- include FN_HtmlLoginLogout -->                    
-                <!-- include FN_HtmlLoginForm -->
-                <form class="form-inline my-2 my-lg-0" role="form" enctype="multipart/form-data" action="{formaction}" method="post" name="login" >
-                    <input type="text" placeholder="{i18n:Username}" name="username" class="form-control mr-sm-2">
-                    <input type="password" placeholder="{i18n:Password}" name="password"  class="form-control mr-sm-2">
-                    <button type="submit" class="btn btn-outline-success my-2 my-sm-0">{i18n:Login}</button> 
-                    <!-- captcha -->
-                    {i18n:Enter this security code}:<br />
-                    {htmlcaptcha}
-                    <!-- end captcha -->
-                    <!-- passwordrecovery -->
-                    <a class="nav-link" href="{urlpasswordrecovery}" >{i18n:Password recovery}</a>
-                    <!-- end passwordrecovery -->
-                    <!-- loginerror --><div style="background-color:yellow;color:red" >{login_error}</div><!-- end loginerror -->
-                </form> 
-                <!-- end include FN_HtmlLoginForm -->
-                <!-- include FN_HtmlLogoutForm -->
-                <form class="form-inline my-2 my-lg-0" role="form" method="post" action="{formaction}" >
-                    <div  class="form-group"><a  class="nav-link" href="{siteurl}index.php?mod=login"><span class="oi oi-people" title="user" aria-hidden="true"></span>&nbsp;{user}</a> <button class="btn btn-outline-success" type="submit">{i18n:Logout}</button></div>
+                <!-- if {show_search_form} -->
+                <form method="post" action="{siteurl}index.php?mod=search" class="form-inline d-none d-sm-none d-lg-inline d-md-inline mr-3" >
+                    <div class="input-group"><input class="form-control" name="q" type="text" placeholder="{i18n:Search}" aria-label="Search"><div class="input-group-append"><button class="btn btn-secondary my-2 my-sm-0" title="{i18n:Search}" type="submit"><span class="oi oi-magnifying-glass"></span></button></div>
+                    </div>
                 </form>
-                <!-- end include FN_HtmlLogoutForm -->
-                <!-- end include FN_HtmlLoginLogout -->                
+                <!-- end if {show_search_form} -->
 
+
+
+                <!-- if {user} -->
+                <!-- include FN_HtmlLogoutForm -->
+                <div class="nav navbar-nav navbar-right d-none d-sm-none d-lg-inline  ">
+                    <button class="btn btn-secondary d-flex " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="user-avatar user-avatar-md"><img style="max-height:20px;" src="{url_avatar}" alt=""></span> 
+                        <span class="account-summary pr-lg-4 d-none d-lg-block"><span class="account-name">{user}</span> 
+                        </span><span class="dropdown-arrow"></span>
+                    </button> 
+
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <div class="dropdown-arrow ml-3"></div>
+                        <a class="dropdown-item" href="{siteurl}index.php?mod=login&op=editreg">
+                            <span class="dropdown-icon oi oi-person"></span> Profile</a> 
+                        <a class="dropdown-item" href="{siteurl}index.php?fnlogin=logout">
+                            <span class="dropdown-icon oi oi-account-logout"></span> {i18n:Logout}</a>
+                    </div>
+                </div>
+                <!-- end include FN_HtmlLogoutForm -->
+                <!-- end if {user} -->
+                <!-- if not {user} -->
+                <div class="nav navbar-nav navbar-right">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{i18n:Login}</button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <!-- include FN_HtmlLoginForm -->                         
+                        <form class="p-4" role="form" enctype="multipart/form-data" action="{formaction}" method="post" name="login" >
+                            <input type="text" placeholder="{i18n:Username}" name="username" class="form-control">
+                            <input type="password" placeholder="{i18n:Password}" name="password"  class="form-control">
+                            <button type="submit" class="btn btn-primary">{i18n:Login}</button> 
+                            <!-- captcha -->
+                            {i18n:Enter this security code}:<br />
+                            {htmlcaptcha}
+                            <!-- end captcha -->
+                            <!-- passwordrecovery -->
+                            <a href="{urlpasswordrecovery}" >{i18n:Password recovery}</a>
+                            <!-- end passwordrecovery -->
+                            <!-- loginerror -->
+                            <script>window.setTimeout(function () {
+                                    alert("{login_error}");
+                                }, 100);</script>
+                            <!-- end loginerror -->
+                        </form> 
+                        <!-- end include FN_HtmlLoginForm -->
+                    </div>
+                </div>
+                <!-- end if not {user} -->
+                <!-- end include FN_HtmlLoginLogout -->  
+                <!-- if {sitelanguages} -->
+                <ul class="nav navbar-nav navbar-left ">                            
+                    <li class="dropdown " >
+
+                        <li class="nav-item dropdown"><a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><img src="{siteurl}/images/flags/{lang}.png" /></a>
+                        <ul class="dropdown-menu dropdown-menu-right" role="menu" >
+                            <!-- foreach {sitelanguages} -->
+                            <li >                        
+                                <a class="dropdown-item" href='{siteurl}?lang={langname}'><img src="{siteurl}/images/flags/{langname}.png" /> {langtitle}</a>
+                            </li>    
+                            <!-- end foreach {sitelanguages} -->
+                        </ul>
+                    </li>
+                </ul>
+                <!-- end if {sitelanguages} -->
             </div>
+
+
         </nav>
 
         <main role="main" class="container">
-
-            <div class="starter-template">
+            <div class="p-2 bg-white">
                 <!-- include section -->
                 <h1>Bootstrap starter template</h1>
                 <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>

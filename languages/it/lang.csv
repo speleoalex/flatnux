@@ -374,3 +374,12 @@
 "the password has been successfully changed","la password è stata modificata correttamente"
 "the password does not meet the requirements","la password non soddisfa i requisiti"
 "results have been found","risultati trovati"
+"resend the verification code","invia nuovamente il codice di verifica"
+"the email address entered does not match any user","l'indirizzo email non è associato a nessun utente"
+"error username or password","Utente o password non validi"
+"show only enabled","visualizza solo abilitati"
+"show only disabled","visualizza solo disabilitati"
+"show administrators","visualizza amministratori"
+"filter","filtro"
+
+

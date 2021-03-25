@@ -84,15 +84,17 @@ function xmldb_frm_view_file($params)
     $path=$params['fieldform']->path;
     $value=$params['value'];
     $values=$params['values'];
+    $attributes=isset($params["htmlattributes"]) ? $params["htmlattributes"] : "";
     $tablepath=$params['fieldform']->xmltable->FindFolderTable($values);
     $table=FN_XmlTable($tablename);
     $htmlout="";
     $fileimage=isset($values[$table->primarykey]) ? "$path/$databasename/$tablepath/".$values[$table->primarykey]."/".$params['name']."/".$values[$params['name']] : "";
     $fileimage2=isset($values[$table->primarykey]) ? "".$values[$table->primarykey]."/".$params['name']."/".$values[$params['name']] : "";
     $link=FN_GetParam("QUERY_STRING",$_SERVER);
-    $htmlout.="\n<a title=\"Download $value\" href=\"?$link&xmldb_ddfile_{$params['name']}={$values[$params['name']]}\"  >$value</a>";
+    $htmlout.="\n<a $attributes title=\"Download $value\" href=\"?$link&xmldb_ddfile_{$params['name']}={$values[$params['name']]}\"  >$value</a>";
     $downloadfile=FN_GetParam("xmldb_ddfile_{$params['name']}",$_GET);
-    if ($downloadfile!= "" && $downloadfile== $values[$params['name']])
+
+    if ($downloadfile!= "" && $downloadfile == $values[$params['name']])
     {
         $downloadfile=$values[$table->primarykey]."/{$params['name']}/$downloadfile";
         xmldb_go_download($downloadfile,$databasename,$tablename,$path,$tablepath);
@@ -162,7 +164,7 @@ function FN_XmltableEditor($tablename,$params=false,$params2=false)
     $params['textrequired']=isset($params['textrequired']) ? $params['textrequired'] : "*";
     $params['textfields']=isset($params['textfields']) ? $params['textfields'] : FN_Translate("required fields");
     $params['textcancel']=isset($params['textcancel']) ? $params['textcancel'] : FN_Translate("cancel");
-    $params['textnew']=isset($params['textnew']) ? $params['textnew'] : "<img style=\"vertical-align:middle;border:0px;\" alt=\"\"  src=\"".FN_FromTheme("images/add.png")."\" /> ".FN_Translate("new")."";
+    $params['textnew']=isset($params['textnew']) ? $params['textnew'] : "".FN_Translate("new")."";
     $params['textexitwithoutsaving']=isset($params['textexitwithoutsaving']) ? $params['textexitwithoutsaving'] : FN_Translate("want to exit without saving?");
     //messages---<
     if (empty($params['layout_template']) && file_exists("themes/{$_FN['theme']}/form.tp.html"))
@@ -191,16 +193,17 @@ class xmldbfrm_field_datetime
         $idcalendar++;
         $html="";
         $attributes=isset($params["htmlattributes"]) ? $params["htmlattributes"] : "";
-        
-        if ($idcalendar== 1)
+
+        if ($idcalendar == 1)
         {
-            $html.="<script type=\"text/javascript\"  >
-var WeekDayName1 = [\"{$_FN['days'][0]}\", \"{$_FN['days'][1]}\", \"{$_FN['days'][2]}\", \"{$_FN['days'][3]}\", \"{$_FN['days'][4]}\", \"{$_FN['days'][5]}\", \"{$_FN['days'][6]}\"];
-var WeekDayName2 = [\"{$_FN['days'][1]}\", \"{$_FN['days'][2]}\", \"{$_FN['days'][3]}\", \"{$_FN['days'][4]}\", \"{$_FN['days'][5]}\", \"{$_FN['days'][6]}\", \"{$_FN['days'][0]}\"];
-</script>";
-            $html.="<script type=\"text/javascript\"  >
-MonthName = new Array
-(
+            $html.="
+<script type=\"text/javascript\">                
+function initCalendarLang()
+{
+    WeekDayName1 = [\"{$_FN['days'][0]}\", \"{$_FN['days'][1]}\", \"{$_FN['days'][2]}\", \"{$_FN['days'][3]}\", \"{$_FN['days'][4]}\", \"{$_FN['days'][5]}\", \"{$_FN['days'][6]}\"];
+    WeekDayName2 = [\"{$_FN['days'][1]}\", \"{$_FN['days'][2]}\", \"{$_FN['days'][3]}\", \"{$_FN['days'][4]}\", \"{$_FN['days'][5]}\", \"{$_FN['days'][6]}\", \"{$_FN['days'][0]}\"];
+    MonthName = new Array
+    (
 ";
             $v="";
             foreach($_FN['months'] as $g)
@@ -208,7 +211,18 @@ MonthName = new Array
                 $html.="\n$v\"$g\"";
                 $v=",";
             }
-            $html.=");
+            $html.="
+    );
+};
+if (window.addEventListener) {
+    window.addEventListener('load', function () {
+        initCalendarLang();
+    })
+    } else {
+        window.attachEvent('onload', function () {
+            initCalendarLang();
+        })    
+}
 </script>";
         }
         $toltips=($params['frm_help']!= "") ? "title=\"".$params['frm_help']."\"" : "";
@@ -288,7 +302,7 @@ MonthName = new Array
      */
     function formtovalue($str,$params)
     {
-        if ($str== "")
+        if ($str == "")
             return "";
         $dateformat="y-mm-dd 00:00:00";
         if (isset($params['frm_dateformat']) && $params['frm_dateformat']!= "")
@@ -345,7 +359,7 @@ MonthName = new Array
      */
     function valuetoform($strdate,$dateformat)
     {
-        if ($strdate== "" || $strdate== "0000-00-00 00:00:00")
+        if ($strdate == "" || $strdate == "0000-00-00 00:00:00")
             return "";
 //        $time=strtotime($strdate);
         $dateformat=str_replace("y","Y",$dateformat);
@@ -353,7 +367,7 @@ MonthName = new Array
         $dateformat=str_replace("00:00","H:i",$dateformat);
         $dateformat=str_replace("00","H",$dateformat);
         $dateformat=str_replace("mm","m",$dateformat);
-        $dateformat=str_replace("dd","d",$dateformat);      
+        $dateformat=str_replace("dd","d",$dateformat);
         $dateObj=$date=DateTime::createFromFormat($dateformat,$strdate);
         if ($dateObj)
         {
@@ -366,7 +380,7 @@ MonthName = new Array
             $strformdate=date($dateformat,$time);
 //            $strformdate=$strdate;
         }
-       // dprint_r("valuetoform $strdate-> $time -> $dateformat -> $strformdate");
+        // dprint_r("valuetoform $strdate-> $time -> $dateformat -> $strformdate");
         return $strformdate;
     }
 
@@ -437,12 +451,12 @@ class xmldbfrm_field_bbcode
         $tooltip=$params['frm_help'];
         $onkeyup="";
         $style="";
-        if ($cols== "auto")
+        if ($cols == "auto")
         {
             $cols="80";
             $style="width:90%;";
         }
-        if ($rows== "auto")
+        if ($rows == "auto")
         {
             $onkeyup="onkeyup=\"if (this.scrollHeight >= this.offsetHeight){ this.style.height = 10 + this.scrollHeight+'px';}\" ";
             $onkeyup.="onfocus=\"if (this.scrollHeight >= this.offsetHeight){ this.style.height = 10 + this.scrollHeight+'px';}\" ";
@@ -500,7 +514,7 @@ class xmldbfrm_field_multicheck
 
     function show($params)
     {
-        $inputid_prefix=uniqid(rand(0,1000000));
+        $inputid_prefix=md5(serialize($params));
         $html="
 <script type=\"text/javascript\" >
 var synccheck{$inputid_prefix}_{$params['name']} = function (id)
@@ -561,7 +575,7 @@ var synccheck{$inputid_prefix}_{$params['name']} = function (id)
                 $toption=$optionslang[$i];
             if (FN_erg("^$k\$",$value) || FN_erg(",$k,",$value) || FN_erg("^$k,",$value) || FN_erg(",$k\$",$value))
                 $sel="checked=\"checked\"";
-            $html.="<span style=\"white-space:nowrap\" ><input $sel $jsonclick type=\"checkbox\" value=\"$k\" title=\"$tooltip\" name=\"__xmldb_multicheck_".$params['name']."\"  />$toption</span>&nbsp; ";
+            $html.="<label style=\"white-space:nowrap\" ><input $sel $jsonclick type=\"checkbox\" value=\"$k\" title=\"$tooltip\" name=\"__xmldb_multicheck_".$params['name']."\"  />&nbsp;$toption</label>&nbsp;&nbsp; ";
             $i++;
         }
         $html.="<input type=\"hidden\" id=\"xmldbvalue{$inputid_prefix}_{$params['name']}\" name=\"$name\" value=\"$value\" />";
@@ -588,7 +602,7 @@ class xmldbfrm_field_stringselect
         $options=false;
         $html="<div onmouseover=\"selectover{$id_field}=true\" onmouseout=\"selectover{$id_field}=false\" >";
 
-        if ($options== false)
+        if ($options == false)
         {
             $options=array();
             $options_tmp=isset($params['options']) ? $params['options'] : array();
@@ -669,16 +683,16 @@ xmldb_field_stringselect=function (idselect,value)
         onclick=\"xdb_show_menu('xmldb_{$id_field}_s');\" 
         id=\"xmldb_{$id_field}\" $l title=\"{$params['frm_help']}\" size=\"".$size."\" 
         name=\"{$params['name']}\"  ";
-        if (!empty($params['frm_uppercase']) && $params['frm_uppercase']== "uppercase")
+        if (!empty($params['frm_uppercase']) && $params['frm_uppercase'] == "uppercase")
         {
             $html.="onchange=\"this.value=this.value.toUpperCase();\"";
         }
-        elseif (!empty($params['frm_uppercase']) && $params['frm_uppercase']== "lowercase")
+        elseif (!empty($params['frm_uppercase']) && $params['frm_uppercase'] == "lowercase")
         {
             $html.="onchange=\"this.value=this.value.toLowerCase();\"";
         }
         $html.="value=\"".str_replace('"','&quot;',$params['value'])."\" />";
-        $html.="<img style=\"margin-left:0px;vertical-align:middle;border:1px outset;border-left:0px;cursor:pointer\" onclick=\"xdb_toggle_menu('xmldb_{$id_field}_s')\" alt=\"+\" src=\"".FN_FromTheme("images/down.png")."\" /><br />";
+        $html.="<img style=\"margin-left:0px;vertical-align:middle;border-left:0px;cursor:pointer\" onclick=\"xdb_toggle_menu('xmldb_{$id_field}_s')\" alt=\"+\" src=\"".FN_FromTheme("images/fn_down.png")."\" /><br />";
 
 
         if (is_array($options))
@@ -829,7 +843,7 @@ class xmldbfrm_field_multiselect
     function show($params)
     {
         global $_FN;
-        $inputid_prefix=uniqid(rand(0,1000000));
+        $inputid_prefix=md5(serialize($params));
         $html="
 <script type=\"text/javascript\" >
 var synccheck{$inputid_prefix}_{$params['name']} = function ()

@@ -1,9 +1,7 @@
 <div class="viewrecordpage">
     {header}
-
     <!-- if {navigationbar} -->
-    {txt_rsults}
-    <ul class="nav">
+    <ul class="nav nav-tabs">
         <!-- if {viewlist} -->
         <li class="nav-item">
             <a class="nav-link" href="{link}">{title}</a>
@@ -11,12 +9,12 @@
         <!-- end if {viewlist} -->
         <!-- if {viewprev} -->
         <li class="nav-item">
-            <a class="nav-link" href="{link}">{title}</a>
+            <a class="nav-link" href="{link}"><span class="oi oi-arrow-left"></span> {title}</a>
         </li>
         <!-- end if {viewprev} -->
         <!-- if {viewnext} -->
         <li class="nav-item">
-            <a class="nav-link" href="{link}">{title}</a>
+            <a class="nav-link" href="{link}">{title} <span class="oi oi-arrow-right"></span></a>
         </li>
         <!-- end if {viewnext} -->
         <!-- foreach {user_options} -->
@@ -34,14 +32,49 @@
     <!-- end if {navigationbar} -->
     <!-- contents -->
     <!-- group -->
-    <div class="xmldbgroup{groupname}">
+    <div>
+        <h5 class="text-capitalize ">{grouptitle}</h5>
         <!-- end_group -->
         <!-- item -->
-        <span class="xmldbcontent xmldbcontent{fieldtype} xmldbcontent{fieldname} ">
-            <span class="xmldbtitle xmldbtitletype{fieldtype} xmldbtitle{fieldname} ">{title}</span>
-            <span class="xmldbvaluetype xmldbvaluetype{fieldtype} xmldbvalue{fieldname} ">
-                {input}</span></span>
+        <div class="row">
+            <div class="col-md-3 col-xs-12 text-info text-lg-right">{title}</div>
+            <div class="col-md-9 col-xs-12">
+                {input}</div>
+        </div>
         <!-- end_item -->
+        <!-- item_code -->
+        <h4 class="text-right">{input}</h4>
+        <!-- end_item_code -->
+        <!-- item_name -->
+        <h2 class="text-center text-primary">{input}</h2>
+        <!-- end_item_name -->
+        <!-- item_title -->
+        <h2 class="text-center text-primary">{input}</h2>
+        <!-- end_item_title -->        
+        <!-- item_import_rawdata -->
+        <div class="row">
+            <div class="col-md-3 col-xs-12 text-info text-lg-right dropdown-toggle" data-toggle="collapse" data-target="#rawdata">{title}</div>
+            <div class="col-md-9 col-xs-12">
+
+                <div id="rawdata" class="collapse">
+                    {input}
+                </div>
+            </div>
+        </div>
+
+        <!-- end_item_import_rawdata -->
+
+        <!-- item_type_image -->
+        <div class="text-center">{input}{title}</div>
+        <!-- end_item_type_image -->
+
+        <!-- item_type_file -->
+        <div class="row">
+            <div class="col-md-3 col-xs-12 text-info text-lg-right">{title}</div>
+            <div class="col-md-9 col-xs-12"> 
+            <!-- inputattributes:class="btn btn-primary"  -->{input}</div>
+        </div>
+        <!-- end_item_type_file -->       
         <!-- endgroup -->
     </div>
     <!-- end_endgroup -->
@@ -49,3 +82,10 @@
     {footer}
     {innertables}
 </div>
+
+
+<!-- if {url_offlineform} -->
+<br />
+<a class="btn btn-primary" href="{url_offlineform}">{i18n:Download update form} </a>
+<!-- end if {url_offlineform} -->
+

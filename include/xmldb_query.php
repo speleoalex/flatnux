@@ -375,6 +375,7 @@ class XMLDatabase
             //dprint_r($tbl_t->fields[$fieldstoget]);
             //dprint_r($fieldstoget);
             $allrecords_tml=$tbl_t->GetRecords(false,false,false,false,false,$fieldstoget);
+            
             if (is_array($allrecords_tml))
                 $allrecords=array_merge($allrecords,$allrecords_tml);
         }
@@ -399,6 +400,7 @@ class XMLDatabase
                 }
             }
         }
+
         //ordinamento --------<
         $i=0;
         $ret=array();
@@ -414,14 +416,18 @@ class XMLDatabase
             }
             else
             {
+                
+                
                 try
                 {
                     //dprint_r("if ($where2) {".'$ok=true;'."} ");
-                    //if ((preg_match("/".xmldb_encode_preg("emittente")."/i",($item['IDRO'])) OR preg_match("/".xmldb_encode_preg("assorbente")."/i",($item['IDRO'])) OR preg_match("/".xmldb_encode_preg("sifoni")."/i",($item['IDRO'])) OR preg_match("/".xmldb_encode_preg("laghi")."/i",($item['IDRO'])))) {$ok=true;} 
-                    eval("if ($where2) {".'$ok=true;'."} ");
+                    @eval("if ($where2) {".'$ok=true;'."} ");
                 }catch(ParseError $e)
                 {
-                    dprint_r("Error in query ");    // Report error somehow
+                    
+                    //dprint_r($qitems);
+                    //dprint_r("if ($where2) {".'$ok=true;'."}");
+                    //dprint_r("Error in query ");    // Report error somehow
                     return false;
                 }
 
@@ -465,10 +471,15 @@ class XMLDatabase
                         $tmp[$k2]=$item[$k1];
                     }
                     else
-                        $tmp[$k2]=$item;
+                        $tmp[$k2]=$item[$k2];
+                    
+                    
                 }
                 //alias -------<
+               
+               
             }
+
             //----distinct------------->
             if (strtoupper($qitems['option'])== "DISTINCT")
                 if ($this->array_in_array($tmp,$ret))
@@ -481,8 +492,11 @@ class XMLDatabase
             if (($qitems['min'] && $qitems['length']) && ($i)>= ($qitems['min'] + $qitems['length']))
                 break;
             //----min length----------->
+            
             $ret[]=$tmp;
         }
+                            
+
         //filtro search condition --------------------<
         return $ret;
     }
@@ -529,7 +543,7 @@ class XMLDatabase
         // fiels <> '%t%'
         $where2=preg_replace('/(\w+)[\040]+(<>)[\040]+([\'])%([^\']*?)%([\'])/i','!preg_match(\'/\'.xmldb_encode_preg(\'${4}\').\'/i\',(\$item[\'${1}\']))',$where2);
         //dprint_r($where2);
-        $where2=str_replace("$apice","'",$where2);
+        $where2=str_replace("$apice","\\'",$where2);
         // dprint_r("w2=$where2");
 
         return $where2;

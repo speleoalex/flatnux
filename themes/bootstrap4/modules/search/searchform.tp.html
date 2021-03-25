@@ -1,26 +1,27 @@
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 col-md-offset-3">
-            <h1>{i18n:Search}</h1>
+<div class="form-group">
+    <form method="post" action="{form_action}">
+        <input class="form-control" type="text" placeholder="{i18n:Search}" name="q" value="{q}">
+        <input type="hidden" name="where" value="{where}">
+        <input type="hidden" name="op" value="{op}">
+        <select class="form-control"  name="method">
+            <option value="OR">{i18n:Any word}</option>
+            <option value="AND">{i18n:All word}</option>
+            <option value="" >{i18n:Exact phrase}</option>
+        </select><br />
+        <button class="btn btn-primary" type="submit">{i18n:Search}</button>
+    </form>
+</div><br />
+
+<div class="card">
+    <!-- foreach {sections_results} -->
+    <h3>{title}</h3>
+    <div>
+        <!-- foreach {results} -->
+        <div class="card p-1 m-1">
+            <a href="{link}">{title}</a><br />
+            <em>{text}</em>
         </div>
+        <!-- end foreach {results} --> 
     </div>
-    <div class="row">
-        <div class="col-md-4 col-md-offset-3">
-            <form id="searchform" action="" class="search-form">
-                <div class="form-group has-feedback">
-                    <label for="search" class="sr-only">{i18n:Search}</label>
-                    <input type="text" class="form-control" name="q" id="search" value="{q}" placeholder="{i18n:search}">
-                    <input type="hidden" name="where" value="">
-                    <input type="hidden" name="op" value="">
-                    <span  onclick="document.getElementById('searchform').submit()" class="glyphicon glyphicon-search form-control-feedback"></span>
-                    <select class="form-control"  name="method">
-                        <option value="OR">{i18n:Any word}</option>
-                        <option value="AND">{i18n:All word}</option>
-                        <option value="" >{i18n:Exact phrase}</option>
-                    </select>
-                </div>
-            </form>
-        </div>
-    </div>
+    <!-- end foreach {sections_results} -->
 </div>
-{results}
