@@ -1,16 +1,44 @@
 <?php
+
 global $_FN;
 $config = FN_LoadConfig("themes/{$_FN['theme']}/config.php");
-$_FN['show_search_form']=$config['show_search_form'];
+$_FN['show_search_form'] = $config['show_search_form'];
+
+/**
+ * 
+ * @global type $_FN
+ * @param type $section
+ * @return string
+ */
+function FN_GetSectionProprieties($section)
+{
+    global $_FN;
+    $section = FN_GetSectionValues($section);
+    $section['menuclass'] = "arrow-right";
+    if ($section['id'] == $_FN['home_section'])
+    {
+        $section['menuclass'] = "home";
+    }
+    if ($section['type'] == 'login')
+    {
+        $section['menuclass'] = "user";
+    }
+    if ($section['type'] == 'news')
+    {
+        $section['menuclass'] = "rss";
+    }
+    
+    return $section;
+}
 
 /**
  * 
  * @param type $title
  * @return type
  */
-function FN_HtmlOpenTableTitle($title="")
+function FN_HtmlOpenTableTitle($title = "")
 {
-    $htmlout="<article class=\"post article\">
+    $htmlout = "<article class=\"post article\">
                                 <div class=\"postmetadataheader\"><h2 class=\"postheader\">$title</h2></div>
 		<div class=\"postcontent clearfix\">
 		";
@@ -22,7 +50,7 @@ function FN_HtmlOpenTableTitle($title="")
  * @param type $title
  * @return string
  */
-function FN_HtmlCloseTableTitle($title="")
+function FN_HtmlCloseTableTitle($title = "")
 {
     return "</div></article>";
 }
@@ -33,7 +61,7 @@ function FN_HtmlCloseTableTitle($title="")
  */
 function FN_HtmlOpenTable()
 {
-    $htmlout="
+    $htmlout = "
 		";
 
     return $htmlout;
@@ -44,7 +72,7 @@ function FN_HtmlOpenTable()
  * @param type $title
  * @return string
  */
-function FN_HtmlCloseTable($title="")
+function FN_HtmlCloseTable($title = "")
 {
     return "";
 }
@@ -55,10 +83,10 @@ function FN_HtmlCloseTable($title="")
  * @param type $title
  * @return string
  */
-function FN_HtmlOpenSection($title=false)
+function FN_HtmlOpenSection($title = false)
 {
     global $_FN;
-    $htmlout="\n<!-- open section -->";
+    $htmlout = "\n<!-- open section -->";
     return $htmlout;
 }
 
@@ -68,10 +96,10 @@ function FN_HtmlOpenSection($title=false)
  * @param type $title
  * @return string
  */
-function FN_HtmlCloseSection($title=false)
+function FN_HtmlCloseSection($title = false)
 {
     global $_FN;
-    $htmlout="\n<!-- close section -->";
+    $htmlout = "\n<!-- close section -->";
     return $htmlout;
 }
 
@@ -85,14 +113,15 @@ function FN_HtmlLoginLogout($tp_str)
     global $_FN;
     if ($_FN['user'] == "")
     {
-        return FN_HtmlLoginForm(FN_TPL_GetHtmlPart("include FN_HtmlLoginForm",$tp_str));
+        return FN_HtmlLoginForm(FN_TPL_GetHtmlPart("include FN_HtmlLoginForm", $tp_str));
     }
     else
     {
-        return FN_HtmlLogoutForm(FN_TPL_GetHtmlPart("include FN_HtmlLogoutForm",$tp_str));
+        return FN_HtmlLogoutForm(FN_TPL_GetHtmlPart("include FN_HtmlLogoutForm", $tp_str));
     }
 }
-function FNNEWS_PrintNews($news_values,$newsobject)
+
+function FNNEWS_PrintNews($news_values, $newsobject)
 {
     global $_FN;
     echo "
@@ -110,11 +139,11 @@ function FNNEWS_PrintNews($news_values,$newsobject)
     echo $news_values['news_BODY'];
     // print footer
     echo "\n<div class=\"news_footer\">";
-    echo $news_values['txt_POSTED']." ".$news_values['txt_DATE']." ";
-    echo FN_i18n("from")." ".$news_values['news_USER'];
+    echo $news_values['txt_POSTED'] . " " . $news_values['txt_DATE'] . " ";
+    echo FN_i18n("from") . " " . $news_values['news_USER'];
     echo "</div>";
     //dprint_r($news_values);
-    echo "<br />".$news_values['socialnetwork_buttons'];
+    echo "<br />" . $news_values['socialnetwork_buttons'];
     if ($newsobject->IsNewsAdministrator())
     {
         echo "<br /><a href=\"{$news_values['link_MODIFY']}\">[{$news_values['txt_MODIFY']}]</a>";
@@ -122,7 +151,7 @@ function FNNEWS_PrintNews($news_values,$newsobject)
     echo "</div></div>";
     if ($newsobject->config['enablecomments'])
     {
-        $inline_form=true;
+        $inline_form = true;
         if (!$inline_form)
         {
             FNNEWS_PrintComments($news_values);
@@ -136,7 +165,7 @@ function FNNEWS_PrintNews($news_values,$newsobject)
             {
                 echo FN_HtmlOpenTable();
                 if (count($news_values['COMMENTS']))
-                    echo "<b>".FN_i18n("comments")."</b> | ";
+                    echo "<b>" . FN_i18n("comments") . "</b> | ";
                 echo "<a href=\"{$news_values['link_WRITECOMMENT']}\">{$news_values['txt_WRITECOMMENT']}</a> | <a href=\"{$news_values['link_PRINT']}\">{$news_values['txt_PRINT']}</a>";
                 echo FN_HtmlCloseTable();
             }
@@ -151,7 +180,7 @@ function FNNEWS_PrintNews($news_values,$newsobject)
     }
 }
 
-function FNNEWS_PrintNews_summary($item,$newsobject)
+function FNNEWS_PrintNews_summary($item, $newsobject)
 {
     global $_FN;
     //static $i = 0;
@@ -163,10 +192,10 @@ function FNNEWS_PrintNews_summary($item,$newsobject)
                 ";
     echo "<p>";
     echo $item['txt_DATE'];
-    echo " |&nbsp;<a accesskey=\"{$item['accesskey_PRINT']}\" href=\"{$item['link_PRINT']}"."\" title=\"".$item['txt_PRINT']." ".$item['news_TITLE']."\" >".$item['txt_PRINT']."</a>";
+    echo " |&nbsp;<a accesskey=\"{$item['accesskey_PRINT']}\" href=\"{$item['link_PRINT']}" . "\" title=\"" . $item['txt_PRINT'] . " " . $item['news_TITLE'] . "\" >" . $item['txt_PRINT'] . "</a>";
     if ($item['link_MODIFY'] != "")
     {
-        echo " |&nbsp;<a href=\"{$item['link_MODIFY']}\" title=\"".$item['txt_MODIFY']."\" >".$item['txt_MODIFY']."</a>";
+        echo " |&nbsp;<a href=\"{$item['link_MODIFY']}\" title=\"" . $item['txt_MODIFY'] . "\" >" . $item['txt_MODIFY'] . "</a>";
     }
     echo "</p>";
 
@@ -182,13 +211,13 @@ function FNNEWS_PrintNews_summary($item,$newsobject)
     echo "</p>";
     //footer ------>
     echo "<p class=\"news_footer\" >";
-    echo "<p>".$item['txt_VIEWS']."</p>";
+    echo "<p>" . $item['txt_VIEWS'] . "</p>";
     if ($newsobject->config['enablecomments'])
     {
-        echo "<a class=\"btn btn-primary btn-lg\" href=\"{$item['link_COMMENTS']}#newscomments\" >".$item['txt_NUMCOMMENTS']."</a> ";
+        echo "<a class=\"btn btn-primary btn-lg\" href=\"{$item['link_COMMENTS']}#newscomments\" >" . $item['txt_NUMCOMMENTS'] . "</a> ";
     }
-    echo "<a class=\"btn btn-primary btn-lg\"  role=\"button\" accesskey=\"{$item['accesskey_READ']}\" href=\"".$item['link_READ']."\" title=\"".$item['txt_READ']." ".$item['news_TITLE']."\" >".$item['txt_READ']."&nbsp;&gt;&gt;</a>";
-    echo "<br />".$item['socialnetwork_buttons'];
+    echo "<a class=\"btn btn-primary btn-lg\"  role=\"button\" accesskey=\"{$item['accesskey_READ']}\" href=\"" . $item['link_READ'] . "\" title=\"" . $item['txt_READ'] . " " . $item['news_TITLE'] . "\" >" . $item['txt_READ'] . "&nbsp;&gt;&gt;</a>";
+    echo "<br />" . $item['socialnetwork_buttons'];
     echo "</p>";
     //footer ------<
     echo "</div></div>";
@@ -197,7 +226,7 @@ function FNNEWS_PrintNews_summary($item,$newsobject)
 function FNNEWS_PrintComments($news_values)
 {
     global $_FN;
-    $comments=$news_values['COMMENTS'];
+    $comments = $news_values['COMMENTS'];
     //write all comments
     if (count($comments) > 0)
     {/* <div class="media">
@@ -210,8 +239,8 @@ function FNNEWS_PrintComments($news_values)
       </div>
       </div> */
         echo "<div id=\"newscomments\" class=\"newscomments\">";
-        echo "<h3>".FN_i18n("comments").":</h3>";
-        foreach($comments as $comment)
+        echo "<h3>" . FN_i18n("comments") . ":</h3>";
+        foreach ($comments as $comment)
         {
             FNNEWS_PrintComment($comment);
         }
@@ -225,9 +254,9 @@ function FNNEWS_PrintComment($commentvalues)
     echo "<div class=\"media\">
       <div class=\"media-left\">";
     echo "<img class=\"media-object\" style=\"width:60px\" src=\"{$commentvalues['img_USER']}\" alt=\"{$commentvalues['username']}\" /><br />{$commentvalues['html_USER']}</div>";
-    echo "<div class=\"media-body\">".$commentvalues['html_COMMENT']."</div>";
+    echo "<div class=\"media-body\">" . $commentvalues['html_COMMENT'] . "</div>";
     if (FN_IsAdmin())
-        echo "<p style=\"text-align:right\">[".$commentvalues['html_DELCOMMENT']."]</p>";
+        echo "<p style=\"text-align:right\">[" . $commentvalues['html_DELCOMMENT'] . "]</p>";
     echo "</div>";
 }
 
@@ -243,13 +272,9 @@ function FN_HtmlCloseNews()
     return "</div></div>";
 }
 
-
-
 function FN_TPL_tp_create_menu_footer($str)
 {
-    return FN_TPL_html_menu($str,"footer","menu_footer");
+    return FN_TPL_html_menu($str, "footer", "menu_footer");
 }
-
-
 
 ?>

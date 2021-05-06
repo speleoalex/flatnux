@@ -1,0 +1,22 @@
+<form class="navbar-form navbar-right" role="form"  action="{formaction}" method="post" name="login" >
+    <div class="mb-3">
+        <input id="username" placeholder="{i18n:Username}" name="username" type="text" class="form-control">
+
+    </div>
+    <div class="mb-3">
+        <input id="password" name="password" type="password" placeholder="Password" class="form-control">
+
+    </div>
+    <!-- captcha -->
+    {i18n:Enter this security code}:<br />
+    {htmlcaptcha}
+    <!-- end captcha -->
+    <!-- loginerror --><div style="background-color:yellow;color:red" >{login_error}</div><!-- end loginerror -->
+    <button type="submit" class="btn btn-primary">{i18n:Login}</button>
+    <!-- passwordrecovery -->
+    <br /><a class="btn btn-outline-primary mt-3" href="{urlpasswordrecovery}" >{i18n:Password recovery}</a>
+    <!-- end passwordrecovery -->
+    <!-- register --> 
+    <br /><a class="btn btn-outline-primary mt-3" href="{urlregister}">{i18n:Register}</a>
+    <!-- end register --> 
+</form> 

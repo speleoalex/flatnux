@@ -1,0 +1,14 @@
+<div class="form-group">
+    <form method="post" action="{form_action}"><div>
+            <input class="form-control" type="text" placeholder="{i18n:Search}" name="q" value="">
+            {form_inputs}
+            <select class="form-select" name="method">
+                <option value="OR">{i18n:any word}</option>
+                <option value="AND">{i18n:all word}</option>
+                <option value="" >{i18n:exact phrase}</option>
+            </select><br />
+            <button class="btn btn-primary" type="submit">{i18n:search}</button></div>
+    </form>
+</div>
+
+

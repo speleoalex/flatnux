@@ -832,6 +832,7 @@ if (!defined("FNNEWS_FUNCTIONS"))
                     return;
                 }
                 $errors=$table->Verify($newvalues);
+                
                 if (count($errors)== 0)
                 {
                     $newvalues['title'.$_FN['lang']]=$newvalues['title']=htmlspecialchars($newvalues['title']);
@@ -1604,6 +1605,8 @@ if (!defined("FNNEWS_FUNCTIONS"))
             }
             else
             {
+                
+                
                 FN_XmlTableEditor($tablename,$params);
             }
             $html.=ob_get_clean();

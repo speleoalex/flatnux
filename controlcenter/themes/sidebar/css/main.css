@@ -85,7 +85,7 @@ nav.sidebar, .main{
 
     /*adds border to bottom nav boxes*/
     nav.sidebar .navbar-nav > li{
-        border-bottom: 1px #aaaaaa solid;
+        border-bottom: 1px #444444 solid;
     }
 
     /* Colors/style dropdown box*/
@@ -107,10 +107,22 @@ nav.sidebar, .main{
 
     /*colors dropdown box text */
     .navbar-inverse .navbar-nav .open .dropdown-menu>li>a {
-        color: #777;
+        color:rgba(163,175,183,.9);
+        
+       /* color: #777;*/
+    }
+    .navbar-inverse .navbar-nav .open .dropdown-menu>li.active.open>a
+    {
+      /*  background-color: #222c32 !important;        
+        background-image: none;*/
     }
     .dropdown-menu>.active>a, .dropdown-menu>.active>a:hover, .dropdown-menu>.active>a:focus{
         color: #dddddd !important;
+        
+    }
+    .navbar-inverse .navbar-nav>.open>a, .navbar-inverse .navbar-nav>.active>a{
+        background-image: none;
+         background-color: #222c32 !important;        
     }
 
 
@@ -198,7 +210,7 @@ form fieldset{
 }
 form .row{
     /*border-bottom: 1px solid #dddddd;*/
-    
+
 }
 h3{
 
@@ -228,8 +240,6 @@ h3{
     .no-more-tables td,
     .no-more-tables tr {
         display: block  ! important;
-
-
     }
     .table-bordered {
         border: 0px !important;
@@ -242,7 +252,7 @@ h3{
         left: -9999px ! important;
     }
 
-    .no-more-tables tr { border: 1px solid #ccc ! important; }
+    .no-more-tables tr { border: 1px solid #ccc ! important; border-bottom:0px !important }
 
     .no-more-tables td {
         /* Behave like a "row" */
@@ -278,9 +288,19 @@ h3{
 
 
 
+.navbar-inverse{
+    background-color: #263238;
+    background-image:none
+
+}
 
 
+.navbar-header{
+    background-color: #62a8ea;
+    color:#ffffff;
+}
 
-
-
+.navbar-header a{
+    color:#ffffff !important;
+}
 

@@ -9,7 +9,22 @@
         }
     }
 </script>            
-<!-- start grid --><ul class="pagination"><!-- start pages --><!-- start page --><li><a href="{pagelink}">{pagetitle}</a></li> <!-- end page --> <!-- start currentpage --><li class="active" ><a href="{pagelink}">{pagetitle}</a></li> <!-- end currentpage --> <!-- end pages --></ul>
+<!-- start grid -->
+
+<div class="text-right"> 
+    <div class="btn-group btn-round" role="group" aria-label="">
+    <!-- start export -->
+    <button type="button" onclick="window.location = '{urlexport}'" class="btn btn-primary">
+        <span class="glyphicon glyphicon-download" aria-hidden="true"></span> {textexport}</button>
+    <!-- end export -->     
+    <!-- start insertnew -->
+    <button type="button" onclick="window.location = '{urlnewrecord}'" class="btn btn-primary ">
+        <span class="glyphicon glyphicon-file" aria-hidden="true"></span> {textnew}</button>
+    <!-- end insertnew -->
+    </div>
+</div>
+
+<ul class="pagination"><!-- start pages --><!-- start page --><li><a href="{pagelink}">{pagetitle}</a></li> <!-- end page --> <!-- start currentpage --><li class="active" ><a href="{pagelink}">{pagetitle}</a></li> <!-- end currentpage --> <!-- end pages --></ul>
 <!-- start table -->
 <div class="no-more-tables" >
     <table id="keywords"  class="table col-sm-12 table-bordered table-striped table-condensed cf">
@@ -31,12 +46,11 @@
             <tr>
                 <!-- start gridfields -->
                 <!-- start gridfield --><td data-title="{fieldtitle}">{fieldvalue}</td><!-- end gridfield -->
-                <!-- end gridfields --></tr>
+                <!-- end gridfields -->
+            </tr>
             <!-- end gridrow --> 
             <!-- end gridbody -->
         </tbody>           
     </table>
 </div><br />
-<!-- end table --><!-- end grid --><!-- start insertnew -->
-<p> <button type="button" onclick="window.location = '{urlnewrecord}'" class="btn btn-default">{textnew}</button></p>
-<!-- end insertnew -->
+<!-- end table --><!-- end grid -->
