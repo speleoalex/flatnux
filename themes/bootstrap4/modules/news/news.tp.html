@@ -1,0 +1,41 @@
+{htmlcontents}
+<!-- if {topnews} -->
+<!-- foreach {topnews} -->
+<section>
+    <div class="card">
+        <div class="card-header">     
+            <h1>{title}</h1>
+        </div>
+        <div class="card-body">
+            <!-- if {img_news} -->
+            <img style="max-width:500px;" class="card-img-top" src="{img_news}" />
+            <!-- end if {img_news} -->
+            <div>{summary}</div>
+            <a class="btn btn-primary" accesskey="{accesskey_READ}" href="{link_READ}" title="{txt_READ} {news_TITLE}" > {txt_READ}</a>
+        </div>
+    </div>
+</section>
+<!-- end foreach {topnews} -->
+<!-- end if {topnews} -->
+<!-- foreach {news} -->
+<section>
+    <section>
+        <div class="card">
+            <div class="card-header">     
+                <h1>{title}</h1>
+                <small class="text-muted">{txt_DATE}</small>
+            </div>
+            <div class="card-body">
+                <!-- if {img_news} -->
+                <img style="max-width:500px;" class="card-img-top" src="{img_news}" />
+                <!-- end if {img_news} -->
+                <div>{summary}</div>
+                <a class="btn btn-primary" accesskey="{accesskey_READ}" href="{link_READ}" title="{txt_READ} {news_TITLE}" > {txt_READ}</a>
+            </div>
+        </div>
+    </section>
+
+</section>
+<!-- end foreach {news} -->
+
+
