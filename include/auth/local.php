@@ -37,7 +37,7 @@ function FN_LoginInitUrl()
     }
     $_FN['urlregister'] = FN_RewriteLink("index.php?mod=$loginmod&amp;op=register", "&amp;", true);
     $_FN['urlprofile'] = FN_RewriteLink("index.php?mod=$loginmod&amp;op=profile", "&amp;", true);
-    $_FN['urleditreg'] = FN_RewriteLink("index.php?mod=$loginmod&amp;op=editreg", "&amp;", true);
+    $_FN['urleditprofile'] = FN_RewriteLink("index.php?mod=$loginmod&amp;op=editreg", "&amp;", true);
 
 
     $_FN['urllogin'] = FN_RewriteLink("index.php?mod=$loginmod", "&amp;", true);
