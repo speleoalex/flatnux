@@ -99,7 +99,16 @@
                         <!-- foreach {headers} -->
                         <td><a class="text-light" href="{link}">{title}{arrow}</a></td>
                         <!-- end foreach {headers} -->
-                        <td colspan="{numactions}"></td>
+                        <!-- if {enableview} -->
+                        <td class="text-light">{i18n:View}</td>
+                        <!-- end if {enableview} -->
+                        <!-- if {enableedit} -->
+                        <td class="text-light">{i18n:Edit}</td>
+                        <!-- end if {enableedit} -->
+                        <!-- if {enabledelete} -->
+                        <td class="text-light">{i18n:Delete}</td>
+                        <!-- end if {enabledelete} -->
+
                     </tr>
                 </thead>
                 <tbody>

@@ -357,7 +357,7 @@ function FN_UnlockFile($file)
 {
     global $_FN;
     $filelock="{$_FN['datadir']}/_cache/".md5(($file)).".lock";
-    $r=unlink($filelock);
+    $r=@unlink($filelock);
     return $r;
 }
 

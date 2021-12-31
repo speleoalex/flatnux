@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @author Alessandro Vernassa <speleoalex@gmail.com>
  * @copyright Copyright (c) 2003-2009
@@ -15,15 +14,6 @@ define("_MAXTENTATIVIDIACCESSO", "1000");
 define("_MAX_FILES_PER_FOLDER", "10000");
 define("_MAX_LOCK_TIME", "30"); // seconds
 //define("XMLDB_DEBUG_FILE_LOG","/tmp/xmldb.log"); // seconds
-
-
-/*
-  $files=glob(dirname(__FILE__)."/xmldb_*.php");
-  foreach($files as $file)
-  {
-  require_once $file;
-  }
- */
 
 /**
  *
@@ -1249,7 +1239,7 @@ class XMLTable
         $unirecid = $recordvalues[$this->primarykey];
         if (!isset($recordvalues[$recordkey]))
             $recordvalues = $this->GetRecord($recordvalues);
-        $value = $recordvalues[$recordkey];
+        $value = isset($recordvalues[$recordkey])?$recordvalues[$recordkey]:null;
         $tablepath = $this->FindFolderTable($recordvalues);
         if ($value != "" /* && file_exists("$path/$databasename/$tablepath/$unirecid/$recordkey/$value") */)
         {
@@ -1376,17 +1366,12 @@ class XMLTable
             }
         }
         $this->SetLastUpdateTime();
-
-//        @fclose(@fopen("{$this->path}/{$this->databasename}/{$this->tablename}/updated",'a'));
         return $this->driverclass ? $this->driverclass->InsertRecord($values) : null;
     }
 
     function SetLastUpdateTime()
     {
         @touch("{$this->path}/{$this->databasename}/{$this->tablename}/updated");
-        //fclose(fopen("{$this->path}/{$this->databasename}/{$this->tablename}/updated",'a'));
-        //echo $this->GetLastUpdateTime();
-        //die("{$this->path}/{$this->databasename}/{$this->tablename}/updated");
     }
 
     /**
@@ -1648,8 +1633,18 @@ class XMLTable
                             mkdir("$path/$databasename/$dirtable_new/$unirecid");
                         if (!file_exists("$path/$databasename/$dirtable_new/$unirecid/$key"))
                             mkdir("$path/$databasename/$dirtable_new/$unirecid/$key");
-                        if (!move_uploaded_file($_FILES[$key]['tmp_name'], "$path/$databasename/$dirtable_new/$unirecid/$key/" . $name_clean))
-                            copy($_FILES[$key]['tmp_name'], "$path/$databasename/$dirtable_new/$unirecid/$key/" . $name_clean);
+                        //workarround: alla insert non funziona move_uploaded_file
+                        //se elimino il file temporaneo non funziona nemmeno copy  
+                        if ($oldvalues)
+                        {
+                            move_uploaded_file($_FILES[$key]['tmp_name'], "$path/$databasename/$dirtable_new/$unirecid/$key/" . $name_clean)    ;                       
+                        }
+                        else
+                        {
+                            $tmpname = $_FILES[$key]['tmp_name'];
+                            copy($tmpname, "$path/$databasename/$dirtable_new/$unirecid/$key/" . $name_clean);                            
+                        }
+
                         $create_thumb[$key] = true;
                     }
                 }
@@ -1873,7 +1868,7 @@ class XMLTable_xmlphp
                     //-----%xxx%------>
                     if (isset($restr[$key]) && preg_match("/^%/s", $restr[$key]) && preg_match('/%$/s', $restr[$key]))
                     {
-                        
+
                         $t = xmldb_encode_preg(substr($restr[$key], 1, strlen($restr[$key]) - 2));
                         if (preg_match("/$t/is", $r[$key]) == false)
                         {
@@ -1883,7 +1878,7 @@ class XMLTable_xmlphp
                     }
                     elseif (isset($restr[$key]) && preg_match("/%" . '$/is', $restr[$key]))
                     {
-                        
+
                         $t = xmldb_encode_preg(substr($restr[$key], 0, strlen($restr[$key]) - 1));
                         if (preg_match("/^$t/is", $r[$key]) == false)
                         {
@@ -1894,7 +1889,7 @@ class XMLTable_xmlphp
                     elseif (isset($restr[$key]) && preg_match("/^%/is", $restr[$key]))
                     {
                         $t = xmldb_encode_preg(substr($restr[$key], 1));
-                        
+
                         if (preg_match("/" . $t . '$/is', $r[$key]) == false)
                         {
                             $ok = false;

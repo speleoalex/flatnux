@@ -48,6 +48,9 @@
     /*
     Label the data
     */
-    .no-more-tables td:before { content: attr(data-title) ! important; }
+    .no-more-tables td:before { content: attr(data-title) ! important; }    
+    .no-more-tables td .selectfile {display: none ! important; } 
+    .no-more-tables td.fieldnumber1:before { content: none ! important; }
+    
 }
 

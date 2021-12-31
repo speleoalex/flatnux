@@ -2841,7 +2841,10 @@ function FN_GetGlobalVarValue($varname, $maxtime = false)
         }
         $var = unserialize(file_get_contents($filename));
         if (!$var)
+        {
+            @unlink($filename);
             return null;
+        }
         return $var;
     }
     return null;

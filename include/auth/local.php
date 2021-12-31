@@ -125,7 +125,7 @@ function FN_ManageLogin()
         else
         {
             FN_Logout();
-            $_FN['login_error'] = "error username or password";
+            $_FN['login_error'] = FN_Translate("error username or password");
         }
     }
     $_FN['user'] = FN_GetParam("fnuser", $_COOKIE);
@@ -315,10 +315,14 @@ function FN_VerifyUserPassword($fnuser, $fnpwd)
 
     if (function_exists("password_hash") && function_exists("password_verify"))
     {
+
         if (password_verify($fnpwd, $passwd))
         {
             return true;
         }
+    }
+    else{
+        die ("functions password_hash password_verify dont exists ");
     }
     return false;
 }

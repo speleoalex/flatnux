@@ -862,6 +862,7 @@ $frm_endgroupfooter
         }
         if ($update == true && isset($this->formvals[$primarykey]['frm_allowupdate']) && $this->formvals[$primarykey]['frm_allowupdate'] == 0)
         {
+            $this->formvals[$primarykey]['frm_readonly']=1;
             $strhiddenfield .= "<input type=\"hidden\" name=\"$primarykey\" value=\"" . $oldvalues[$primarykey] . "\" />";
         }
         if ($update == true && isset($this->formvals[$primarykey]['frm_setonlyadmin']) && $this->formvals[$primarykey]['frm_setonlyadmin'] != "" && $currentleveladmin < $this->formvals[$primarykey]['frm_setonlyadmin'])
@@ -2046,6 +2047,10 @@ class xmldbfrm_field_varchar
         $l = (!empty($params['size'])) ? "maxlength=\"{$params['size']}\"" : "";
         $frm_prefix = isset($params['frm_prefix']) ? $params['frm_prefix'] : "";
         $attributes = isset($params["htmlattributes"]) ? $params["htmlattributes"] : "";
+        if (!empty($params['frm_readonly']))
+        {
+            $attributes.=" readonly=\"readonly\"";
+        }
         $html .= "$frm_prefix<input $required $attributes  $l title=\"{$params['frm_help']}\" size=\"" . $size . "\" name=\"{$params['name']}\"  value=\"" . str_replace('"', '&quot;', $params['value']) . "\" />";
         $frm_suffix = isset($params['frm_suffix']) ? $params['frm_suffix'] : "";
         $html .= $frm_suffix;
@@ -2585,9 +2590,9 @@ class xmldbfrm_field_check
             $ch = "";
         }
         $attributes = isset($params["htmlattributes"]) ? $params["htmlattributes"] : "";
-
+        $required = (isset($params['frm_required']) && $params['frm_required'] == 1 ) ? "required=\"required\"" : "";
         $html .= "<input type=\"hidden\" value=\"" . htmlspecialchars($oldval) . "\" name=\"__check__" . $params['name'] . "\"  />";
-        $html .= "<input $attributes $toltips $ch type=\"checkbox\" value=\"" . $params['frm_checkon'] . "\" name=\"" . $params['name'] . "\"  />";
+        $html .= "<input $required $attributes $toltips $ch type=\"checkbox\" value=\"" . $params['frm_checkon'] . "\" name=\"" . $params['name'] . "\"  />";
         return $html;
     }
 
@@ -2660,7 +2665,7 @@ class xmldbfrm_field_radio
                 $sel = "checked=\"checked\"";
             $id++;
             $required = (isset($params['frm_required']) && $params['frm_required'] == 1 ) ? "required=\"required\"" : "";
-            $html .= "<input $required $attributes_input  id=\"xmldbradio{$name}{$id}\"  $sel $jsonclick type=\"radio\" value=\"{$option['value']}\" title=\"$tooltip\" name=\"" . $name . "\"  /><label $attributes_label for=\"xmldbradio{$name}{$id}\" style=\"white-space:nowrap\" >$toption</label> ";
+            $html .= "<label $attributes_label for=\"xmldbradio{$name}{$id}\" style=\"white-space:nowrap\" ><input $required $attributes_input  id=\"xmldbradio{$name}{$id}\"  $sel $jsonclick type=\"radio\" value=\"{$option['value']}\" title=\"$tooltip\" name=\"" . $name . "\"  />$toption</label> ";
             $i++;
         }
         $html .= "<script type=\"text/javascript\"  >setTimeout(\"$jexecute\",0);</script>";

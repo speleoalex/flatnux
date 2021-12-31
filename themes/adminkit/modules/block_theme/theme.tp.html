@@ -2,7 +2,13 @@
     <div style="text-align: center">
         <select class="form-select" id="theme{id}" onchange="window.location = document.getElementById('theme{id}').options[document.getElementById('theme{id}').selectedIndex].value">
             <!-- foreach {themes} -->
+            <!-- if {selected} --> 
             <option value="{value}" selected="selected">{title}</option>
+            <!-- end if {selected} --> 
+            <!-- if not {selected} --> 
+            <option value="{value}" >{title}</option>
+            <!-- end if not {selected} --> 
+            
             <!-- end foreach {themes} -->
         </select>
     </div>

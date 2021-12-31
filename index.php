@@ -13,7 +13,6 @@ if ($_FN['enable_mod_rewrite']>0)
     header("Cache-Control: no-cache");
     header("Pragma: no-cache");
 }
-
 //accesskey  ----->
 FN_GetSections("",true);
 //accesskey  -----<

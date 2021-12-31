@@ -3,15 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/speleoalex/public_html/flatnux/flatnux/themes/adminkit/template.tp.html</file>
-            <file>file:/home/speleoalex/public_html/flatnux/flatnux/controlcenter/themes/adminkit/controlcenter.tp.html</file>
-            <file>file:/home/speleoalex/public_html/flatnux/flatnux/themes/adminkit/modules/block_user/login.tp.html</file>
-            <file>file:/home/speleoalex/public_html/flatnux/flatnux/include/functions.inc.php</file>
-            <file>file:/home/speleoalex/public_html/flatnux/flatnux/include/functions_javascript.inc.php</file>
-            <file>file:/home/speleoalex/public_html/flatnux/flatnux/modules/login/login.tp.html</file>
-            <file>file:/home/speleoalex/public_html/flatnux/flatnux/install.php</file>
-            <file>file:/home/speleoalex/public_html/flatnux/flatnux/include/auth/local.php</file>
-            <file>file:/home/speleoalex/public_html/flatnux/flatnux/themes/adminkit/modules/login/login.tp.html</file>
+            <file>file:/home/speleoalex/git/flatnux/make_minimal.sh</file>
+            <file>file:/home/speleoalex/git/flatnux/minimal.txt</file>
         </group>
     </open-files>
 </project-private>

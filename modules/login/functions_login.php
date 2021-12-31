@@ -492,6 +492,7 @@ function FNREG_ManageRegister($actionform="")
     $tplfile=FN_FromTheme("modules/login/manageregister.tp.html",false);
     $op=FN_GetParam("op",$_GET);
     $conditions=FN_XMLQuery("SELECT * FROM fn_conditions WHERE enabled LIKE '1' ORDER BY position");
+
     $sendRegistrationCode=false;
 
     if (!is_array($conditions))
@@ -660,6 +661,7 @@ function FNREG_ManageRegister($actionform="")
                 }
             }
 
+           
 
 
             //---check captcha----------------------------------------------------->
@@ -858,12 +860,17 @@ function FNREG_ManageRegister($actionform="")
             {
                 $ck="checked=\"checked\"";
             }
-            $htmlconditions.="<label><input name=\"conditions_{$condition['id']}\" type=\"checkbox\" $ck/> ".FN_Translate("accept")."</label>";
-            if (!empty($_POST[$username_field]) && empty($condition['optional']) && empty($_POST['conditions_'.$condition['id']]))
+            
+            $required = !empty($condition['optional'])?"":"required=\"required\"";
+            $htmlconditions.="<label><input $required  name=\"conditions_{$condition['id']}\" type=\"checkbox\" $ck/> ".FN_Translate("accept")."</label>";
+            if (!empty($_POST) && empty($condition['optional']) && empty($_POST['conditions_'.$condition['id']]))
                 $htmlconditions.=" <span style=\"background-color:#ffffff;color:red\">".FN_Translate("to register is required to accept")."</span>";
             $htmlconditions.="</div>";
         }
+                
         $tplvars['htmlconditions']=$htmlconditions;
+        
+
     }
     else
     {

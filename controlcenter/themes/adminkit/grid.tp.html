@@ -75,21 +75,30 @@
                 <!-- end if {nav_page_next} -->
             </ul>
         </nav>
-        <div class="no-more-tables" >
+        <div class="no-more-tables  table-responsive" >
             <table id="keywords"  class="table col-sm-12 table-bordered table-striped table-hover table-condensed">
                 <thead class="bg-primary">
                     <tr>
                         <!-- foreach {headers} -->
                         <td><a class="text-light" href="{link}">{title}{arrow}</a></td>
                         <!-- end foreach {headers} -->
-                        <td colspan="{numactions}"></td>
+                        <!-- if {enableview} -->
+                        <td class="text-light">{i18n:View}</td>
+                        <!-- end if {enableview} -->
+                        <!-- if {enableedit} -->
+                        <td class="text-light">{i18n:Edit}</td>
+                        <!-- end if {enableedit} -->
+                        <!-- if {enabledelete} -->
+                        <td class="text-light">{i18n:Delete}</td>
+                        <!-- end if {enabledelete} -->
+
                     </tr>
                 </thead>
                 <tbody>
                     <!-- foreach {rows} -->
                     <tr>
                         <!-- foreach {cols} -->
-                        <td data-title="{fieldtitle}">{fieldvalue}</td>
+                        <td class="fieldnumber{fieldnumber}" data-title="{fieldtitle}">{fieldvalue}</td>
                         <!-- end foreach {cols} -->
                         <!-- if {action_view} -->
                         <td><a href="{link}"><img alt="{text}" src="img/view.svg"/></a></td>
@@ -102,6 +111,8 @@
                                     window.location = '{link}'
                                 }"><img alt="{text}" src="img/delete.svg"/></a></td>
                         <!-- end if {action_delete} -->
+                        
+                        
                     </tr>
                     <!-- end foreach {rows} -->
                 </tbody>           
