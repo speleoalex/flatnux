@@ -169,7 +169,7 @@ function FN_Copy($s,$d)
  */
 function FN_Write($string,$file,$mode="w")
 {
-    if (false!== ($fp=fopen($file,$mode)))
+    if (false!== ($fp=@fopen($file,$mode)))
     {
         fwrite($fp,$string);
         fclose($fp);

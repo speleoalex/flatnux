@@ -52,7 +52,7 @@ function TPL_GetHtmlParts($partname, $tp_str, $default = "")
         return $cache[$md5];
     }
     $out = array();
-    $ret = false;
+    $ret = array();
     if (preg_match("/<!-- $partname -->.*<!-- $partname -->/s", $tp_str))//se il nome del nodo contiene un elemento con lo stesso nome
     {
         $tmp = explode("<!-- $partname -->", $tp_str);
@@ -107,6 +107,8 @@ function TPL_ReplaceHtmlPart($partname, $replace, $tp_str, $default = "")
 function TPL_encode($str)
 {
     global $tpl_skeep;
+    if (!isset($str))
+        return "";
     if (!$tpl_skeep)
         $tpl_skeep = "__skeep___graph_";
     $str = str_replace("{", $tpl_skeep, $str);
@@ -151,7 +153,7 @@ function TPL_ApplyTplFile($tplname, $vars, $config)
  * @param type $config
  * @return type
  */
-function TPL_ApplyTplString($str, $vars, $basepath = false, $config)
+function TPL_ApplyTplString($str, $vars, $basepath = false, $config = array())
 {
     /*
 

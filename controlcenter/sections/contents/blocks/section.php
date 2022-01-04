@@ -79,7 +79,7 @@ if ($modcont)
 //----------------------modify-------------------------------------------------<
 else
 {
-    $params=false;
+    $params=array();
     $params['enablenew']=true;
     $params['textmodify']=FN_Translate("configure");
     $params['textsave']=FN_Translate("save");

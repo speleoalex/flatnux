@@ -18,7 +18,7 @@
  */
 function xmldb_frm($databasename, $tablename, $path = "misc", $lang = "en", $languages = "en,it", $params = false)
 {
-    static $tables = false;
+    static $tables = array();
     if (!is_array($tablename))
     {
         $id = "$databasename,$tablename,$path,$lang,$languages";
@@ -252,7 +252,7 @@ class FieldFrm
         $tmp->template = "$str";
         if ($fieldname == "")
         {
-            foreach ($this->formvals as $k => $v)
+           foreach ($this->formvals as $k => $v)
             {
                 if (!isset($v['name']))
                     continue;
@@ -265,7 +265,6 @@ class FieldFrm
         }
         else
         {
-
             $type = $this->formvals[$fieldname]['frm_type'] ? $this->formvals[$fieldname]['frm_type'] : $this->formvals[$fieldname]['type'];
             if (preg_match('/(<!-- item' . $suffix . ' -->)(.*)(<!-- end_item' . $suffix . ' -->)/is', $tmp->template, $out))
             {
@@ -482,7 +481,7 @@ $frm_endgroupfooter
      */
     function LoadFieldsForm($values = "")
     {
-        static $options = false;
+        static $options = array();
         $databasename = $this->databasename;
         $tablename = $this->tablename;
         $lang = $this->lang;

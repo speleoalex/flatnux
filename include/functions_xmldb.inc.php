@@ -127,15 +127,13 @@ function xmldb_frm_view_file($params)
  * @param $xmldatabase
  * @param $params
  */
-function FN_XmltableEditor($tablename,$params=false,$params2=false)
+function FN_XmltableEditor($tablename,$params=array())
 {
     require_once ("include/xmldb_editor.php");
     global $_FN;
-    $xmldatabase=$_FN['database'];
-    if ($params2!= false && !is_array($params))
+    if (empty($params['xmldatabase']))
     {
-        $xmldatabase=$params;
-        $params=$params2;
+        $params['xmldatabase']=$_FN['database'];
     }
     $op=FN_GetParam("opt",$_GET,"html");
     $link="mod={$_FN['mod']}&amp;opt=$op";
@@ -146,9 +144,6 @@ function FN_XmltableEditor($tablename,$params=false,$params2=false)
     $params['siteurl']=$_FN['siteurl'];
     $params['enable_mod_rewrite']=$_FN['enable_mod_rewrite'];
     $params['links_mode']=$_FN['links_mode'];
-    
-    
-
     if (!isset($params['link']))
     {
         $params['link']=$link;
@@ -192,7 +187,7 @@ function FN_XmltableEditor($tablename,$params=false,$params2=false)
     $params['enable_mod_rewrite'] = isset($params['enable_mod_rewrite']) ? $params['enable_mod_rewrite'] : $_FN['enable_mod_rewrite'];
     $params['use_urlserverpath'] = isset($params['use_urlserverpath']) ? $params['use_urlserverpath'] : $_FN['use_urlserverpath'];
     $params['sitepath'] = isset($params['sitepath']) ? $params['sitepath'] : $_FN['sitepath'];    
-    XMLDB_editor($tablename,$xmldatabase,$params);
+    XMLDB_editor($tablename,$params);
 }
 
 //---------datetime-------------------------------------------->

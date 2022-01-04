@@ -8,7 +8,7 @@
  */
 global $_FN;
 defined('_FNEXEC') or die('Restricted access');
-$params = false;
+$params = array();
 $params['enablenew'] = false;
 $_FN['section_header_footer']="<link rel='StyleSheet' type='text/css' href=\"modules/filemanager/style.css\" />";
 echo "<iframe src=\"{$_FN['siteurl']}/filemanager.php\" style=\"border:0px;height:500px;;width:600px\"></iframe>";

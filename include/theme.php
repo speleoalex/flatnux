@@ -803,10 +803,10 @@ function FN_TPL_tp_create_menu($str = "")
  * @param type $parent
  * @return string
  */
-function FN_TPL_html_menu($str = "", $part, $parent = false)
+function FN_TPL_html_menu($str = "", $part="", $parent = false)
 {
     global $_FN;
-    static $sections = false;
+    static $sections = array();
     $config = FN_LoadConfig("themes/{$_FN['theme']}/config.php");
     if (isset($config['show_' . $part . '_menu']) && $config['show_' . $part . '_menu'] == 0)
         return "";

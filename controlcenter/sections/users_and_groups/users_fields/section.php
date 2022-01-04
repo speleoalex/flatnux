@@ -401,7 +401,8 @@ function edit_struct_table($tablename,$path,$databasename)
     $params ['fields']="position|MoveUpdown()|name|frm_i18n|frm_type|frm_show|frm_required|showinprofile|frm_title_insert_i18n";
     $params ['link']="op=edit&amp;opt=$opt&amp;t=$tablename";
     $params ['textnew']=FN_Translate("new field");
-    FNCC_xmltableeditor(false,"tables",$params);
+    $params ['xmldatabase']= "tables";
+    FNCC_xmltableeditor(false,$params);
     //fix position---->
     if (!empty($_GET['moveup'])||!empty($_GET['movedown']))
     {

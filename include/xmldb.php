@@ -99,13 +99,15 @@ function xmldb_readDatabase($filename, $elem, $fields = false, $usecache = true)
 
     if (!file_exists($filename))
         return false;
+    
+    /*
     if (is_array($fields))
     {
         $fields = implode("|", $fields);
-    }
+    }*/
     $_fields = "_" . $fields;
     static $cache = array();
-    static $lastmod = false;
+    static $lastmod = array();
     $filename = realpath($filename);
     if (!isset($lastmod[$filename]) || $lastmod[$filename] != filectime($filename) . filesize($filename))
     {
@@ -559,7 +561,8 @@ function addxmltablefield($databasename, $tablename, $field, $path = ".", $force
     if (!isset($field['name']))
         return null;
     if (is_array($tablename))
-        return;
+        return null;
+    $newvalues = array();
     $values = $field;
     $pvalue = $field['name'];
     $pkey = "name";
@@ -583,7 +586,8 @@ function addxmltablefield($databasename, $tablename, $field, $path = ".", $force
     $oldfilestring = xmldb_removexmlcomments($oldfilestring);
     $oldvalues = $newvalues = getxmltablefield($databasename, $tablename, $field['name'], $path);
     foreach ($values as $key => $value)
-    {
+    { 
+        
         $newvalues[$key] = $value;
     }
     //compongo il nuovo xml per il record da aggiornare
@@ -650,7 +654,7 @@ function addxmltablefield($databasename, $tablename, $field, $path = ".", $force
 function getxmltablefield($databasename, $tablename, $fieldname, $path = ".")
 {
     if (!file_exists("$path/$databasename/$tablename.php"))
-        return false;
+        return null;
     $rows = xmldb_readDatabase("$path/$databasename/$tablename.php", "field");
     foreach ($rows as $row)
     {
@@ -659,7 +663,7 @@ function getxmltablefield($databasename, $tablename, $fieldname, $path = ".")
             return $row;
         }
     }
-    return false;
+    return null;
 }
 
 /**
@@ -932,7 +936,7 @@ function xmldb_now()
  */
 function xmldb_table($databasename, $tablename, $path = "misc", $params = false)
 {
-    static $tables = false;
+    static $tables = array();
     if (is_array($tablename))
     {
         return new XMLTable($databasename, $tablename, $path, $params);

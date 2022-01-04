@@ -39,7 +39,6 @@ function FN_LoginInitUrl()
     $_FN['urlprofile'] = FN_RewriteLink("index.php?mod=$loginmod&amp;op=profile", "&amp;", true);
     $_FN['urleditprofile'] = FN_RewriteLink("index.php?mod=$loginmod&amp;op=editreg", "&amp;", true);
 
-
     $_FN['urllogin'] = FN_RewriteLink("index.php?mod=$loginmod", "&amp;", true);
     $_FN['urllogout'] = FN_RewriteLink("index.php?fnlogin=logout", "&amp;", true);
     $_FN['urlpasswordrecovery'] = FN_RewriteLink("index.php?mod=$loginmod&op=recovery", "&amp;", true);
@@ -65,17 +64,21 @@ function FN_CountUsers($arrayfilter = false)
  */
 function FN_GetUserForm()
 {
-    FN_LoginInitUrl();
-    $form = FN_XmlForm("fn_users");
-    $form->formvals['passwd']['frm_type'] = "cryptpasswd";
-    $op = FN_GetParam("op", $_GET, "html");
-    $pk___xdb_fn_users = FN_GetParam("pk___xdb_fn_users", $_GET, "html");
-    if ($op == "editreg" || $pk___xdb_fn_users != "")
-        $form->formvals['passwd']['frm_required'] = "false";
-    $form->LoadFieldsClasses();
-    $form->fieldname_active = "active";
-    $form->fieldname_user = "username";
-    $form->fieldname_password = "passwd";
+    static $form = null;
+    if (!$form)
+    {
+        FN_LoginInitUrl();
+        $form = FN_XmlForm("fn_users");
+        $form->formvals['passwd']['frm_type'] = "cryptpasswd";
+        $op = FN_GetParam("op", $_GET, "html");
+        $pk___xdb_fn_users = FN_GetParam("pk___xdb_fn_users", $_GET, "html");
+        if ($op == "editreg" || $pk___xdb_fn_users != "")
+            $form->formvals['passwd']['frm_required'] = "false";
+        $form->LoadFieldsClasses();
+        $form->fieldname_active = "active";
+        $form->fieldname_user = "username";
+        $form->fieldname_password = "passwd";
+    }
     return $form;
 }
 
@@ -249,7 +252,6 @@ function FN_HtmlLoginForm($templateForm = false)
 
     $html = FN_TPL_ApplyTplString($templateForm, $tplvars, $tplbasepath);
 
-
     return $html;
 }
 
@@ -321,8 +323,9 @@ function FN_VerifyUserPassword($fnuser, $fnpwd)
             return true;
         }
     }
-    else{
-        die ("functions password_hash password_verify dont exists ");
+    else
+    {
+        die("functions password_hash password_verify dont exists ");
     }
     return false;
 }
@@ -335,11 +338,11 @@ function FN_VerifyUserPassword($fnuser, $fnpwd)
  * @param bool $usecache
  * @return array
  */
-function FN_GetUser($user, $usecache = true)
+function FN_GetUser($user, $usecache = array())
 {
     if ($user == "")
-        return false;
-    static $usercache = false;
+        return null;
+    static $usercache = array();
     global $_FN;
     if ($usecache)
     {
@@ -351,7 +354,7 @@ function FN_GetUser($user, $usecache = true)
     if (is_array($UserValues) && $UserValues['level'] === "")
         $UserValues['level'] = "0";
     if (empty($UserValues['username']))
-        return false;
+        return null;
     $_FN['uservalues'] = $usercache[$user] = $UserValues;
     return $usercache[$user];
 }

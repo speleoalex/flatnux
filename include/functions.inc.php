@@ -1299,7 +1299,7 @@ function FN_InitTables($force = false)
  * @param array $params
  * @return object
  */
-function FN_XmlTable($tablename, $params = false)
+function FN_XmlTable($tablename, $params = array())
 {
     global $_FN;
     if (!isset($params['defaultdriver']))
@@ -1313,7 +1313,7 @@ function FN_XmlTable($tablename, $params = false)
  * @param array $params
  * @return object
  */
-function FN_XmlForm($tablename, $params = false)
+function FN_XmlForm($tablename, $params = array())
 {
     global $_FN;
     $params['siteurl'] = $_FN['siteurl'];

@@ -140,9 +140,9 @@ function XMLDB_editor_cleanLink($link)
  * @param $params
  * @return unknown_type
  */
-function XMLDB_editor($tablename, $dbname, $params = false)
+function XMLDB_editor($tablename, $params = array())
 {
-
+    $dbname = isset($params['xmldatabase'])?$params['xmldatabase']:"xmldatabase";
     //--parametri ---->
     $bgcolorover = isset($params['bgcolorover']) ? $params['bgcolorover'] : "#ffff00";
     $defaultsParams = array(
@@ -279,9 +279,6 @@ Pages : <!-- start pages --><!-- start page --><a href=\"{pagelink}\">{pagetitle
 
     $urlexport = isset($params['urlexport']) ? $params['urlexport'] : "";
 
-
-
-
     $html = "";
     $tname = $tablename;
     if (is_array($tablename))
@@ -393,7 +390,6 @@ Pages : <!-- start pages --><!-- start page --><a href=\"{pagelink}\">{pagetitle
     $list_onupdate = isset($params['list_onupdate']) ? $params['list_onupdate'] : $list_onsave;
 
     $params['maxrows'] = isset($params['maxrows']) ? $params['maxrows'] : false;
-
 
     //--parametri ----<
     //-----variabili da get --------->
@@ -607,15 +603,12 @@ set_changed();
                 $tplvars['text_on_insert_fail'] = "";
                 $tplvars['text_on_insert_ok'] = "";
 
-
-
                 $layout_template = $scriptOnExit . $layout_template;
 
                 $endloop = true;
 
                 $html .= "" . $scriptOnExit;
                 $newvalues = $table->getbypost();
-
 
                 if (is_array($forcevalues))
                 {
@@ -768,7 +761,7 @@ set_changed();
                                 $toupdate = true;
                                 if (!$enableedit)
                                 {
-                                    $list_oninsert=true;
+                                    $list_oninsert = true;
                                 }
                             }
                             else
@@ -823,8 +816,6 @@ set_changed();
                   dprint_r($httpqueryparams);
                  */
                 $urlquery = (http_build_query($httpqueryparams));
-
-
 
                 //---------- $httpqueryparams ins new--<             
                 $link_ = XMLDB_editor_mergelink($tlink, "$urlquery&amp;op_$postgetkey=insnew");
@@ -885,14 +876,9 @@ set_changed();
                     }
                     $tplvars['url_cancel'] = $link_;
 
-
                     $html .= "&nbsp;<button id='exit_$postgetkey' type=\"button\" onclick=\"window.location='" . str_replace("&amp;", "&", $link_) . "'\" >" . $textcancel . "</button>";
                 }
                 $html .= "\n</div></form>";
-
-
-
-
 
                 if ($textviewlist)
                 {
@@ -1097,7 +1083,7 @@ set_changed();
                     $html .= $htmlgrid;
                 else
                 {
-                    $fieldstoread = $__fieldstoread = false;
+                    $fieldstoread = $__fieldstoread = array();
                     if ($fields != false && !is_array($fields))
                     {
                         $fields = explode("|", $fields);
@@ -1275,13 +1261,9 @@ set_changed();
                     }
                     $htmlpages_full = $htmlpages;
 
-
-
-
                     //----------------------header----------------------------->
                     $html_GridHeader = "";
                     $orderfield = array();
-
 
                     if ($fields)
                     {
@@ -1314,9 +1296,8 @@ set_changed();
                         $orderfield = $table->formvals;
                     $numcols = 0;
 
-
                     $tplvars['headers'] = array();
-                    $numcol=0;
+                    $numcol = 0;
                     foreach ($orderfield as $key => $value)
                     {
                         $numcol++;
@@ -1368,7 +1349,6 @@ set_changed();
                                 $tmp_header['numcols'] = $numcols;
                                 $tmp_header['numcol'] = $numcol;
                                 $tmp_header['arrow'] = $t;
-                                
                             }
                             else
                             {
@@ -1389,13 +1369,11 @@ set_changed();
                     $html_GridRow = preg_replace('/(<!-- start gridfields -->)(.*)(<!-- end gridfields -->)/is', xmldb_encode_preg_replace2nd($html_GridHeader), $template_gridheader_gridrow);
                     $html_GridHeader = preg_replace('/(<!-- start gridrow -->)(.*)(<!-- end gridrow -->)/is', xmldb_encode_preg_replace2nd($template_gridheader_gridrow), $html_GridRow);
 
-
                     //----------------------header-----------------------------<
                     $i = 1;
                     static $tablefk = array();
                     $html_gridbody = "";
                     $tplvars['rows'] = array();
-
 
                     //----order------------------------------------------------>
                     if (is_array($all) && count($all) > 0)
@@ -1470,7 +1448,7 @@ set_changed();
 
 
 
-                                $tmp_row['action_view'] = false;
+                                $tmp_row['action_view'] = array();
                                 if ($enableview)
                                 {
                                     $link_ = XMLDB_editor_mergelink($mlink, "$urlquery&amp;op_$postgetkey=view&amp;filter{$postgetkey}=$link_FiltersEncoded");
@@ -1516,14 +1494,14 @@ set_changed();
                                 $numcol = 0;
                                 foreach ($orderfield as $key => $field)
                                 {
-                                    
+
                                     $tmp_col = array();
                                     $tmp_col['fieldvalue'] = "";
                                     $tmp_col['fieldname'] = $key;
                                     $tmp_col['fieldtitle'] = $key;
-                                    
-                                    $tmp_col['action_view'] = $tmp_row['action_view'] ;
-                                            
+
+                                    $tmp_col['action_view'] = $tmp_row['action_view'];
+
                                     $kfunction = (false !== strpos($key, "()")) ? str_replace("()", "", $key) : false;
                                     if (false !== strpos($kfunction, "]"))
                                     {
@@ -1536,7 +1514,7 @@ set_changed();
 
                                     $vimage = "";
                                     $numcol++;
-                                    
+
                                     if ($show_translations == true || !isset($table->formvals[$key]['frm_multilanguage']) || $table->formvals[$key]['frm_multilanguage'] != "1")
                                     {
                                         if (isset($functionsview[$key]))
@@ -1631,6 +1609,7 @@ set_changed();
                                                     }
                                                 }
                                             }
+                                            $value = isset($value)?$value:"";
                                             $value = XMLDB_FixEncoding(substr(strip_tags($value), 0, $params['max_cell_text_lenght']), $params['charset_page']);
                                         }
 
@@ -1640,8 +1619,8 @@ set_changed();
                                         $tmp_col['fieldtitle'] = "$fieldtitle";
                                         $tmp_col['fieldvalue'] = "$vimage$value";
                                     }
-                                    
-                                    $tmp_col['fieldnumber']=$numcol;
+
+                                    $tmp_col['fieldnumber'] = $numcol;
                                     $tmp_col['field_' . $tmp_col['fieldname']]['action_view'] = isset($tmp_row['action_view']) ? $tmp_row['action_view'] : false;
                                     $tmp_col['field_' . $tmp_col['fieldname']]['action_edit'] = isset($tmp_row['action_edit']) ? $tmp_row['action_edit'] : false;
                                     $tmp_col['field_' . $tmp_col['fieldname']]['action_delete'] = isset($tmp_row['action_delete']) ? $tmp_row['action_delete'] : false;
