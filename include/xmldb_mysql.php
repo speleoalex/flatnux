@@ -315,9 +315,12 @@ class XMLTable_mysql
      * @param array $fields
      * @return array
      */
-    function GetRecords($restr=false,$min=false,$length=false,$order=false,$reverse=false,$fields=false)
+    function GetRecords($restr=false,$min=false,$length=false,$order=false,$reverse=false,$fields=array())
     {
-
+        if ($fields===false)
+        {
+            $fields=array();
+        }
         $tablename=$this->tablename;
         if (!$fields)
         {

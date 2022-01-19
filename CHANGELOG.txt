@@ -1,5 +1,6 @@
 1/2022
  -compatibilità php 8.1
+ -emailhidden 
 
 12/2021
  -bug fix

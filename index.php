@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @package Flatnux
  * @author Alessandro Vernassa <speleoalex@gmail.com>
@@ -48,6 +47,9 @@ if (file_exists("sections/{$_FN['mod']}/footer.php"))
 $str .= "<!-- Page generated in " . FN_GetExecuteTimer() . " seconds. -->";
 //FN_Debug_timer(__FILE__.":".__LINE__);
 //die("");
+
+
+
 if (function_exists("FN_BeforePrint"))
 {
     $str = FN_BeforePrint($str);

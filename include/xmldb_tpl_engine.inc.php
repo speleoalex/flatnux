@@ -1,5 +1,4 @@
 <?php
-
 /**
  * find <!-- $partname -->(.*)<!-- end$partname -->
  * 
