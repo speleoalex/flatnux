@@ -653,11 +653,12 @@ class FNDBVIEW
         {
             foreach ($params as $key => $value)
             {
-                $link[$key] = "$key=" . urlencode($params[$key]);
                 if ($params[$key] === null)
                     unset($link[$key]);
                 elseif ($params[$key] === "")
                     $link[$key] = "$key=$blank";
+                else
+                    $link[$key] = "$key=" . urlencode($params[$key]);
             }
         }
         if ($onlyquery)

@@ -2583,7 +2583,7 @@ function FN_ReadCsvDatabase($filename, $delimiter, $enclosure = '"')
         else
         {
             $num = 0;
-            $tmp = false;
+            $tmp = array();
             foreach ($keys as $k => $val)
             {
                 $tmp[$k] = isset($data[$num]) ? $data[$num] : "";

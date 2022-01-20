@@ -5,75 +5,75 @@ $_FN['table_border']="#000000;";
 $_FN['table_background']="#ffffff;";
 
 define("_XMLTABLESTRUCTURE","<tables>
-	<field>
-		<name>name</name>
-		<type>string</type>
-		<primarykey>1</primarykey>
-		<frm_group>DATA</frm_group>
-	</field>
-	<field>
-		<name>primarykey</name>
-		<frm_type>check</frm_type>
-		<frm_show>1</frm_show>
-		<frm_allowupdate>0</frm_allowupdate>
-	</field>
-	<field>
-		<name>type</name>
-                <frm_i18n>type (db)</frm_i18n>
-		<type>select</type>
-		<frm_options>varchar,text,image,file,datetime,check,select,radio,html,password</frm_options>
-	</field>
-	<field>
-		<name>extra</name>
-		<type>select</type>
-		<frm_options>autoincrement</frm_options>
-	</field>	
-	<field>
-		<name>size</name>
-		<type>string</type>+
-		<frm_endgroup></frm_endgroup>
-	</field>
-	<field>
-		<name>frm_type</name>
-		<type>varchar</type>
-                <frm_i18n>type (form)</frm_i18n>
-		<frm_type>stringselect</frm_type>
-		<frm_options>varchar,text,image,file,localfile,datetime,check,select,radio,html,password</frm_options>
-		<frm_group>FORM</frm_group>
-	</field>
-	<field>
-		<name>frm_options</name>
-                <frm_i18n>list options</frm_i18n>
-		<type>text</type>
-	</field>
-	<field>
-		<name>frm_retype</name>
-		<type>check</type>
-	</field>
-	<field>
-		<name>frm_show</name>
-		<type>select</type>
-		<frm_options>0,1</frm_options>
-	</field>
-	<field>
-		<name>frm_default</name>
-                <frm_i18n>default value</frm_i18n>
-		<type>text</type>
-	</field>
-	<field>
-		<name>frm_validator</name>
-		<type>string</type>
-	</field>
-	<field>
-		<name>frm_allowupdate</name>
-		<type>select</type>
-		<frm_options>0,1,onlyadmin</frm_options>
-	</field>
-	<field>
-		<name>frm_multilanguage</name>
-		<frm_type>check</frm_type>
-		<frm_endgroup></frm_endgroup>
-	</field>
+    <field>
+            <name>name</name>
+            <type>string</type>
+            <primarykey>1</primarykey>
+            <frm_group>DATA</frm_group>
+    </field>
+    <field>
+            <name>primarykey</name>
+            <frm_type>check</frm_type>
+            <frm_show>1</frm_show>
+            <frm_allowupdate>0</frm_allowupdate>
+    </field>
+    <field>
+            <name>type</name>
+            <frm_i18n>type (db)</frm_i18n>
+            <type>select</type>
+            <frm_options>varchar,text,image,file,datetime,check,select,radio,html,password</frm_options>
+    </field>
+    <field>
+            <name>extra</name>
+            <type>select</type>
+            <frm_options>autoincrement</frm_options>
+    </field>	
+    <field>
+            <name>size</name>
+            <type>string</type>+
+            <frm_endgroup></frm_endgroup>
+    </field>
+    <field>
+            <name>frm_type</name>
+            <type>varchar</type>
+            <frm_i18n>type (form)</frm_i18n>
+            <frm_type>stringselect</frm_type>
+            <frm_options>varchar,text,image,file,localfile,datetime,check,select,radio,html,password</frm_options>
+            <frm_group>FORM</frm_group>
+    </field>
+    <field>
+            <name>frm_options</name>
+            <frm_i18n>list options</frm_i18n>
+            <type>text</type>
+    </field>
+    <field>
+            <name>frm_retype</name>
+            <type>check</type>
+    </field>
+    <field>
+            <name>frm_show</name>
+            <type>select</type>
+            <frm_options>0,1</frm_options>
+    </field>
+    <field>
+            <name>frm_default</name>
+            <frm_i18n>default value</frm_i18n>
+            <type>text</type>
+    </field>
+    <field>
+            <name>frm_validator</name>
+            <type>string</type>
+    </field>
+    <field>
+            <name>frm_allowupdate</name>
+            <type>select</type>
+            <frm_options>0,1,onlyadmin</frm_options>
+    </field>
+    <field>
+            <name>frm_multilanguage</name>
+            <frm_type>check</frm_type>
+            <frm_endgroup></frm_endgroup>
+    </field>
 </tables>
 ");
 $opt=FN_GetParam("opt",$_GET,"flat");

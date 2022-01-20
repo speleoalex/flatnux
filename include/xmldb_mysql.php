@@ -25,7 +25,6 @@
  */
 global $xmldb_mysqldatabase,$xmldb_mysqlusername,$xmldb_mysqlpassword,$xmldb_mysqlhost;
 global $xmldb_mysqlcurrentdb,$xmldb_mysqlconnection;
-
 class XMLTable_mysql
 {
 

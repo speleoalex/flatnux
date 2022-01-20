@@ -33,7 +33,6 @@ function TPL_GetHtmlPart($partname, $tp_str, $default = "")
     $tp_str = empty($out[0]) ? $default : $out[0];
     return $tp_str;
 }
-
 /**
  * 
  * @staticvar array $cache
@@ -81,7 +80,6 @@ function TPL_GetHtmlParts($partname, $tp_str, $default = "")
     }
     return array();
 }
-
 /**
  * 
  * @param type $partname

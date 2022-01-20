@@ -105,3 +105,4 @@
         <frm_allowupdate>onlyadmin</frm_allowupdate>
     </field>
 </tables>
+

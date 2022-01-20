@@ -19,7 +19,6 @@ require_once "modules/dbview/FNDBVIEW.php";
 if (isset($_GET['debug']))
 {
     dprint_r(__FILE__ . " " . __LINE__ . " : " . FN_GetExecuteTimer());
-
 }
 if (file_exists("sections/{$_FN['mod']}/custom_functions.php"))
     require_once "sections/{$_FN['mod']}/custom_functions.php";
