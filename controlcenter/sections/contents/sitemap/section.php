@@ -495,7 +495,8 @@ var syncdiv = function (id)
             $params=array();
             $params['enablenew']=false;
             $params['table']=$table;
-            $params['htmlgrid']=$htmlgrid;
+            $params['htmlgrid']=$htmlgrid."";
+
             $params['list_onupdate']=false;
             $params['textviewlist']="";
             $params['textcancel']="";
@@ -506,6 +507,7 @@ var syncdiv = function (id)
                 $sectionvalues=FN_GetSectionValues($mod);
                 echo "<h2>".FN_Translate("page")."</h2><div style=\"padding:5px;border:1px solid #dadada\">";
             }
+           
             FNCC_XmltableEditor("fn_sections",$params); //editor
             $sectionvalues=FN_GetSectionValues($mod,false);
 

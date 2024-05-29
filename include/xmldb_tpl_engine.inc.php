@@ -152,6 +152,7 @@ function TPL_ApplyTplFile($tplname, $vars, $config)
  */
 function TPL_ApplyTplString($str, $vars, $basepath = false, $config = array())
 {
+    global $_TPL_DEBUG;
     /*
 
       $config['lang_default']=isset($config['lang_default'])?$config['lang_default']:"";
@@ -161,13 +162,16 @@ function TPL_ApplyTplString($str, $vars, $basepath = false, $config = array())
       $config['use_urlserverpath']=isset($config['use_urlserverpath'])?$config['use_urlserverpath']:"";
       $config['sitepath']=isset($config['sitepath'])?$config['sitepath']:"";
      */
-
     static $recursion = 0;
     $recursion++;
     if ($recursion > 5)
     {
         $recursion--;
         return $str;
+    }
+    if (is_string($vars))
+    {
+        $vars=array("item"=>$vars);
     }
     foreach ($config as $k => $v)
     {

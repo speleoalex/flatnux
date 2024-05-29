@@ -5,6 +5,8 @@
  * @copyright Copyright (c) 2011
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License
  */
+
+
 ob_start();
 global $_FN;
 require_once "include/flatnux.php";
@@ -23,7 +25,7 @@ include ("include/autoexec.php");
 if (file_exists("themes/{$_FN['theme']}/structure.php"))
 {
     include "./themes/{$_FN['theme']}/structure.php";
-    $str = ob_get_contents();
+    $str = ob_get_clean();
 }
 elseif (file_exists("themes/{$_FN['theme']}/template.{$_FN['mod']}.tp.html"))
 {

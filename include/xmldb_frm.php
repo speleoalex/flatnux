@@ -73,6 +73,31 @@ function xmldb_frm($databasename, $tablename, $path = "misc", $lang = "en", $lan
  */
 class FieldFrm
 {
+    var $databasename;
+    var $table;
+    var $tablename;
+    var $tableparams;
+    var $path;
+    var $siteurl;
+    var $lang;
+    var $languages;
+    var $charset_page;
+    var $charset_storage;
+    var $langdefault;
+    var $frm_i18n;
+    var $formvals;
+    var $requiredtext;
+    var $innertables;
+    var $formclass ;
+    var $messages;
+    var $templateobjects;
+    var $xmltable;
+    var $templateviewobjects;
+    var $fieldname_active;
+    var $fieldname_user;
+    var $fieldname_password;
+    var $escapechar;
+    
 
     function __construct($databasename, $tablename, $path = "misc", $lang = "en", $languages = "en,it", $params = false)
     {
@@ -252,7 +277,7 @@ class FieldFrm
         $tmp->template = "$str";
         if ($fieldname == "")
         {
-           foreach ($this->formvals as $k => $v)
+            foreach ($this->formvals as $k => $v)
             {
                 if (!isset($v['name']))
                     continue;
@@ -861,7 +886,7 @@ $frm_endgroupfooter
         }
         if ($update == true && isset($this->formvals[$primarykey]['frm_allowupdate']) && $this->formvals[$primarykey]['frm_allowupdate'] == 0)
         {
-            $this->formvals[$primarykey]['frm_readonly']=1;
+            $this->formvals[$primarykey]['frm_readonly'] = 1;
             $strhiddenfield .= "<input type=\"hidden\" name=\"$primarykey\" value=\"" . $oldvalues[$primarykey] . "\" />";
         }
         if ($update == true && isset($this->formvals[$primarykey]['frm_setonlyadmin']) && $this->formvals[$primarykey]['frm_setonlyadmin'] != "" && $currentleveladmin < $this->formvals[$primarykey]['frm_setonlyadmin'])
@@ -1228,13 +1253,16 @@ $frm_endgroupfooter
                 $foreignkeyvalues = explode(",", $oldval);
                 $sep = "";
 
+                //dprint_r($foreignkeyvalues);
+                //dprint_r($fieldform_values);
                 foreach ($foreignkeyvalues as $foreignkeyVal)
                 {
                     //$tmp_optionvalues = array();
+                    
                     foreach ($fieldform_values['options'] as $option)
                     {
                         //	if (!isset($tmp_optionvalues[$option['value']]))
-                        if ($option['value'] == $foreignkeyVal)
+                        if (isset($option['value']) && $option['value'] == $foreignkeyVal)
                         {
                             $tit .= $sep . $option['title'];
                             $sep = ",";
@@ -1263,7 +1291,6 @@ $frm_endgroupfooter
             // --------multilanguage --------------<
             //------------gestione visualizzazione----------->
             $showfield = true;
-
 
             if (isset($fieldform_values['frm_viewonlyadmin']) && $fieldform_values['frm_viewonlyadmin'] == 1 && $currentleveladmin < $fieldform_values['frm_viewonlyadmin'])
                 $showfield = false;
@@ -1313,11 +1340,6 @@ $frm_endgroupfooter
                     $fieldform_values['lang'] = $this->lang;
                     $fieldform_values['languagesfield'] = $languagesfield;
                     $fieldform_values['frm_help'] = isset($fieldform_values['frm_help']) ? $fieldform_values['frm_help'] : "";
-
-
-
-
-
 
                     if ($showfield && $fieldform_valuesk != "")
                     {
@@ -1406,12 +1428,31 @@ $frm_endgroupfooter
     }
 
     /**
+     * 
+     * @param type $oldvalues
+     * @return type
+     */
+    function GetByPostJson($oldvalues = array())
+    {
+        $_VAR = json_decode(file_get_contents('php://input'), JSON_OBJECT_AS_ARRAY);
+        return $this->GetByVar($oldvalues,$_VAR);
+    }
+    /**
+     * 
+     * @param type $oldvalues
+     * @return type
+     */
+    function GetByPost($oldvalues = array())
+    {
+        return $this->GetByVar($oldvalues,$_POST);
+    }
+    /**
      * getbypost
      *
      * riempe un array con i valori ricevuti tramite post
      * @param array $oldvalues i valori che non sono in post vanno mantenuti
      */
-    function GetByPost($oldvalues = array())
+    function GetByVar($oldvalues = array(),$_VAR=array())
     {
         $newvalues = array();
         ////dprint_r($_POST);
@@ -1420,13 +1461,13 @@ $frm_endgroupfooter
 
             if ((isset($value['type']) && ($value['type'] == 'check')) || (isset($value['frm_type']) && ($value['frm_type'] == 'check')))
             {
-                if (isset($_POST["__check__$key"]) && !isset($_POST["$key"]))
+                if (isset($_VAR["__check__$key"]) && !isset($_VAR["$key"]))
                 {
                     $newvalues[$key] = "";
                 }
-                if (isset($_POST["__check__$key"]) && isset($_POST[$key]))
+                if (isset($_VAR["__check__$key"]) && isset($_VAR[$key]))
                 {
-                    $newvalues[$key] = $_POST[$key];
+                    $newvalues[$key] = $_VAR[$key];
                 }
                 if (isset($oldvalues[$key]) && !isset($newvalues[$key]))
                 {
@@ -1436,7 +1477,7 @@ $frm_endgroupfooter
             else
             if (isset($value['type']) && ($value['type'] == 'image' || $value['type'] == 'file') && isset($_FILES[$key]['name']))
             {
-                if (isset($_POST["__isnull__$key"]) && $_POST["__isnull__$key"] == "null")
+                if (isset($_VAR["__isnull__$key"]) && $_VAR["__isnull__$key"] == "null")
                 {
                     $newvalues[$key] = "";
                 }
@@ -1455,16 +1496,16 @@ $frm_endgroupfooter
             }
             else
             {
-                if (isset($_POST[$key]))
+                if (isset($_VAR[$key]))
                 {
-                    $newvalues[$key] = $_POST[$key];
+                    $newvalues[$key] = $_VAR[$key];
                     if (ini_get('magic_quotes_gpc') == 1)
                     {
                         $newvalues[$key] = stripslashes($newvalues[$key]);
                     }
                     if (isset($value['frm_allowhtml']) && $value['frm_allowhtml'] != "true")
                     {
-                        $newvalues[$key] = htmlentities($_POST[$key]);
+                        $newvalues[$key] = htmlentities($_VAR[$key]);
                     }
                 }
                 if (isset($oldvalues[$key]) && !isset($newvalues[$key]))
@@ -1494,7 +1535,7 @@ $frm_endgroupfooter
                 }
             }
         }
-       
+
         return $newvalues;
     }
 
@@ -1589,7 +1630,7 @@ $frm_endgroupfooter
     function Verify($newvalues, $update = false, $pk = null)
     {
         $ret = array();
-
+        $_VAR = $_POST;
         $allerrors = "";
         $allerrors_sep = "";
 
@@ -1734,8 +1775,8 @@ $frm_endgroupfooter
             }
             if (isset($value['frm_retype']) && $value['frm_retype'] == 1)
             {
-                if (isset($_POST[$key . "_retype"]) && isset($_POST[$key]))
-                    if (($_POST[$key] != "" && $_POST[$key] != $_POST[$key . "_retype"]) || ($_POST[$key . "_retype"] != "" && $_POST[$key . "_retype"] != $_POST[$key]))
+                if (isset($_VAR[$key . "_retype"]) && isset($_VAR[$key]))
+                    if (($_VAR[$key] != "" && $_VAR[$key] != $_VAR[$key . "_retype"]) || ($_VAR[$key . "_retype"] != "" && $_VAR[$key . "_retype"] != $_VAR[$key]))
                     {
                         $err .= $errsep . $this->messages["_XMLDBERRORRETYPE"];
                         $errsep = " - ";
@@ -1841,14 +1882,20 @@ $frm_endgroupfooter
                     $ret[$key] = XMLDB_FixEncoding($ret[$key], $this->charset_page);
             }
             //----------------foreign key ------------------------------------->
+            foreach ($this->formvals as $key => $field)
+            {
+                $value = "";
+                if (!empty($field['type']) && $field['type'] == "image")
+                {
+                    $ret['_url_' . $key] = $this->xmltable->get_file($rec, $field['name']);
+                }
+            }
             if (!$keep_fk)
             {
                 foreach ($this->formvals as $key => $field)
                 {
-                    $value = "";
                     if (!empty($field['foreignkey']) && !empty($field['fk_show_field']))
                     {
-
                         $r = array();
                         $tfk[$field['fk_link_field']] = xmldb_table($this->xmltable->databasename, $field['foreignkey'], $this->xmltable->path);
                         $tablefk = $tfk[$field['fk_link_field']];
@@ -1883,17 +1930,24 @@ $frm_endgroupfooter
                     {
                         if (isset($field['options']) && is_array($field['options']))
                         {
-                            //dprint_r($field);
+                            $values = array();
+                            $values_opt = explode(",", $rec[$field['name']]);
                             foreach ($field['options'] as $opt)
                             {
-                                if (!isset($opt['value']))
+                                foreach ($values_opt as $value_opt)
                                 {
-                                    dprint_r("error xmldb_frm: {$opt['value']} not exists ");
+                                    if (!isset($opt['value']))
+                                    {
+                                        dprint_r("error xmldb_frm: {$opt['value']} not exists ");
+                                    }
+                                    if ($value_opt == $opt['value'])
+                                    {
+                                        $values[] = $opt['title'];
+                                    }
                                 }
-
-                                if ($rec[$field['name']] == $opt['value'])
-                                    $value = $opt['title'];
                             }
+                            $value = implode(",", $values);
+
                             $ret[$key] = $value;
                         }
                     }
@@ -2048,7 +2102,7 @@ class xmldbfrm_field_varchar
         $attributes = isset($params["htmlattributes"]) ? $params["htmlattributes"] : "";
         if (!empty($params['frm_readonly']))
         {
-            $attributes.=" readonly=\"readonly\"";
+            $attributes .= " readonly=\"readonly\"";
         }
         $html .= "$frm_prefix<input $required $attributes  $l title=\"{$params['frm_help']}\" size=\"" . $size . "\" name=\"{$params['name']}\"  value=\"" . str_replace('"', '&quot;', $params['value']) . "\" />";
         $frm_suffix = isset($params['frm_suffix']) ? $params['frm_suffix'] : "";
@@ -2376,7 +2430,7 @@ class xmldbfrm_field_file
 //---------image--------------------------------------->
 class xmldbfrm_field_image
 {
-
+    var $fieldvalues;
     function __construct($field)
     {
         $this->fieldvalues = $field['fieldvalues'];
@@ -2749,34 +2803,37 @@ function XMLDB_IsIso8859($str)
 {
     //if (preg_match("/^[\\x00-\\xFF]*$/u",$str) === 1)
     //	return true;
-    $chars = array(
-        "&agrave;",
-        "&egrave;",
-        "&igrave;",
-        "&ograve;",
-        "&ugrave;",
-        "&aacute;",
-        "&eacute;",
-        "&iacute;",
-        "&oacute;",
-        "&uacute;",
-        "&Agrave;",
-        "&Egrave;",
-        "&Igrave;",
-        "&Ograve;",
-        "&Ugrave;",
-        "&Aacute;",
-        "&Eacute;",
-        "&Iacute;",
-        "&Oacute;",
-        "&Uacute;",
-        "&deg;"
-    );
-    foreach ($chars as $char)
+    if ($str)
     {
-        if (strpos($str, html_entity_decode($char, ENT_QUOTES, "ISO-8859-1")))
+        $chars = array(
+            "&agrave;",
+            "&egrave;",
+            "&igrave;",
+            "&ograve;",
+            "&ugrave;",
+            "&aacute;",
+            "&eacute;",
+            "&iacute;",
+            "&oacute;",
+            "&uacute;",
+            "&Agrave;",
+            "&Egrave;",
+            "&Igrave;",
+            "&Ograve;",
+            "&Ugrave;",
+            "&Aacute;",
+            "&Eacute;",
+            "&Iacute;",
+            "&Oacute;",
+            "&Uacute;",
+            "&deg;"
+        );
+        foreach ($chars as $char)
         {
-            return true;
+            if (strpos($str, html_entity_decode($char, ENT_QUOTES, "ISO-8859-1")))
+            {
+                return true;
+            }
         }
     }
     return false;

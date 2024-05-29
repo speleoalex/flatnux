@@ -384,6 +384,8 @@ $_FN['section_title']=isset($_FN['sectionvalues']['title'])?$_FN['sectionvalues'
 
 if (!empty($_FN['include']))
 {
+    $_FN['include'] = array_unique($_FN['include']);
+
     foreach($_FN['include'] as $value)
     {
         if (file_exists($value))
@@ -507,4 +509,6 @@ function FN_IncludeScript($file_to_Include)
     }
     $_FN['include'][]=$file_to_Include;
 }
+
+
 ?>

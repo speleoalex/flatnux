@@ -451,6 +451,9 @@ function FN_TPL_html_MakeThemeFromTemplate($templatefile)
     $vars['notifications_count'] = count($notifications);
     $vars['menuitems'] = FN_GetMenuTree();
     $vars['nav'] = FN_GetSectionsTree();
+    
+
+    
     $vars['url_logo'] = file_exists("themes/{$_FN['theme']}/images/logo.png") ? "themes/{$_FN['theme']}/images/logo.png" : "";
     if (!$vars['url_logo'])
         $vars['url_logo'] = file_exists("themes/{$_FN['theme']}/images/logo.svg") ? "themes/{$_FN['theme']}/images/logo.svg" : "";
@@ -1376,7 +1379,6 @@ function FN_GetMenuTree($parent = "")
     $menuarray = array();
     $current = $_FN['mod'];
     $sections = FN_GetSections($parent);
-
     if (empty($sections) || count($sections) == 0)
         return false;
     foreach ($sections as $section)

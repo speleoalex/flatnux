@@ -287,7 +287,7 @@ function new_table($tablename,$path,$databasename)
 		}
 		$newvalues=$table->getbypost();
 		$newvalues['primarykey']="1";
-		$errors=$table->VerifyExt($newvalues,false);
+		$errors=$table->Verify($newvalues,false);
 		if (count($errors)>0)
 		{
 			foreach ( $errors as $field => $error )
@@ -303,7 +303,7 @@ function new_table($tablename,$path,$databasename)
 			if(isset($_POST['xmltablesinglefile']))
 				$singlefilename=$xmltablename;
 			echo createxmltable("fndatabase", $xmltablename, array(0 => $newvalues), $_FN['datadir'], $singlefilename);
-			jsredirect("?opt=$opt&op=edit&t=$xmltablename");
+			FN_JsRedirect("?opt=$opt&op=edit&t=$xmltablename");
 			return;
 		}
 		//

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Flatnux_module_login
  * @author Alessandro Vernassa <speleoalex@gmail.com>
@@ -22,7 +23,7 @@ function FNREG_ManageRecovery()
     $errors = "";
     $tplvars = $_FN;
     $tplvars['txtusername'] = FN_Translate("username");
-
+    $body = "";
     // step 1 generate rnd and send -------->
     if ($postuser != "")
     {
@@ -371,14 +372,14 @@ function FNREG_ManageEditRegister($user = "")
     </table>
 </form>
 ';
-        
+
         //splx non lo prende start --->
         //carica form.tp.html del tema ma non editreg.tp.html
         $tplfile = FN_FromTheme("modules/login/editreg.tp.html", false);
         $tplbasepath = dirname($tplfile) . "/";
         if (file_exists($tplfile))
         {
-            $templateForm = file_get_contents($tplfile);            
+            $templateForm = file_get_contents($tplfile);
         }
         $tplvars = $_FN;
         $tplvars['text_on_update_fail'] = "";
@@ -392,7 +393,7 @@ function FNREG_ManageEditRegister($user = "")
         $form->SetlayoutTemplate($templateForm);
         //splx non lo prende end ---<
         $form->ShowUpdateForm($newvalues[$form->xmltable->primarykey], FN_IsAdmin(), false, $errors);
-        
+
         array_merge($_FN['return'], $tplvars);
     }
     else
@@ -556,7 +557,7 @@ function FNREG_ManageRegister($actionform = "")
         $message = "";
         if ($user != "" && $id != "" && isset($uservalues['rnd']) && $uservalues['rnd'] == $id)
         {
-            FNREG_ConfirmUser($uservalues, $config['send_welwelcome_message']);
+            FNREG_ConfirmUser($uservalues, !empty($config['send_welcome_message']));
             //complete registration-------------------------------------------->
             if (function_exists("FN_OnConfirmUser"))
             {
@@ -703,7 +704,7 @@ function FNREG_ManageRegister($actionform = "")
                 {
                     $tplvalues['message'] .= "<br />" . FN_Translate("registration has been completed") . "<br />";
                     FN_AddUser($newvalues);
-                    FNREG_ConfirmUser($newvalues, $config['send_welwelcome_message']);
+                    FNREG_ConfirmUser($newvalues, !empty($config['send_welcome_message']));
                     if (function_exists("FN_OnConfirmUser"))
                     {
                         FN_OnConfirmUser($newvalues);
@@ -850,29 +851,43 @@ function FNREG_ManageRegister($actionform = "")
     if (is_array($conditions) && count($conditions) > 0)
     {
         $tcond = FN_XmlForm("fn_conditions");
+        $tpvars_conditions = array();
         foreach ($conditions as $condition)
         {
+            $tpvars_conditions_item = array("title" => "", "text" => "", "checked" => "", "error" => "", "checked" => "");
             $htmlconditions .= "<div>";
             $condition = $tcond->GetRecordTranslatedByPrimarykey($condition['id']);
             if (!empty($condition['title']))
+            {
+                $tpvars_conditions_item['title'] = $condition['title'];
                 $htmlconditions .= "<b>" . $condition['title'] . "</b><br />";
+            }
+            $tpvars_conditions_item['text'] = $condition['text'];
             $htmlconditions .= "<div style=\"\" >";
             $htmlconditions .= $condition['text'];
             $htmlconditions .= "</div>";
             $ck = "";
             if (!empty($_POST['conditions_' . $condition['id']]))
             {
+                $tpvars_conditions_item['checked'] = 'checked';
                 $ck = "checked=\"checked\"";
             }
-
             $required = !empty($condition['optional']) ? "" : "required=\"required\"";
+            $tpvars_conditions_item['required'] = !empty($condition['optional']) ? "" : "required";
+            $tpvars_conditions_item['name'] = "conditions_{$condition['id']}";
+            $tpvars_conditions_item['title_accept'] = FN_Translate("accept");
+
             $htmlconditions .= "<label><input $required  name=\"conditions_{$condition['id']}\" type=\"checkbox\" $ck/> " . FN_Translate("accept") . "</label>";
             if (!empty($_POST) && empty($condition['optional']) && empty($_POST['conditions_' . $condition['id']]))
+            {
                 $htmlconditions .= " <span style=\"background-color:#ffffff;color:red\">" . FN_Translate("to register is required to accept") . "</span>";
+                $tpvars_conditions_item['error'] = FN_Translate("to register is required to accept");
+            }
             $htmlconditions .= "</div>";
+            $tpvars_conditions[] = $tpvars_conditions_item;
         }
-
         $tplvars['htmlconditions'] = $htmlconditions;
+        $tplvars['conditions'] = $tpvars_conditions;
     }
     else
     {

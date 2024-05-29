@@ -150,7 +150,7 @@ function FN_LoginForm($templateForm = false)
  *
  * @global array $_FN
  */
-function FN_HtmlLoginForm($templateForm = false)
+function FN_HtmlLoginForm($templateForm = false,$url="")
 {
     global $_FN;
     FN_LoginInitUrl();
@@ -210,6 +210,10 @@ function FN_HtmlLoginForm($templateForm = false)
     else
     {
         $querystring = "?" . $querystring;
+    }
+    if ($url)
+    {
+        $querystring = $url;
     }
     $tplvars = array();
     $tplvars['login_error'] = "";

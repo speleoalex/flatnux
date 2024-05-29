@@ -6,7 +6,7 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License
  *
  */
-##<fnmodule>statistics</fnmodule>
+//<fnmodule>statistics</fnmodule>
 //[it]TRACCIA IP {1=SI,0=NO}
 //[en]TRACK IP {1=YES,0=NO}
 $config['track_ip'] = 0;
