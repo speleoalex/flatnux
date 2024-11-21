@@ -46,7 +46,7 @@ elseif ($editconf!= "")
         echo "<button onclick=\"resizeThumb(320,240)\">320x240</button>";
         echo "<button onclick=\"resizeThumb(250,900)\">250x900</button>";
         echo "<button onclick=\"resizeThumb(250,900)\">250x900</button>";
-        echo "<iframe style=\"border:1px solid inset;height:250px;width:900px\" src=\"index.php?theme=$themetoedit\"></iframe>";
+        echo "$themetoedit<iframe style=\"border:1px solid inset;height:250px;width:900px\" src=\"index.php?themepreview=$themetoedit\"></iframe>";
         echo "<br /><img alt=\"\" style=\"vertical-align:middle\" src=\"images/left.png\" /> <a href=\"?mod={$_FN['mod']}&amp;opt=$opt&amp;themetoedit=$themetoedit\">".FN_i18n("back")."</a>";
     }
     echo FNCC_HtmlEditConfFile("themes/{$theme}/config.php","?mod={$_FN['mod']}&amp;opt=$opt&amp;themetoedit=$themetoedit&amp;editconf=$editconf",""
@@ -120,7 +120,7 @@ function resizeThumb(w,h){
         echo "<button onclick=\"resizeThumb('320px','240px')\">320x240</button>";
         echo "<button onclick=\"resizeThumb('640px','480px')\">640x480</button>";
         echo "</div>";
-        echo "<iframe id=\"thumb\" style=\"border:1px solid;height:250px;width:100%\" src=\"index.php?theme=$themetoedit\"></iframe>";
+        echo "<iframe id=\"thumb\" style=\"border:1px solid;height:250px;width:100%\" src=\"index.php?themepreview=$themetoedit\"></iframe>";
 //		echo "<br /><img alt=\"\" style=\"vertical-align:middle\" src=\"images/left.png\" /> <a href=\"?mod={$_FN['mod']}&amp;opt=$opt&amp;themetoedit=$themetoedit\">".FN_i18n("back")."</a>";
         echo "<div style=\"text-align:right\"><img border=\"\" alt=\"\" style=\"vertical-align:middle\"src=\"".FN_FromTheme("images/modify.png")."\" />&nbsp;";
         if (file_exists("themes/$themetoedit/structure.php"))
